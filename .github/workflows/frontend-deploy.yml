@@ -15,6 +15,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: Check Secrets
+        run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "⚠️  Missing VERCEL_TOKEN secret. Setup guide: https://vercel.com/account/tokens"
+            exit 1
+          fi
+          if [ -z "${{ secrets.VERCEL_ORG_ID }}" ]; then
+            echo "⚠️  Missing VERCEL_ORG_ID secret. Get from Vercel project settings."
+            exit 1
+          fi
+          if [ -z "${{ secrets.VERCEL_PROJECT_ID }}" ]; then
+            echo "⚠️  Missing VERCEL_PROJECT_ID secret. Get from Vercel project settings."
+            exit 1
+          fi
+      
       - name: Install Vercel CLI
         run: npm install -g vercel
       

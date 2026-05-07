@@ -15,7 +15,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Trigger Render Deploy Hook
+      - name: Check Render Hook
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
+            echo "⚠️  Missing RENDER_DEPLOY_HOOK secret. Setup guide:"
+            echo "1. Go to Render dashboard → Select backend service"
+            echo "2. Settings → Deploy Hooks → Copy the webhook URL"
+            echo "3. Add to GitHub Secrets as RENDER_DEPLOY_HOOK"
+            exit 1
+          fi
+      
+      - name: Trigger Render Deploy
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-        if: always()
+          echo "✅ Render deployment triggered"
