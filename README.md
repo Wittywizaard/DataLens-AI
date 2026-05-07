@@ -148,46 +148,89 @@ DELETE /api/files/:fileId
 
 ## 🐳 Deployment Options
 
-### Option A: Docker Compose (Recommended)
+### Recommended Free Backend Hosts
+
+- **Fly.io** — Best long-term free option for a Dockerized Node backend. It supports your existing `backend/Dockerfile` and can stay running without forced sleep.
+- **Render** — Easy setup for Node apps, free for small services. Great if you want a simple web service deployment without refactoring.
+- **Vercel** — Best for frontend hosting. You can also use Vercel serverless functions if you rewrite the backend API into Vercel routes, but that is more work.
+
+> Note: Hosting can often be free, but Gemini API usage still incurs cost based on your Google account.
+
+### Option A: Fly.io (Recommended Free Backend)
+
+1. Install Fly CLI: `curl -L https://fly.io/install.sh | sh`
+2. Login: `fly auth login`
+3. From the `backend/` folder:
 
 ```bash
-# Set your API key
-export GEMINI_API_KEY=your-api-key-here
+cd backend
+fly launch --name datalens-ai-backend --region iad --dockerfile Dockerfile
+```
 
-# Run with Docker
+4. Set secrets:
+
+```bash
+fly secrets set GEMINI_API_KEY=your-gemini-api-key
+fly secrets set FRONTEND_URL=https://your-frontend.vercel.app
+```
+
+5. Deploy:
+
+```bash
+fly deploy
+```
+
+### Option B: Render (Easy Free Backend)
+
+1. Create a Render account and connect your GitHub repo.
+2. Create a new **Web Service**.
+3. Set the root directory to `backend`.
+4. Use `Dockerfile` as the deploy method.
+5. Set environment variables:
+   - `GEMINI_API_KEY`
+   - `FRONTEND_URL=https://your-frontend.vercel.app`
+6. Deploy.
+
+### Option C: Vercel (Frontend Hosting)
+
+Your frontend can be deployed directly from the `frontend/` folder.
+
+1. Create a Vercel account and connect your GitHub repo.
+2. Create a new project and select the `frontend` folder as the root.
+3. Set the build command:
+
+```bash
+npm run build
+```
+
+4. Set the output directory:
+
+```text
+dist
+```
+
+5. Add environment variable:
+   - `VITE_API_URL=https://your-backend-domain.com`
+
+6. Deploy.
+
+You can use the included `frontend/vercel.json` file to help Vercel detect the static build.
+
+### Option D: Local Docker Compose
+
+If you just want local testing, use:
+
+```bash
+export GEMINI_API_KEY=your-api-key-here
 docker-compose up -d
 ```
 
-### Option B: Railway (Easy Cloud Deployment)
+---
 
-1. Push your code to GitHub
-2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub
-3. Select your repo
-4. Add environment variable: `GEMINI_API_KEY=your-key-here`
-5. Railway auto-detects Node.js and deploys
+## 🚀 Deployment Files Included
 
-For the frontend, create a second Railway service:
-- **Root Directory**: `/frontend`
-- **Build Command**: `npm run build`
-- **Start Command**: `npx serve dist`
-- **Environment Variable**: `VITE_API_URL=https://your-backend-railway-url`
-
-### Option C: Manual Deployment
-
-**Backend:**
-```bash
-cd backend
-npm install --production
-npm start
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run build
-# Serve the 'dist' folder with any static server
-```
+- `frontend/vercel.json` — helps Vercel deploy the frontend from the `frontend/` folder.
+- `backend/fly.toml` — configuration file for deploying the backend to Fly.io.
 
 ---
 
