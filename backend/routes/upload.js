@@ -1,0 +1,170 @@
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const { v4: uuidv4 } = require("uuid");
+const Papa = require("papaparse");
+const XLSX = require("xlsx");
+
+const router = express.Router();
+
+// In-memory store for parsed data (use Redis in production)
+const dataStore = require("../utils/dataStore");
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, "../uploads");
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${uuidv4()}${ext}`);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowed = [".csv", ".tsv", ".xlsx", ".xls"];
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (allowed.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(
+      new Error(
+        `Unsupported file type: ${ext}. Allowed: ${allowed.join(", ")}`
+      ),
+      false
+    );
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB
+});
+
+// POST /api/upload
+router.post("/", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded." });
+    }
+
+    const filePath = req.file.path;
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    let headers = [];
+    let rows = [];
+
+    // Parse the file
+    if (ext === ".csv" || ext === ".tsv") {
+      const content = fs.readFileSync(filePath, "utf8");
+      const delimiter = ext === ".tsv" ? "\t" : ",";
+      const result = Papa.parse(content, {
+        header: true,
+        skipEmptyLines: true,
+        dynamicTyping: true,
+        delimiter,
+      });
+      headers = result.meta.fields || [];
+      rows = result.data;
+    } else if (ext === ".xlsx" || ext === ".xls") {
+      const workbook = XLSX.readFile(filePath);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(sheet, { defval: null });
+      headers = json.length ? Object.keys(json[0]) : [];
+      rows = json;
+    }
+
+    if (!headers.length || !rows.length) {
+      fs.unlinkSync(filePath);
+      return res.status(400).json({ error: "File appears to be empty or unreadable." });
+    }
+
+    // Detect column types
+    const columnTypes = {};
+    headers.forEach((h) => {
+      const values = rows.map((r) => r[h]).filter((v) => v !== null && v !== undefined && v !== "");
+      const numericCount = values.filter((v) => typeof v === "number" || (!isNaN(parseFloat(v)) && isFinite(v))).length;
+      const dateCount = values.filter((v) => {
+        if (typeof v !== "string") return false;
+        return !isNaN(Date.parse(v));
+      }).length;
+      if (numericCount / values.length > 0.8) columnTypes[h] = "numeric";
+      else if (dateCount / values.length > 0.6) columnTypes[h] = "date";
+      else columnTypes[h] = "categorical";
+    });
+
+    // Compute basic stats
+    const stats = {};
+    headers.forEach((h) => {
+      if (columnTypes[h] === "numeric") {
+        const vals = rows.map((r) => parseFloat(r[h])).filter((v) => !isNaN(v));
+        if (vals.length) {
+          const sum = vals.reduce((a, b) => a + b, 0);
+          const sorted = [...vals].sort((a, b) => a - b);
+          stats[h] = {
+            min: sorted[0],
+            max: sorted[sorted.length - 1],
+            mean: sum / vals.length,
+            count: vals.length,
+            sum,
+          };
+        }
+      } else {
+        const freq = {};
+        rows.forEach((r) => {
+          const v = String(r[h] ?? "");
+          freq[v] = (freq[v] || 0) + 1;
+        });
+        const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+        stats[h] = {
+          unique: sorted.length,
+          topValues: sorted.slice(0, 10).map(([val, count]) => ({ val, count })),
+        };
+      }
+    });
+
+    // Store parsed data in memory
+    const fileId = uuidv4();
+    dataStore.set(fileId, {
+      fileId,
+      originalName: req.file.originalname,
+      headers,
+      rows,
+      columnTypes,
+      stats,
+      rowCount: rows.length,
+      uploadedAt: new Date().toISOString(),
+    });
+
+    // Clean up the uploaded file (data is in memory now)
+    fs.unlinkSync(filePath);
+
+    // Auto-delete after 1 hour
+    setTimeout(() => {
+      dataStore.delete(fileId);
+    }, 60 * 60 * 1000);
+
+    res.json({
+      success: true,
+      fileId,
+      originalName: req.file.originalname,
+      rowCount: rows.length,
+      headers,
+      columnTypes,
+      stats,
+      preview: rows.slice(0, 5),
+    });
+  } catch (err) {
+    console.error("Upload error:", err);
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ error: err.message || "Failed to process file." });
+  }
+});
+
+module.exports = router;
