@@ -1,0 +1,92 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.container h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 32px;
+  color: #f1f0ff;
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #a09dbe;
+}
+
+.stat strong {
+  color: #c4a0ff;
+  font-weight: 600;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #0c0c1d;
+  border: 1px solid #ffffff0f;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.table thead {
+  background: #111128;
+}
+
+.table th {
+  color: #7c3aed;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid #ffffff0f;
+}
+
+.table td {
+  padding: 12px 16px;
+  color: #a09dbe;
+  border-bottom: 1px solid #ffffff05;
+}
+
+.table tbody tr:hover {
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.deleteBtn {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}

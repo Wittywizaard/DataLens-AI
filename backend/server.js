@@ -8,6 +8,7 @@ const path = require("path");
 const uploadRoutes = require("./routes/upload");
 const analyzeRoutes = require("./routes/analyze");
 const fileRoutes = require("./routes/files");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -43,6 +44,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/analyze", analyzeRoutes);
 app.use("/api/files", fileRoutes);
