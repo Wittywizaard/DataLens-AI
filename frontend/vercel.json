@@ -1,13 +1,7 @@
 {
-  "version": 3,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build"
-    }
-  ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
+  "buildCommand": "npm run build --legacy-peer-deps",
+  "outputDirectory": "dist",
+  "env": {
+    "VITE_API_URL": "@VITE_API_URL"
+  }
 }
