@@ -69,6 +69,7 @@ npm run dev
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
+| **Languages** | JavaScript, HTML, CSS | Full-stack application languages |
 | **Frontend** | React 18, Vite | Modern UI framework with fast development server |
 | **Backend** | Node.js, Express | REST API server with file handling |
 | **AI Engine** | Google Gemini 1.5 Flash | Natural language processing and chart generation |
@@ -251,53 +252,6 @@ If you find this project helpful, please:
 
 Happy analyzing! 📊✨
 
-**Backend:**
-1. New Web Service → Connect GitHub repo
-2. Root directory: `backend`
-3. Build command: `npm install`
-4. Start command: `node server.js`
-5. Add env vars: `ANTHROPIC_API_KEY`, `NODE_ENV=production`, `FRONTEND_URL=https://your-frontend.onrender.com`
-
-**Frontend:**
-1. New Static Site → Connect same repo
-2. Root directory: `frontend`
-3. Build command: `npm install && npm run build`
-4. Publish directory: `dist`
-5. Add env var: `VITE_API_URL=https://your-backend.onrender.com`
-
----
-
-### Option C: Vercel (Frontend) + Railway (Backend)
-
-**Backend on Railway:**
-```bash
-# Install Railway CLI
-npm install -g @railway/cli
-railway login
-railway init
-railway up
-railway variables set ANTHROPIC_API_KEY=sk-ant-...
-```
-
-**Frontend on Vercel:**
-```bash
-cd frontend
-npm install -g vercel
-vercel
-# Set VITE_API_URL to your Railway backend URL when prompted
-```
-
----
-
-### Option D: Docker
-
-```bash
-# Copy and fill in your key
-cp backend/.env.example backend/.env
-# Edit backend/.env with your ANTHROPIC_API_KEY
-
-# Run with docker-compose
-docker-compose up --build
 ```
 
 Access at http://localhost:5173
