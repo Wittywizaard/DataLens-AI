@@ -37,28 +37,24 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          npm install -g vercel
-          
           if [ -z "$VERCEL_TOKEN" ]; then
             echo "Error: VERCEL_TOKEN is not set"
             exit 1
           fi
           
-          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
-            echo "Warning: VERCEL_ORG_ID or VERCEL_PROJECT_ID not set"
-            echo "Attempting deployment without org/project IDs..."
-          fi
-          
           cd frontend
           
-          # Try deployment with org and project IDs if available
+          echo "Deploying with Vercel CLI..."
           if [ ! -z "$VERCEL_ORG_ID" ] && [ ! -z "$VERCEL_PROJECT_ID" ]; then
-            echo "Deploying with org and project context..."
-            vercel deploy --prod \
-              --token=$VERCEL_TOKEN \
-              --scope=$VERCEL_ORG_ID \
-              --confirm
+            echo "Using org and project context."
+            npx --yes vercel@latest deploy --prod \
+              --token="$VERCEL_TOKEN" \
+              --scope="$VERCEL_ORG_ID" \
+              --project="$VERCEL_PROJECT_ID" \
+              --yes
           else
-            echo "Deploying with token only..."
-            vercel deploy --prod --token=$VERCEL_TOKEN --confirm
+            echo "Warning: VERCEL_ORG_ID or VERCEL_PROJECT_ID not set. Deploying with token only."
+            npx --yes vercel@latest deploy --prod \
+              --token="$VERCEL_TOKEN" \
+              --yes
           fi
