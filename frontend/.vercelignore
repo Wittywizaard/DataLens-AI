@@ -1,0 +1,9 @@
+# Ignore all non-frontend files when deploying from the frontend root
+node_modules
+.git
+.gitignore
+README.md
+backend
+.github
+*.log
+.DS_Store
