@@ -213,13 +213,20 @@ function UploadZone({ onUpload, uploading, progress }) {
 
   return (
     <div {...getRootProps()} style={{
-      border: `2px dashed ${isDragActive ? "#7c3aed" : "#ffffff15"}`,
-      borderRadius: 24, padding: "56px 40px", textAlign: "center",
+      border: `2px dashed ${isDragActive ? "#7c3aed" : "#ffffff20"}`,
+      borderRadius: 32, padding: "60px 44px", textAlign: "center",
       cursor: uploading ? "default" : "pointer",
-      background: isDragActive ? "rgba(124,58,237,.08)" : "rgba(255,255,255,.02)",
-      transition: "all .25s", outline: "none",
-      boxShadow: isDragActive ? "0 0 40px rgba(124,58,237,.15)" : "none",
-      maxWidth: 560, margin: "0 auto",
+      background: isDragActive ? "linear-gradient(135deg, rgba(124,58,237,.15), rgba(91,33,182,.15))" : "linear-gradient(135deg, rgba(255,255,255,.03), rgba(124,58,237,.02))",
+      transition: "all .25s ease",
+      outline: "none",
+      boxShadow: isDragActive ? "0 0 45px rgba(124,58,237,.18)" : "0 24px 90px rgba(0,0,0,.14)",
+      maxWidth: 720,
+      margin: "0 auto",
+      minWidth: 320,
+      minHeight: 340,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
     }}>
       <input {...getInputProps()} />
       {uploading ? (
@@ -236,16 +243,18 @@ function UploadZone({ onUpload, uploading, progress }) {
         </div>
       ) : (
         <>
-          <div style={{ width:64, height:64, background:"rgba(124,58,237,.15)", border:"1px solid rgba(124,58,237,.3)", borderRadius:18, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 20px", fontSize:26 }}>
+          <div style={{ width:96, height:96, background:"rgba(124,58,237,.18)", border:"1px solid rgba(124,58,237,.35)", borderRadius:22, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", fontSize:32, color:"#7c3aed" }}>
             {isDragActive ? "📂" : "📁"}
           </div>
-          <p style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#f1f0ff" }}>
-            {isDragActive ? "Drop it!" : "Drop your spreadsheet here"}
+          <p style={{ fontSize:22, fontWeight:700, marginBottom:10, color:"#f1f0ff" }}>
+            {isDragActive ? "Drop it here" : "Drop your spreadsheet here"}
           </p>
-          <p style={{ fontSize:13, color:"#5c5a7a", marginBottom:20 }}>or click to browse — up to 25 MB</p>
-          <div style={{ display:"flex", gap:8, justifyContent:"center", flexWrap:"wrap" }}>
+          <p style={{ fontSize:15, color:"#b9b6d2", marginBottom:24, maxWidth:520, marginLeft:"auto", marginRight:"auto" }}>
+            Click to browse files or drag and drop your Excel/CSV into the card to start analytics instantly.
+          </p>
+          <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
             {[".csv",".xlsx",".xls",".tsv"].map(f => (
-              <span key={f} style={{ fontSize:11, fontFamily:"'JetBrains Mono'", padding:"3px 12px", borderRadius:100, background:"rgba(255,255,255,.05)", border:"1px solid #ffffff12", color:"#a09dbe" }}>{f}</span>
+              <span key={f} style={{ fontSize:11, fontFamily:"'JetBrains Mono'", padding:"8px 16px", borderRadius:999, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.12)", color:"#a09dbe" }}>{f}</span>
             ))}
           </div>
         </>
@@ -259,7 +268,12 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
   const [activeTab, setActiveTab] = useState("preview");
   const endRef = useRef(null);
   const inputRef = useRef(null);
-  const { headers, columnTypes, stats, preview, rowCount, originalName } = fileInfo;
+  const headers = fileInfo?.headers ?? [];
+  const columnTypes = fileInfo?.columnTypes ?? {};
+  const stats = fileInfo?.stats ?? {};
+  const preview = fileInfo?.preview ?? [];
+  const rowCount = fileInfo?.rowCount ?? 0;
+  const originalName = fileInfo?.originalName ?? "Uploaded file";
 
   const numCols = headers.filter(h => columnTypes[h] === "numeric");
   const catCols = headers.filter(h => columnTypes[h] !== "numeric");
@@ -403,71 +417,114 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
   );
 }
 
+const Section = ({ children, style }) => {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "none" : "translateY(28px)",
+        transition: "opacity .75s ease, transform .75s ease",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 export function Dashboard() {
-  const [hasFile, setHasFile] = useState(false);
-  const [fileInfo, setFileInfo] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const { messages, analyzing, uploadFile, queryAnalysis, reset } = useAnalysis();
+  const { fileInfo, uploading, uploadProgress, messages, analyzing, uploadFile, queryAnalysis, reset } = useAnalysis();
+  const uploadSectionRef = useRef(null);
+  const scrollToUpload = () => uploadSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const handleUpload = async (file) => {
-    setUploading(true);
-    setProgress(0);
-    try {
-      const data = await uploadFile(file, (p) => setProgress(p));
-      setFileInfo(data);
-      setHasFile(true);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setUploading(false);
-    }
+    await uploadFile(file);
   };
 
   const handleReset = () => {
     reset();
-    setHasFile(false);
-    setFileInfo(null);
   };
 
   const FeatureCard = ({ title, description }) => (
-    <div style={{ background: "#0c0c1d", border: "1px solid #ffffff12", borderRadius:20, padding:24, minHeight:150, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
+    <div style={{ background: "#0c0c1d", border: "1px solid #ffffff12", borderRadius:20, padding:30, minHeight:180, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
       <div>
-        <div style={{ fontSize:18, fontWeight:700, color:"#f1f0ff", marginBottom:10 }}>{title}</div>
-        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.7, fontSize:14 }}>{description}</p>
+        <div style={{ fontSize:18, fontWeight:700, color:"#f1f0ff", marginBottom:12 }}>{title}</div>
+        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.8, fontSize:15 }}>{description}</p>
       </div>
     </div>
   );
 
   const StepCard = ({ step, title, description }) => (
-    <div style={{ background: "#070718", border: "1px solid #ffffff10", borderRadius:18, padding:18, display:"grid", gap:12 }}>
-      <div style={{ width:34, height:34, borderRadius:12, background: "rgba(124,58,237,.14)", color: "#7c3aed", display:"grid", placeItems:"center", fontWeight:800 }}>{step}</div>
+    <div style={{ background: "#070718", border: "1px solid #ffffff10", borderRadius:18, padding:20, display:"grid", gap:14 }}>
+      <div style={{ width:40, height:40, borderRadius:14, background: "rgba(124,58,237,.14)", color: "#7c3aed", display:"grid", placeItems:"center", fontWeight:800 }}>{step}</div>
       <div>
-        <div style={{ fontSize:16, fontWeight:700, color:"#f1f0ff", marginBottom:6 }}>{title}</div>
-        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.7, fontSize:14 }}>{description}</p>
+        <div style={{ fontSize:16, fontWeight:700, color:"#f1f0ff", marginBottom:8 }}>{title}</div>
+        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.8, fontSize:14 }}>{description}</p>
       </div>
     </div>
   );
 
-  if (!hasFile) {
+  if (!fileInfo?.headers) {
     return (
       <>
         <Header />
         <div style={{ minHeight:"calc(100vh - 64px)", background:"#05050f", color:"#f1f0ff" }}>
-          <div style={{ maxWidth:1200, margin:"0 auto", padding:"60px 24px" }}>
-            <div style={{ display:"grid", gap:32, gridTemplateColumns:"1.1fr 0.9fr", alignItems:"center", marginBottom:48 }}>
-              <div>
-                <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.28)", borderRadius:100, padding:"8px 18px", marginBottom:24 }}>
+          <div style={{ maxWidth:1000, margin:"0 auto", padding:"100px 24px 100px", display:"grid", gap:100, alignItems:"center" }}>
+            <Section style={{ padding:0, textAlign:"center" }}>
+              <div style={{ display:"flex", flexDirection:"column", gap:22, alignItems:"center" }}>
+                <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.28)", borderRadius:100, padding:"10px 20px", width:"fit-content" }}>
                   <span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed", boxShadow:"0 0 12px #7c3aed" }} />
-                  <span style={{ fontSize:13, color:"#c4a0ff", fontWeight:600 }}>Open-source Power BI alternative for mid-scale businesses</span>
+                  <span style={{ fontSize:13, color:"#c4a0ff", fontWeight:600 }}>Open-source BI workflow for modern teams</span>
                 </div>
-                <h1 style={{ fontSize:"clamp(48px,5vw,84px)", fontWeight:900, lineHeight:1.02, marginBottom:24 }}>
-                  Your data, instantly visual.
-                </h1>
-                <p style={{ fontSize:18, color:"#b9b6d2", lineHeight:1.8, maxWidth:640, marginBottom:32 }}>
-                  Upload any Excel or CSV file, describe what you want to see, and the AI agent will generate charts, insights, and KPIs — no Power BI license required.
-                </p>
-                <div style={{ display:"grid", gap:14, gridTemplateColumns:"repeat(2, minmax(0, 1fr))", marginBottom:36 }}>
+                <div>
+                  <h1 style={{ fontSize:"clamp(48px,5vw,84px)", fontWeight:900, lineHeight:1.02, marginBottom:24 }}>
+                    Your data, <span style={{ color:"#7c3aed" }}>instantly visual</span>.
+                  </h1>
+                  <p style={{ fontSize:18, color:"#b9b6d2", lineHeight:1.8, maxWidth:760, margin:"0 auto" }}>
+                    Upload any spreadsheet, ask natural language questions, and watch the AI build charts, metrics, and insights step by step.
+                  </p>
+                </div>
+                <div style={{ display:"flex", justifyContent:"center", gap:16, flexWrap:"wrap" }}>
+                  <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg,#7c3aed,#5b21b6)", color:"white", borderRadius:999, padding:"14px 26px", fontSize:15, fontWeight:700, boxShadow:"0 20px 60px rgba(124,58,237,.18)", cursor:"pointer" }}>
+                    Upload your spreadsheet
+                  </button>
+                  <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: "smooth" })} style={{ background:"rgba(255,255,255,.06)", color:"#c4c2df", borderRadius:999, padding:"14px 26px", fontSize:15, fontWeight:700, border:"1px solid rgba(255,255,255,.12)", cursor:"pointer" }}>
+                    How it works
+                  </button>
+                </div>
+              </div>
+            </Section>
+
+            <Section style={{ padding:0, textAlign:"center" }}>
+              <div style={{ maxWidth:720, margin:"0 auto" }}>
+                <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, marginBottom:12, textTransform:"uppercase", letterSpacing:"0.2em" }}>Agentic AI</div>
+                <h2 style={{ fontSize:38, lineHeight:1.05, margin:0, marginBottom:18 }}>Upload, ask, visualize.</h2>
+              </div>
+            </Section>
+
+            <Section style={{ padding:0, textAlign:"center" }}>
+              <div style={{ display:"grid", gap:18, justifyItems:"center" }}>
+                <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.24em" }}>What you get</div>
+                <div style={{ display:"grid", gap:18, width:"100%", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))" }}>
                   {[
                     { title: "AI-driven spreadsheet analysis", description: "Upload your file, ask questions, and get actionable visuals automatically." },
                     { title: "Multi-turn agentic experience", description: "Follow up with new questions like 'Show only Q1' or 'Compare by region'." },
@@ -475,93 +532,46 @@ export function Dashboard() {
                     { title: "Secure session storage", description: "Files are temporary and removed after the session completes." },
                   ].map((item) => <FeatureCard key={item.title} {...item} />)}
                 </div>
-                <div style={{ background:"#0c0c1d", border:"1px solid #ffffff10", borderRadius:24, padding:24, display:"flex", flexWrap:"wrap", gap:16 }}>
-                  <div style={{ flex:"1 1 220px" }}>
-                    <div style={{ fontSize:13, fontWeight:700, color:"#7c3aed", marginBottom:8 }}>Ready to analyze?</div>
-                    <div style={{ fontSize:20, fontWeight:700, color:"#f1f0ff", lineHeight:1.3 }}>Start by uploading your spreadsheet now.</div>
-                  </div>
-                  <div style={{ flex:"1 1 240px", display:"grid", gap:8 }}>
-                    <div style={{ background:"#111128", borderRadius:14, padding:14, minWidth:0 }}>
-                      <div style={{ fontSize:12, color:"#c4a0ff", marginBottom:6 }}>Supported formats</div>
-                      <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                        {['.csv', '.xlsx', '.xls', '.tsv'].map((ext) => (
-                          <span key={ext} style={{ fontSize:12, padding:"6px 10px", borderRadius:999, background:"rgba(255,255,255,.05)", color:"#b9b6d2" }}>{ext}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div style={{ background:"#111128", borderRadius:14, padding:14, minWidth:0 }}>
-                      <div style={{ fontSize:12, color:"#c4a0ff", marginBottom:6 }}>Deploy anywhere</div>
-                      <div style={{ fontSize:14, color:"#b9b6d2", lineHeight:1.6 }}>
-                        Designed for free host deployment, ideal for startups and small teams.
-                      </div>
-                    </div>
-                  </div>
+              </div>
+            </Section>
+
+            <Section id="how-it-works" style={{ padding:0, textAlign:"center" }}>
+              <div style={{ display:"grid", gap:20, justifyItems:"center", width:"100%" }}>
+                <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.24em" }}>How it works</div>
+                <div style={{ display:"grid", gap:20, width:"100%", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))" }}>
+                  <StepCard step="1" title="Upload your spreadsheet" description="Drop a CSV or Excel file to start the experience." />
+                  <StepCard step="2" title="Ask your question" description="Use natural language prompts and follow up as needed." />
+                  <StepCard step="3" title="Review charts & insights" description="The agent builds visuals and metrics for fast decisions." />
                 </div>
               </div>
-              <div style={{ display:"grid", gap:18 }}>
-                <div style={{ background:"linear-gradient(180deg, rgba(25, 16, 70, 0.95), rgba(10, 4, 25, 0.95))", border:"1px solid rgba(255,255,255,.08)", borderRadius:28, padding:28, minHeight:420, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
-                  <div>
-                    <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, marginBottom:14 }}>Agentic AI for spreadsheets</div>
-                    <h2 style={{ fontSize:28, lineHeight:1.1, marginBottom:18 }}>Upload, ask, visualize.</h2>
-                    <p style={{ color:"#b9b6d2", lineHeight:1.8, marginBottom:24 }}>
-                      DataLens AI converts raw spreadsheet data into clear charts and key metrics using natural language.
-                    </p>
-                    <div style={{ display:"grid", gap:12 }}>
-                      <div style={{ display:"flex", gap:10, alignItems:"center" }}><span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed" }} />No login required</div>
-                      <div style={{ display:"flex", gap:10, alignItems:"center" }}><span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed" }} />Supports Excel and CSV files</div>
-                      <div style={{ display:"flex", gap:10, alignItems:"center" }}><span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed" }} />Instant preview and insights</div>
-                    </div>
-                  </div>
-                  <div style={{ background:"rgba(255,255,255,.03)", borderRadius:20, padding:20, color:"#c4c2df" }}>
-                    <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, marginBottom:10 }}>How DataLens works</div>
-                    <div style={{ display:"grid", gap:10 }}>
-                      {[
-                        { title: 'Upload your spreadsheet', detail: 'CSV and Excel files are parsed instantly.' },
-                        { title: 'Ask your question', detail: 'Use plain English prompts like a BI specialist.' },
-                        { title: 'Get visuals & KPIs', detail: 'Charts, summaries, and follow-up insights appear immediately.' },
-                      ].map((item) => (
-                        <div key={item.title} style={{ display:'grid', gap:4 }}>
-                          <div style={{ fontSize:13, fontWeight:700 }}>{item.title}</div>
-                          <div style={{ fontSize:13, color:'#a9a6c8' }}>{item.detail}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+            </Section>
+
+            <Section style={{ padding:0, textAlign:"center" }}>
+              <div ref={uploadSectionRef} style={{ width:"100%", maxWidth:760, margin:"0 auto" }}>
+                <div style={{ marginBottom:28 }}>
+                  <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.24em", marginBottom:12 }}>Get started</div>
+                  <h2 style={{ fontSize:34, lineHeight:1.05, margin:0, marginBottom:14 }}>Drop your spreadsheet here</h2>
+                  <p style={{ color:"#b9b6d2", lineHeight:1.7, maxWidth:640, margin:"0 auto" }}>
+                    Upload Excel or CSV and let the AI generate instant visual analysis. The upload card is interactive, centered, and designed to feel premium.
+                  </p>
                 </div>
-                <div style={{ background:"#0c0c1d", border:"1px solid #ffffff0f", borderRadius:24, padding:24 }}>
-                  <div style={{ fontSize:14, fontWeight:700, color:"#f1f0ff", marginBottom:14 }}>What you can do</div>
-                  <ul style={{ margin:0, paddingLeft:20, color:"#b9b6d2", lineHeight:1.8, fontSize:14 }}>
-                    <li>Compare revenue, region, product, and time</li>
-                    <li>Analyze trends without writing formulas</li>
-                    <li>Generate follow-up queries for deeper insight</li>
-                    <li>Download charts for reports</li>
-                  </ul>
+                <div style={{ display:"flex", justifyContent:"center" }}>
+                  <UploadZone onUpload={handleUpload} uploading={uploading} progress={uploadProgress} />
                 </div>
               </div>
-            </div>
-            <div style={{ background:"#090915", border:"1px solid rgba(255,255,255,.08)", borderRadius:28, padding:32, marginTop:20 }}>
-              <div style={{ display:"grid", gap:22, gridTemplateColumns:"1.3fr 0.7fr", alignItems:"center" }}>
-                <div>
-                  <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, marginBottom:8 }}>Ready to analyze your data?</div>
-                  <h2 style={{ fontSize:34, lineHeight:1.05, margin:0, marginBottom:12 }}>Upload your file and visualize in seconds.</h2>
-                  <p style={{ color:"#b9b6d2", lineHeight:1.7, maxWidth:600 }}>Every spreadsheet becomes a live data exploration experience with AI-powered charts, summaries, and follow-up questions.</p>
-                </div>
-                <div style={{ display:"flex", justifyContent:"flex-end" }}>
-                  <UploadZone onUpload={handleUpload} uploading={uploading} progress={progress} />
-                </div>
-              </div>
-            </div>
+            </Section>
           </div>
         </div>
       </>
     );
   }
 
+  const safeFileInfo = fileInfo || {};
   return (
     <>
       <Header />
       <Workspace
-        fileInfo={fileInfo}
+        fileInfo={safeFileInfo}
         messages={messages}
         analyzing={analyzing}
         onQuery={queryAnalysis}
