@@ -430,26 +430,126 @@ export function Dashboard() {
     setFileInfo(null);
   };
 
+  const FeatureCard = ({ title, description }) => (
+    <div style={{ background: "#0c0c1d", border: "1px solid #ffffff12", borderRadius:20, padding:24, minHeight:150, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
+      <div>
+        <div style={{ fontSize:18, fontWeight:700, color:"#f1f0ff", marginBottom:10 }}>{title}</div>
+        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.7, fontSize:14 }}>{description}</p>
+      </div>
+    </div>
+  );
+
+  const StepCard = ({ step, title, description }) => (
+    <div style={{ background: "#070718", border: "1px solid #ffffff10", borderRadius:18, padding:18, display:"grid", gap:12 }}>
+      <div style={{ width:34, height:34, borderRadius:12, background: "rgba(124,58,237,.14)", color: "#7c3aed", display:"grid", placeItems:"center", fontWeight:800 }}>{step}</div>
+      <div>
+        <div style={{ fontSize:16, fontWeight:700, color:"#f1f0ff", marginBottom:6 }}>{title}</div>
+        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.7, fontSize:14 }}>{description}</p>
+      </div>
+    </div>
+  );
+
   if (!hasFile) {
     return (
       <>
         <Header />
-        <div style={{ minHeight:"calc(100vh - 64px)", background:"#05050f", display:"flex", flexDirection:"column", justifyContent:"center", paddingBottom:80 }}>
-          <div style={{ maxWidth:780, margin:"0 auto", padding:"60px 24px", textAlign:"center", width:"100%" }}>
-            <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.3)", borderRadius:100, padding:"6px 16px", marginBottom:32 }}>
-              <span style={{ width:7, height:7, borderRadius:"50%", background:"#7c3aed", boxShadow:"0 0 10px #7c3aed" }}/>
-              <span style={{ fontSize:12, fontFamily:"'JetBrains Mono'", color:"#c4a0ff", fontWeight:500 }}>Powered by Google Gemini AI</span>
+        <div style={{ minHeight:"calc(100vh - 64px)", background:"#05050f", color:"#f1f0ff" }}>
+          <div style={{ maxWidth:1200, margin:"0 auto", padding:"60px 24px" }}>
+            <div style={{ display:"grid", gap:32, gridTemplateColumns:"1.1fr 0.9fr", alignItems:"center", marginBottom:48 }}>
+              <div>
+                <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.28)", borderRadius:100, padding:"8px 18px", marginBottom:24 }}>
+                  <span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed", boxShadow:"0 0 12px #7c3aed" }} />
+                  <span style={{ fontSize:13, color:"#c4a0ff", fontWeight:600 }}>Open-source Power BI alternative for mid-scale businesses</span>
+                </div>
+                <h1 style={{ fontSize:"clamp(48px,5vw,84px)", fontWeight:900, lineHeight:1.02, marginBottom:24 }}>
+                  Your data, instantly visual.
+                </h1>
+                <p style={{ fontSize:18, color:"#b9b6d2", lineHeight:1.8, maxWidth:640, marginBottom:32 }}>
+                  Upload any Excel or CSV file, describe what you want to see, and the AI agent will generate charts, insights, and KPIs — no Power BI license required.
+                </p>
+                <div style={{ display:"grid", gap:14, gridTemplateColumns:"repeat(2, minmax(0, 1fr))", marginBottom:36 }}>
+                  {[
+                    { title: "AI-driven spreadsheet analysis", description: "Upload your file, ask questions, and get actionable visuals automatically." },
+                    { title: "Multi-turn agentic experience", description: "Follow up with new questions like 'Show only Q1' or 'Compare by region'." },
+                    { title: "No signup needed", description: "Start analyzing data immediately without authentication friction." },
+                    { title: "Secure session storage", description: "Files are temporary and removed after the session completes." },
+                  ].map((item) => <FeatureCard key={item.title} {...item} />)}
+                </div>
+                <div style={{ background:"#0c0c1d", border:"1px solid #ffffff10", borderRadius:24, padding:24, display:"flex", flexWrap:"wrap", gap:16 }}>
+                  <div style={{ flex:"1 1 220px" }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:"#7c3aed", marginBottom:8 }}>Ready to analyze?</div>
+                    <div style={{ fontSize:20, fontWeight:700, color:"#f1f0ff", lineHeight:1.3 }}>Start by uploading your spreadsheet now.</div>
+                  </div>
+                  <div style={{ flex:"1 1 240px", display:"grid", gap:8 }}>
+                    <div style={{ background:"#111128", borderRadius:14, padding:14, minWidth:0 }}>
+                      <div style={{ fontSize:12, color:"#c4a0ff", marginBottom:6 }}>Supported formats</div>
+                      <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+                        {['.csv', '.xlsx', '.xls', '.tsv'].map((ext) => (
+                          <span key={ext} style={{ fontSize:12, padding:"6px 10px", borderRadius:999, background:"rgba(255,255,255,.05)", color:"#b9b6d2" }}>{ext}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ background:"#111128", borderRadius:14, padding:14, minWidth:0 }}>
+                      <div style={{ fontSize:12, color:"#c4a0ff", marginBottom:6 }}>Deploy anywhere</div>
+                      <div style={{ fontSize:14, color:"#b9b6d2", lineHeight:1.6 }}>
+                        Designed for free host deployment, ideal for startups and small teams.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ display:"grid", gap:18 }}>
+                <div style={{ background:"linear-gradient(180deg, rgba(25, 16, 70, 0.95), rgba(10, 4, 25, 0.95))", border:"1px solid rgba(255,255,255,.08)", borderRadius:28, padding:28, minHeight:420, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
+                  <div>
+                    <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, marginBottom:14 }}>Agentic AI for spreadsheets</div>
+                    <h2 style={{ fontSize:28, lineHeight:1.1, marginBottom:18 }}>Upload, ask, visualize.</h2>
+                    <p style={{ color:"#b9b6d2", lineHeight:1.8, marginBottom:24 }}>
+                      DataLens AI converts raw spreadsheet data into clear charts and key metrics using natural language.
+                    </p>
+                    <div style={{ display:"grid", gap:12 }}>
+                      <div style={{ display:"flex", gap:10, alignItems:"center" }}><span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed" }} />No login required</div>
+                      <div style={{ display:"flex", gap:10, alignItems:"center" }}><span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed" }} />Supports Excel and CSV files</div>
+                      <div style={{ display:"flex", gap:10, alignItems:"center" }}><span style={{ width:8, height:8, borderRadius:"50%", background:"#7c3aed" }} />Instant preview and insights</div>
+                    </div>
+                  </div>
+                  <div style={{ background:"rgba(255,255,255,.03)", borderRadius:20, padding:20, color:"#c4c2df" }}>
+                    <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, marginBottom:10 }}>How DataLens works</div>
+                    <div style={{ display:"grid", gap:10 }}>
+                      {[
+                        { title: 'Upload your spreadsheet', detail: 'CSV and Excel files are parsed instantly.' },
+                        { title: 'Ask your question', detail: 'Use plain English prompts like a BI specialist.' },
+                        { title: 'Get visuals & KPIs', detail: 'Charts, summaries, and follow-up insights appear immediately.' },
+                      ].map((item) => (
+                        <div key={item.title} style={{ display:'grid', gap:4 }}>
+                          <div style={{ fontSize:13, fontWeight:700 }}>{item.title}</div>
+                          <div style={{ fontSize:13, color:'#a9a6c8' }}>{item.detail}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ background:"#0c0c1d", border:"1px solid #ffffff0f", borderRadius:24, padding:24 }}>
+                  <div style={{ fontSize:14, fontWeight:700, color:"#f1f0ff", marginBottom:14 }}>What you can do</div>
+                  <ul style={{ margin:0, paddingLeft:20, color:"#b9b6d2", lineHeight:1.8, fontSize:14 }}>
+                    <li>Compare revenue, region, product, and time</li>
+                    <li>Analyze trends without writing formulas</li>
+                    <li>Generate follow-up queries for deeper insight</li>
+                    <li>Download charts for reports</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <h1 style={{ fontSize:"clamp(42px,7vw,80px)", fontWeight:900, lineHeight:1.05, marginBottom:24 }}>
-              <span style={{ display:"block", color:"#f1f0ff" }}>Your Spreadsheet.</span>
-              <span style={{ display:"block", background:"linear-gradient(135deg,#7c3aed,#06b6d4,#10b981)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Visualized Instantly.</span>
-            </h1>
-            <p style={{ fontSize:18, color:"#a09dbe", lineHeight:1.7, maxWidth:520, margin:"0 auto 48px" }}>
-              Upload any Excel or CSV. Ask in plain English. Get charts instantly.
-            </p>
-            <UploadZone onUpload={handleUpload} uploading={uploading} progress={progress} />
-            <div style={{ textAlign:"center", fontSize:12, color:"#5c5a7a", marginTop:40 }}>
-              DataLens AI · Data never stored beyond your session
+            <div style={{ background:"#090915", border:"1px solid rgba(255,255,255,.08)", borderRadius:28, padding:32, marginTop:20 }}>
+              <div style={{ display:"grid", gap:22, gridTemplateColumns:"1.3fr 0.7fr", alignItems:"center" }}>
+                <div>
+                  <div style={{ fontSize:12, color:"#7c3aed", fontWeight:700, marginBottom:8 }}>Ready to analyze your data?</div>
+                  <h2 style={{ fontSize:34, lineHeight:1.05, margin:0, marginBottom:12 }}>Upload your file and visualize in seconds.</h2>
+                  <p style={{ color:"#b9b6d2", lineHeight:1.7, maxWidth:600 }}>Every spreadsheet becomes a live data exploration experience with AI-powered charts, summaries, and follow-up questions.</p>
+                </div>
+                <div style={{ display:"flex", justifyContent:"flex-end" }}>
+                  <UploadZone onUpload={handleUpload} uploading={uploading} progress={progress} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
