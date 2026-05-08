@@ -12,9 +12,3 @@ export function Header() {
     </header>
   );
 }
-          </div>
-        )}
-      </div>
-    </header>
-  );
-}
