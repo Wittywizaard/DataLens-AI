@@ -18,7 +18,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '24'
+          cache: 'npm'
       
       - name: Install dependencies
         run: |
@@ -32,29 +33,10 @@ jobs:
           echo "Build completed successfully"
       
       - name: Deploy to Vercel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          if [ -z "$VERCEL_TOKEN" ]; then
-            echo "Error: VERCEL_TOKEN is not set"
-            exit 1
-          fi
-          
-          cd frontend
-          
-          echo "Deploying with Vercel CLI..."
-          if [ ! -z "$VERCEL_ORG_ID" ] && [ ! -z "$VERCEL_PROJECT_ID" ]; then
-            echo "Using org and project context."
-            npx --yes vercel@latest deploy --prod \
-              --token="$VERCEL_TOKEN" \
-              --scope="$VERCEL_ORG_ID" \
-              --project="$VERCEL_PROJECT_ID" \
-              --yes
-          else
-            echo "Warning: VERCEL_ORG_ID or VERCEL_PROJECT_ID not set. Deploying with token only."
-            npx --yes vercel@latest deploy --prod \
-              --token="$VERCEL_TOKEN" \
-              --yes
-          fi
+        uses: vercel/action@v3
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: frontend
+          prod: true
