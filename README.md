@@ -1,8 +1,10 @@
 ﻿# DataLens AI 📊
 
-> Transform Excel and CSV data into visual insights using Google Gemini AI.
+> Turn Excel and CSV data into business-ready charts and insights without Power BI or expensive BI tools.
 
-DataLens AI helps users upload spreadsheets, ask natural language questions, and receive charts and insights instantly.
+DataLens AI is built for mid-scale businesses and startups that work with spreadsheets but don't have the budget or expertise for professional BI.
+
+Users upload a file, type a natural language prompt, and the AI agent generates charts, insights, and KPIs instantly.
 
 ---
 
@@ -12,10 +14,11 @@ DataLens AI helps users upload spreadsheets, ask natural language questions, and
 - Automatic chart selection based on query and data
 - Column intelligence for numeric, categorical, and date data
 - Insight cards for totals, averages, counts, and trends
-- Multi-turn conversation support for follow-up questions
+- Agentic, multi-turn conversation support for follow-up questions
+- No signup required — upload and analyze immediately
 - Data preview before analysis
 - Download charts as PNG images
-- Separate React frontend and Express backend
+- Temporary data storage with no third-party sharing
 
 ---
 

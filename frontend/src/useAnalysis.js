@@ -43,5 +43,14 @@ export default function useAnalysis() {
     setFileInfo(null); setMessages([]); historyRef.current = [];
   }, [fileInfo]);
 
-  return { fileInfo, uploading, uploadProgress, messages, analyzing, handleUpload, handleQuery, handleReset };
+  return {
+    fileInfo,
+    uploading,
+    uploadProgress,
+    messages,
+    analyzing,
+    uploadFile: handleUpload,
+    queryAnalysis: handleQuery,
+    reset: handleReset,
+  };
 }
