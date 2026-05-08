@@ -15,13 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Check Secrets
-        run: |
-          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
-            echo "⚠️  Missing VERCEL_TOKEN secret"
-            exit 1
-          fi
-      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -36,13 +29,36 @@ jobs:
         run: |
           cd frontend
           npm run build
-      
-      - name: Install Vercel CLI
-        run: npm install -g vercel
+          echo "Build completed successfully"
       
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
+          npm install -g vercel
+          
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "Error: VERCEL_TOKEN is not set"
+            exit 1
+          fi
+          
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Warning: VERCEL_ORG_ID or VERCEL_PROJECT_ID not set"
+            echo "Attempting deployment without org/project IDs..."
+          fi
+          
           cd frontend
-          vercel --prod --token="$VERCEL_TOKEN" --yes
+          
+          # Try deployment with org and project IDs if available
+          if [ ! -z "$VERCEL_ORG_ID" ] && [ ! -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Deploying with org and project context..."
+            vercel deploy --prod \
+              --token=$VERCEL_TOKEN \
+              --scope=$VERCEL_ORG_ID \
+              --confirm
+          else
+            echo "Deploying with token only..."
+            vercel deploy --prod --token=$VERCEL_TOKEN --confirm
+          fi

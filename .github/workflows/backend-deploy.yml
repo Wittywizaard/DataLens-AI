@@ -15,27 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      
-      - name: Install dependencies
+      - name: Trigger Render Deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          cd backend
-          npm install
-      
-      - name: Check Render Hook
-        run: |
-          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
-            echo "⚠️  Missing RENDER_DEPLOY_HOOK secret"
+          DEPLOY_HOOK="${{ secrets.RENDER_DEPLOY_HOOK }}"
+          
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "Error: RENDER_DEPLOY_HOOK secret not set"
             exit 1
           fi
-      
-      - name: Trigger Render Deploy
-        run: |
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}" \
+          
+          echo "Triggering Render deployment..."
+          curl -X POST "$DEPLOY_HOOK" \
             -H "Content-Type: application/json" \
-            -d '{"ref": "main"}'
-          echo "✅ Render deployment triggered"
-          sleep 2
+            -d '{"ref":"main"}' \
+            -w "\nHTTP Status: %{http_code}\n"
+          
+          echo "Deployment webhook triggered successfully"
