@@ -18,17 +18,24 @@ jobs:
       - name: Check Secrets
         run: |
           if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
-            echo "⚠️  Missing VERCEL_TOKEN secret. Setup guide: https://vercel.com/account/tokens"
+            echo "⚠️  Missing VERCEL_TOKEN secret"
             exit 1
           fi
-          if [ -z "${{ secrets.VERCEL_ORG_ID }}" ]; then
-            echo "⚠️  Missing VERCEL_ORG_ID secret. Get from Vercel project settings."
-            exit 1
-          fi
-          if [ -z "${{ secrets.VERCEL_PROJECT_ID }}" ]; then
-            echo "⚠️  Missing VERCEL_PROJECT_ID secret. Get from Vercel project settings."
-            exit 1
-          fi
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install --legacy-peer-deps
+      
+      - name: Build
+        run: |
+          cd frontend
+          npm run build
       
       - name: Install Vercel CLI
         run: npm install -g vercel
@@ -36,8 +43,6 @@ jobs:
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           cd frontend
-          vercel deploy --prod --token=$VERCEL_TOKEN
+          vercel --prod --token="$VERCEL_TOKEN" --yes

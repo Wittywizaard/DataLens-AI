@@ -51,3 +51,7 @@ jobs:
           cd backend
           node -c server.js
           echo "✅ Backend syntax valid"
+          node -c routes/auth.js
+          node -c routes/upload.js
+          node -c routes/analyze.js
+          echo "✅ All route files valid"
