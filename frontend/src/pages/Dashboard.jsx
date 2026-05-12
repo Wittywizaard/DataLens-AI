@@ -578,7 +578,7 @@ export function Dashboard() {
                 </p>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:24, maxWidth: 1100, margin: "0 auto" }}>
                   {[
-                    { t: "Instant Viz", d: "Automatic chart generation based on natural language queries. No manual plotting needed.", i: "📊" },
+                    { t: "Instant Visualization", d: "Automatic chart generation based on natural language queries. No manual plotting needed.", i: "📊" },
                     { t: "Deep Insights", d: "Uncover hidden trends, correlations, and anomalies in seconds with Gemini AI.", i: "🧠" },
                     { t: "Zero Config", d: "No setup required. Upload any CSV or Excel and start chatting with your data immediately.", i: "⚡" }
                   ].map((f,idx) => (
