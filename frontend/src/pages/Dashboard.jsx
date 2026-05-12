@@ -595,7 +595,7 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div ref={uploadSectionRef} style={{ padding:"200px 0 240px", position:"relative" }}>
+            <div ref={uploadSectionRef} style={{ padding:"200px 0 100px", position:"relative" }}>
               <div style={{ position:"absolute", inset:0, background:"var(--accent)", filter:"blur(120px)", opacity:0.05, transform:"scale(0.8)" }}></div>
               <div style={{ position:"relative" }}>
                 <h2 style={{ fontSize:32, fontWeight:800, marginBottom:40, letterSpacing:"-0.02em" }}>Ready to analyze?</h2>
