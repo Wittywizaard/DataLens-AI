@@ -1,6 +1,23 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { PrivateRoute } from "./components/PrivateRoute";
 import { Dashboard } from "./pages/Dashboard";
+import { Login } from "./pages/Login";
+import { SignUp } from "./pages/SignUp";
+import { UsersPage } from "./pages/UsersPage";
 
 export default function App() {
-  return <Dashboard />;
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/users" element={<PrivateRoute><UsersPage /></PrivateRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }

@@ -185,7 +185,7 @@ router.post("/", async (req, res) => {
     });
 
     const model = genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL || "gemini-flash-latest",
+      model: process.env.GEMINI_MODEL || "gemini-2.0-flash",
       generationConfig: {
         temperature: 0.1,       // very low — maximises JSON consistency
         maxOutputTokens: 3000,

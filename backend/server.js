@@ -13,6 +13,11 @@ const authRoutes = require("./routes/auth");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Ensure uploads directory exists at startup
+const fs = require("fs");
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
 // Security
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
