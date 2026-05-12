@@ -78,6 +78,31 @@ a { text-decoration: none; color: inherit; }
 @keyframes pulse    { 0%,100% { box-shadow:0 0 0 0 var(--glow); } 70% { box-shadow:0 0 0 10px transparent; } }
 @keyframes float    { 0%,100% { transform:translateY(0px); } 50% { transform:translateY(-8px); } }
 @keyframes shimmer  { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+@keyframes orbRotate { from { transform: rotate(0deg) translateX(40px) rotate(0deg); } to { transform: rotate(360deg) translateX(40px) rotate(-360deg); } }
+@keyframes orbFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.05); } }
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+.orb-gold {
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  width: 600px;
+  height: 600px;
+  animation: orbFloat 15s infinite ease-in-out;
+}
+
+.orb-orange {
+  background: radial-gradient(circle, #ea580c 0%, transparent 70%);
+  width: 400px;
+  height: 400px;
+  animation: orbFloat 12s infinite ease-in-out reverse;
+}
 
 .shimmer {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);

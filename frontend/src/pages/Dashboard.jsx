@@ -576,7 +576,11 @@ export function Dashboard() {
 
   if (!fileId) {
     return (
-      <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", overflowX:"hidden" }}>
+      <div style={{ minHeight:"100vh", background:"radial-gradient(circle at 10% 20%, #080705 0%, #020205 100%)", color:"var(--text)", overflowX:"hidden", position: "relative" }}>
+        {/* Dynamic Background Elements */}
+        <div className="orb orb-gold" style={{ top: "-10%", left: "-10%", opacity: 0.15 }}></div>
+        <div className="orb orb-orange" style={{ bottom: "10%", right: "-5%", opacity: 0.1 }}></div>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "100%", background: "linear-gradient(180deg, rgba(245, 158, 11, 0.03) 0%, transparent 40%)", pointerEvents: "none" }}></div>
         <Header onSettingsOpen={() => setIsSettingsOpen(true)} />
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
@@ -603,8 +607,9 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Background Glows matching the reference */}
-          <div style={{ position: "absolute", top: "10%", left: "-5%", width: "40%", height: "60%", background: "radial-gradient(circle, rgba(120, 53, 15, 0.25) 0%, transparent 70%)", filter: "blur(60px)", zIndex: 1 }}></div>
+          {/* Deep Dynamic Glow matching the reference */}
+          <div style={{ position: "absolute", top: "5%", left: "0%", width: "50%", height: "70%", background: "radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.15) 0%, transparent 80%)", filter: "blur(80px)", zIndex: 1, pointerEvents: "none" }}></div>
+          <div style={{ position: "absolute", top: "20%", right: "-10%", width: "40%", height: "50%", background: "radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.05) 0%, transparent 70%)", filter: "blur(100px)", zIndex: 1, pointerEvents: "none" }}></div>
 
           <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto" }}>
             <div id="how-it-works" style={{ marginBottom: 200, marginTop: 200, textAlign: "center" }}>
