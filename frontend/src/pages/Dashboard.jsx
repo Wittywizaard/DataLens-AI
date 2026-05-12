@@ -595,32 +595,6 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div id="security" style={{ marginBottom: 180, textAlign: "center", padding: "0 20px" }}>
-              <Section>
-                <div style={{ maxWidth: 800, margin: "0 auto" }}>
-                  <div style={{ display: "inline-block", padding: "8px 16px", borderRadius: 100, background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.2)", color: "var(--accent)", fontSize: 12, fontWeight: 700, fontFamily: "var(--mono)", marginBottom: 24, textTransform: "uppercase" }}>
-                    Security First
-                  </div>
-                  <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 24, letterSpacing: "-0.02em" }}>Protected by DataLens Shield</h2>
-                  <p style={{ fontSize: 18, color: "var(--text3)", lineHeight: 1.8, marginBottom: 48 }}>
-                    Your data is processed in isolated environment. We use end-to-end encryption and never store your files longer than needed for analysis.
-                  </p>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 32 }}>
-                    {[
-                      { t: "E2E Encryption", d: "Data is encrypted in transit and at rest." },
-                      { t: "Private Sessions", d: "Your analysis sessions are private and isolated." },
-                      { t: "Auto-Deletion", d: "Files are permanently deleted after your session ends." }
-                    ].map((s, i) => (
-                      <div key={i} style={{ textAlign: "left" }}>
-                        <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{s.t}</div>
-                        <div style={{ fontSize: 14, color: "var(--text3)", lineHeight: 1.6 }}>{s.d}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Section>
-            </div>
-
             <div ref={uploadSectionRef} style={{ padding:"120px 0 180px", position:"relative" }}>
               <div style={{ position:"absolute", inset:0, background:"var(--accent)", filter:"blur(120px)", opacity:0.05, transform:"scale(0.8)" }}></div>
               <div style={{ position:"relative" }}>

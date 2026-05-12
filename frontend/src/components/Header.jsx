@@ -32,8 +32,7 @@ export function Header() {
       
       <nav style={{ display: "flex", gap: 32, alignItems: "center" }}>
         {[
-          { name: "Features", id: "features" },
-          { name: "Security", id: "security" }
+          { name: "Features", id: "features" }
         ].map(link => (
           <a key={link.name} href={`#${link.id}`} style={{ fontSize: 14, color: "var(--text3)", fontWeight: 500, transition: "color 0.2s" }} 
              onMouseOver={e => e.target.style.color = "var(--accent)"} 
