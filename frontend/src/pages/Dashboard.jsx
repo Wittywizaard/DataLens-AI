@@ -494,13 +494,13 @@ export function Dashboard() {
         width: 48,
         height: 48,
         borderRadius: 14,
-        background: "linear-gradient(135deg, #a855f7, #ec4899)",
+        background: "linear-gradient(135deg, var(--accent), var(--accent2))",
         color: "#fff",
         display: "grid",
         placeItems: "center",
         fontSize: 18,
         fontWeight: 800,
-        boxShadow: "0 8px 20px rgba(168, 85, 247, 0.3)"
+        boxShadow: "0 8px 20px var(--glow)"
       }}>
         {step}
       </div>

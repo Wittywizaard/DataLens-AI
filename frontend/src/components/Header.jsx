@@ -31,7 +31,6 @@ export function Header() {
       
       <nav style={{ display: "flex", gap: 32, alignItems: "center" }}>
         {[
-          { name: "How It Works", id: "how-it-works" },
           { name: "Features", id: "features" },
           { name: "Security", id: "security" }
         ].map(link => (
