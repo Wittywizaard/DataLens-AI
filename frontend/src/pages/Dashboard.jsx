@@ -522,7 +522,7 @@ export function Dashboard() {
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
           <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "80px 0" }}>
             <h1 style={{ fontSize:"clamp(48px, 8vw, 96px)", fontWeight:900, marginBottom:28, letterSpacing:"-0.05em", lineHeight:0.95, background:"linear-gradient(135deg, #fff 40%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", maxWidth: 900, margin: "0 auto 28px" }}>
-              Analyze data.<br/>Not spreadsheets.
+              Spreadsheets,<br/>Meet Intelligence.
             </h1>
             
             <p style={{ fontSize:22, color:"var(--text2)", maxWidth:720, margin:"0 auto 48px", lineHeight:1.6 }}>
