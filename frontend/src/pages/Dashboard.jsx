@@ -520,7 +520,7 @@ export function Dashboard() {
         <Header />
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
-          <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "80px 0" }}>
+          <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "120px 0" }}>
             <h1 style={{ fontSize:"clamp(48px, 8vw, 96px)", fontWeight:900, marginBottom:28, letterSpacing:"-0.05em", lineHeight:0.95, background:"linear-gradient(135deg, #fff 40%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", maxWidth: 900, margin: "0 auto 28px" }}>
               Spreadsheets,<br/>Meet Intelligence.
             </h1>
@@ -538,7 +538,7 @@ export function Dashboard() {
               </button>
             </div>
 
-            <div id="how-it-works" style={{ marginBottom: 140, marginTop: 100, textAlign: "center" }}>
+            <div id="how-it-works" style={{ marginBottom: 200, marginTop: 200, textAlign: "center" }}>
               <Section>
                 <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16 }}>How It Works</h2>
                 <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
@@ -570,7 +570,7 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div id="features" style={{ marginBottom: 180, textAlign: "center" }}>
+            <div id="features" style={{ marginBottom: 200, marginTop: 200, textAlign: "center" }}>
               <Section>
                 <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16, letterSpacing: "-0.02em" }}>Everything you need.</h2>
                 <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
@@ -595,7 +595,7 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div ref={uploadSectionRef} style={{ padding:"120px 0 180px", position:"relative" }}>
+            <div ref={uploadSectionRef} style={{ padding:"200px 0 240px", position:"relative" }}>
               <div style={{ position:"absolute", inset:0, background:"var(--accent)", filter:"blur(120px)", opacity:0.05, transform:"scale(0.8)" }}></div>
               <div style={{ position:"relative" }}>
                 <h2 style={{ fontSize:32, fontWeight:800, marginBottom:40, letterSpacing:"-0.02em" }}>Ready to analyze?</h2>
