@@ -570,7 +570,7 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div id="features" style={{ marginBottom: 200, marginTop: 200, textAlign: "center" }}>
+            <div id="features" style={{ marginBottom: 100, marginTop: 200, textAlign: "center" }}>
               <Section>
                 <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16, letterSpacing: "-0.02em" }}>Everything you need.</h2>
                 <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
@@ -595,7 +595,7 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div ref={uploadSectionRef} style={{ padding:"200px 0 100px", position:"relative" }}>
+            <div ref={uploadSectionRef} style={{ padding:"100px 0 100px", position:"relative" }}>
               <div style={{ position:"absolute", inset:0, background:"var(--accent)", filter:"blur(120px)", opacity:0.05, transform:"scale(0.8)" }}></div>
               <div style={{ position:"relative" }}>
                 <h2 style={{ fontSize:32, fontWeight:800, marginBottom:40, letterSpacing:"-0.02em" }}>Ready to analyze?</h2>
