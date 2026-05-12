@@ -6,9 +6,8 @@ const router = express.Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const COLORS = [
-  "#7c3aed","#06b6d4","#10b981","#f59e0b","#ef4444",
-  "#ec4899","#8b5cf6","#3b82f6","#14b8a6","#f97316",
-  "#84cc16","#a855f7","#0ea5e9","#d946ef","#fb923c"
+  "#f59e0b", "#fbbf24", "#d97706", "#b45309", "#78350f",
+  "#fcd34d", "#fb923c", "#ea580c", "#c2410c", "#9a3412"
 ];
 
 // Sanitize and guarantee the parsed result always has valid chart data
@@ -103,15 +102,15 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
       {
         "label": "Value",
         "data": [100, 200, 150],
-        "backgroundColor": "#7c3aed",
-        "borderColor": "#7c3aed"
+        "backgroundColor": "#f59e0b",
+        "borderColor": "#f59e0b"
       }
     ]
   },
   "insights": [
-    { "label": "Total", "value": "1,234" },
-    { "label": "Average", "value": "411" },
-    { "label": "Top Category", "value": "Category B" }
+    { "label": "Total Revenue", "value": "$1,234.50", "trend": "+12.4%" },
+    { "label": "Average Sale", "value": "$411.50" },
+    { "label": "Top Performance", "value": "Category B" }
   ],
   "tableData": null
 }
@@ -123,15 +122,15 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
 - Use "scatter" for correlation between two numeric columns
 
 ==CRITICAL COLOR RULES==
-- For "bar" and "line": backgroundColor MUST be a single color string like "#7c3aed"
-- For "pie" and "doughnut": backgroundColor MUST be an ARRAY of color strings, one per label.
-  Example for pie with 4 labels: "backgroundColor": ["#7c3aed", "#06b6d4", "#10b981", "#f59e0b"]
-  NEVER use a single string for pie/doughnut backgroundColor.
+- For "bar" and "line": backgroundColor MUST be a single color string like "#f59e0b"
+- For "pie" and "doughnut": backgroundColor MUST be an ARRAY of color strings from this palette: ["#f59e0b", "#fbbf24", "#d97706", "#b45309", "#78350f", "#fcd34d", "#fb923c", "#ea580c"]
+- NEVER use a single string for pie/doughnut backgroundColor.
 
 ==OTHER RULES==
 - labels: max 12 items. If more, group the smallest values as "Other"
 - data values: must be real numbers computed from the actual sample data
-- insights: 2-4 key stats, nicely formatted ("1,234" not "1234", "42.3%" not "0.423")
+- insights: 3-4 key stats, formatted professionally ("$1,234.50" or "34.3%").
+- Each insight MUST have a "label" and "value". You can optionally add a "trend" field like "+12.5%".
 - tableData: set to {"headers":["Col1","Col2"],"rows":[["val1","val2"]]} only for top-N lists, else null
 - chartConfig: only set to null if the question genuinely cannot be charted
 - Sort time-series data chronologically
