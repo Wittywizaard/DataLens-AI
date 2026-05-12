@@ -654,10 +654,13 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div ref={uploadSectionRef} style={{ padding:"100px 0 100px", position:"relative" }}>
-              <div style={{ position:"absolute", inset:0, background:"var(--accent)", filter:"blur(120px)", opacity:0.05, transform:"scale(0.8)" }}></div>
+            <div ref={uploadSectionRef} style={{ padding:"160px 0 160px", position:"relative", textAlign: "center" }}>
+              <div style={{ position:"absolute", inset:0, background:"var(--accent)", filter:"blur(160px)", opacity:0.1, transform:"scale(0.6)" }}></div>
               <div style={{ position:"relative" }}>
-                <h2 style={{ fontSize:32, fontWeight:800, marginBottom:40, letterSpacing:"-0.02em" }}>Ready to analyze?</h2>
+                <h2 style={{ fontSize:"clamp(32px, 5vw, 48px)", fontWeight:800, marginBottom:16, letterSpacing:"-0.02em", color: "#fff" }}>Ready to analyze?</h2>
+                <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
+                  Drop your file below and start uncovering the stories hidden in your data.
+                </p>
                 <UploadZone onUpload={handleUpload} uploading={uploading} progress={uploadProgress} />
               </div>
             </div>
