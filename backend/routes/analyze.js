@@ -3,7 +3,6 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const dataStore = require("../utils/dataStore");
 
 const router = express.Router();
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const COLORS = [
   "#f59e0b", "#fbbf24", "#d97706", "#b45309", "#78350f",
@@ -151,7 +150,16 @@ Remember: respond with ONLY the JSON object. Nothing else.`;
 
 router.post("/", async (req, res) => {
   try {
-    const { fileId, query, conversationHistory = [] } = req.body;
+    const { fileId, query, conversationHistory = [], userApiKey } = req.body;
+
+    // Use user-provided key if available, otherwise fallback to system key
+    const apiKeyToUse = userApiKey || process.env.GEMINI_API_KEY;
+    
+    if (!apiKeyToUse) {
+      return res.status(400).json({ error: "No API key found. Please provide your own Gemini API key in Settings." });
+    }
+
+    const currentGenAI = new GoogleGenerativeAI(apiKeyToUse);
 
     if (!fileId || !query) {
       return res.status(400).json({ error: "fileId and query are required." });
@@ -183,7 +191,7 @@ router.post("/", async (req, res) => {
       query,
     });
 
-    const model = genAI.getGenerativeModel({
+    const model = currentGenAI.getGenerativeModel({
       model: process.env.GEMINI_MODEL || "gemini-2.0-flash",
       generationConfig: {
         temperature: 0.1,       // very low — maximises JSON consistency

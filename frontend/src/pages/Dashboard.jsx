@@ -275,7 +275,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
+function Workspace({ fileInfo, messages, analyzing, onQuery, onReset, onSettingsOpen }) {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("preview");
   const endRef = useRef(null);
@@ -374,9 +374,12 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }}></span>
             <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>Session active</span>
           </div>
-          <button onClick={onReset} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
-            ↺ New file
-          </button>
+            <button onClick={onSettingsOpen} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px", borderRadius: 12, fontSize: 18, transition: "all 0.2s", cursor: "pointer", display: "flex" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+              ⚙️
+            </button>
+            <button onClick={onReset} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+              ↺ New file
+            </button>
         </div>
 
         <div style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
@@ -456,6 +459,39 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
   );
 }
 
+function SettingsModal({ isOpen, onClose, onSave, currentKey }) {
+  const [key, setKey] = useState(currentKey || "");
+  if (!isOpen) return null;
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div style={{ background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 24, padding: 32, maxWidth: 480, width: "100%", animation: "fadeUp .4s ease" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 800 }}>API Settings</h2>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--text4)", fontSize: 24, cursor: "pointer" }}>✕</button>
+        </div>
+        <p style={{ fontSize: 14, color: "var(--text3)", marginBottom: 24, lineHeight: 1.6 }}>
+          Provide your own Gemini API key to bypass shared limits. Get one for free at <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Google AI Studio</a>.
+        </p>
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--text2)", marginBottom: 8, textTransform: "uppercase", fontFamily: "var(--mono)" }}>Gemini API Key</label>
+          <input
+            type="password"
+            value={key}
+            onChange={e => setKey(e.target.value)}
+            placeholder="Enter AIzaSy..."
+            style={{ width: "100%", background: "var(--bg3)", border: "1px solid var(--border2)", borderRadius: 12, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none", transition: "border 0.2s" }}
+            onFocus={e => e.target.style.borderColor = "var(--accent)"}
+            onBlur={e => e.target.style.borderColor = "var(--border2)"}
+          />
+        </div>
+        <div style={{ display: "flex", gap: 12 }}>
+          <button onClick={() => { onSave(key); onClose(); }} style={{ flex: 1, background: "linear-gradient(135deg, var(--accent), var(--accent2))", color: "#fff", border: "none", borderRadius: 12, padding: "14px", fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={e => e.target.style.filter = "brightness(1.1)"} onMouseLeave={e => e.target.style.filter = "none"}>Save Configuration</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const Section = ({ children, style }) => {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -490,71 +526,55 @@ const Section = ({ children, style }) => {
   );
 };
 
-export function Dashboard() {
-  const { fileInfo, uploading, uploadProgress, messages, analyzing, uploadFile, queryAnalysis, reset } = useAnalysis();
-  const uploadSectionRef = useRef(null);
-  const scrollToUpload = () => uploadSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+export default function Dashboard() {
+  const [fileId, setFileId] = useState(null);
+  const [fileInfo, setFileInfo] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [userApiKey, setUserApiKey] = useState(() => localStorage.getItem("datalens_api_key") || "");
+
+  const saveApiKey = (key) => {
+    setUserApiKey(key);
+    localStorage.setItem("datalens_api_key", key);
+  };
 
   const handleUpload = async (file) => {
-    await uploadFile(file);
+    setUploading(true); setUploadProgress(0);
+    const interval = setInterval(() => setUploadProgress(p => p < 90 ? p + 10 : p), 200);
+    const formData = new FormData(); formData.append("file", file);
+    try {
+      const res = await axios.post(`${API_URL}/api/upload`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+      setFileId(res.data.fileId); setFileInfo(res.data.fileInfo);
+    } catch (e) { alert(e.response?.data?.error || "Upload failed"); }
+    finally { clearInterval(interval); setUploadProgress(100); setTimeout(() => setUploading(false), 500); }
   };
 
-  const handleReset = () => {
-    reset();
+  const queryAnalysis = async (query) => {
+    if (!fileId || analyzing) return;
+    const userMsg = { role: "user", content: query };
+    setMessages(prev => [...prev, userMsg]);
+    setAnalyzing(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/analyze`, {
+        fileId, query, conversationHistory: messages, userApiKey
+      });
+      setMessages(prev => [...prev, { role: "assistant", result: res.data }]);
+    } catch (e) {
+      setMessages(prev => [...prev, { role: "error", content: e.response?.data?.error || "Analysis failed" }]);
+    } finally { setAnalyzing(false); }
   };
 
-  const FeatureCard = ({ title, description }) => (
-    <div style={{ background: "#0c0c1d", border: "1px solid #ffffff12", borderRadius:20, padding:30, minHeight:180, display:"flex", flexDirection:"column", justifyContent:"space-between" }}>
-      <div>
-        <div style={{ fontSize:18, fontWeight:700, color:"#f1f0ff", marginBottom:12 }}>{title}</div>
-        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.8, fontSize:15 }}>{description}</p>
-      </div>
-    </div>
-  );
+  const handleReset = () => { setFileId(null); setFileInfo(null); setMessages([]); };
 
-  const StepCard = ({ step, title, description }) => (
-    <div style={{
-      background: "rgba(255, 255, 255, 0.02)",
-      border: "1px solid rgba(255, 255, 255, 0.06)",
-      borderRadius: 24,
-      padding: "40px 32px",
-      display: "flex",
-      flexDirection: "column",
-      gap: 20,
-      textAlign: "left",
-      transition: "all 0.3s ease",
-      height: "100%",
-    }}
-    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"; e.currentTarget.style.transform = "translateY(-5px)"; }}
-    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.02)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.06)"; e.currentTarget.style.transform = "none"; }}
-    >
-      <div style={{
-        width: 48,
-        height: 48,
-        borderRadius: 14,
-        background: "linear-gradient(135deg, var(--accent), var(--accent2))",
-        color: "#fff",
-        display: "grid",
-        placeItems: "center",
-        fontSize: 18,
-        fontWeight: 800,
-        boxShadow: "0 8px 20px var(--glow)"
-      }}>
-        {step}
-      </div>
-      <div>
-        <h3 style={{ fontSize: 24, fontWeight: 700, color: "#fff", marginBottom: 12 }}>{title}</h3>
-        <p style={{ margin: 0, color: "var(--text3)", lineHeight: 1.6, fontSize: 16 }}>{description}</p>
-      </div>
-    </div>
-  );
+  const uploadSectionRef = useRef(null);
+  const scrollToUpload = () => uploadSectionRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  if (!fileInfo?.headers) {
+  if (!fileId) {
     return (
-      <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", display:"flex", flexDirection:"column", position:"relative" }}>
-        <div style={{ position:"absolute", top:"-10%", left:"-10%", width:"50%", height:"50%", background:"var(--glow)", filter:"blur(120px)", opacity:0.15, borderRadius:"50%", animation:"glow 8s infinite alternate" }}></div>
-        <div style={{ position:"absolute", bottom:"-10%", right:"-10%", width:"60%", height:"60%", background:"var(--glow2)", filter:"blur(140px)", opacity:0.1, borderRadius:"50%", animation:"glow 12s infinite alternate-reverse" }}></div>
-        
+      <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", overflowX:"hidden" }}>
         <Header />
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
@@ -564,46 +584,40 @@ export function Dashboard() {
             </h1>
             
             <p style={{ fontSize:22, color:"var(--text2)", maxWidth:720, margin:"0 auto 48px", lineHeight:1.6 }}>
-              Stop wrestling with charts. Just drop your file and ask questions. DataLens AI builds the visualizations you need, instantly.
+              Upload your data and start chatting. No pivot tables, no formulas, just instant insights powered by Gemini AI.
             </p>
-            
-            <div style={{ display:"flex", justifyContent:"center", gap:20, marginBottom:160 }}>
-              <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", color:"white", borderRadius:16, padding:"20px 42px", fontSize:17, fontWeight:700, boxShadow:"0 10px 40px var(--glow)", cursor:"pointer", border:"none", transition:"all 0.3s" }} onMouseEnter={e=>e.target.style.transform="translateY(-3px)"} onMouseLeave={e=>e.target.style.transform="none"}>
-                Analyze Your Data
+
+            <div style={{ display:"flex", gap:16, justifyContent:"center" }}>
+              <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", color:"#fff", border:"none", padding:"20px 42px", borderRadius:18, fontSize:18, fontWeight:700, cursor:"pointer", transition:"all 0.3s", boxShadow:"0 10px 40px var(--glow)" }}
+                onMouseEnter={e => e.target.style.transform="translateY(-3px)"} onMouseLeave={e => e.target.style.transform="none"}>
+                Get Started
               </button>
-              <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: "smooth" })} style={{ background:"rgba(255,255,255,.03)", color:"var(--text2)", borderRadius:16, padding:"20px 42px", fontSize:17, fontWeight:700, border:"1px solid var(--border2)", cursor:"pointer", transition:"all 0.2s" }} onMouseOver={e=>e.target.style.background="rgba(255,255,255,0.06)"} onMouseOut={e=>e.target.style.background="rgba(255,255,255,0.03)"}>
-                How It Works
+              <button onClick={() => setIsSettingsOpen(true)} style={{ background:"rgba(255,255,255,0.03)", color:"var(--text2)", border:"1px solid var(--border)", padding:"20px 42px", borderRadius:18, fontSize:18, fontWeight:700, cursor:"pointer", transition:"all 0.3s" }}
+                onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+                ⚙️ Settings
               </button>
             </div>
+          </div>
 
+          <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto" }}>
             <div id="how-it-works" style={{ marginBottom: 200, marginTop: 200, textAlign: "center" }}>
               <Section>
                 <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16 }}>How It Works</h2>
                 <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
-                  Three simple steps to unlock deep insights from your data.
+                  Three simple steps to unlock the hidden potential in your data.
                 </p>
-                <div style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                  gap: 32,
-                  maxWidth: 1100,
-                  margin: "0 auto"
-                }}>
-                  <StepCard
-                    step="1"
-                    title="Upload"
-                    description="Drag and drop your dataset. We support CSV, Excel, and TSV files up to 25MB."
-                  />
-                  <StepCard
-                    step="2"
-                    title="Analyze"
-                    description="Ask questions in plain English. Our AI analyzes your data and finds key trends."
-                  />
-                  <StepCard
-                    step="3"
-                    title="Visualize"
-                    description="Get instant charts and insights. Export high-quality visualizations with one click."
-                  />
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap:32 }}>
+                  {[
+                    { n: "01", t: "Upload", d: "Drop your CSV or Excel file. We instantly parse it securely on your machine." },
+                    { n: "02", t: "Chat", d: "Ask questions in plain English. 'What was my top product last month?'" },
+                    { n: "03", t: "Visualize", d: "Get beautiful charts and deep insights generated automatically." }
+                  ].map(s => (
+                    <div key={s.n} style={{ textAlign:"left", padding:40, background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", borderRadius:32, transition: "all 0.3s ease" }} onMouseEnter={e => e.currentTarget.style.borderColor="var(--accent2)"} onMouseLeave={e => e.currentTarget.style.borderColor="var(--border)"}>
+                      <div style={{ fontSize:14, fontFamily:"var(--mono)", color:"var(--accent)", fontWeight:700, marginBottom:20 }}>{s.n}</div>
+                      <h3 style={{ fontSize:24, fontWeight:800, marginBottom:16, color:"#fff" }}>{s.t}</h3>
+                      <p style={{ fontSize:16, color:"var(--text3)", lineHeight:1.7 }}>{s.d}</p>
+                    </div>
+                  ))}
                 </div>
               </Section>
             </div>
@@ -642,6 +656,13 @@ export function Dashboard() {
             </div>
           </div>
         </main>
+
+        <SettingsModal 
+          isOpen={isSettingsOpen} 
+          onClose={() => setIsSettingsOpen(false)} 
+          onSave={saveApiKey}
+          currentKey={userApiKey}
+        />
       </div>
     );
   }
@@ -656,6 +677,13 @@ export function Dashboard() {
         analyzing={analyzing}
         onQuery={queryAnalysis}
         onReset={handleReset}
+        onSettingsOpen={() => setIsSettingsOpen(true)}
+      />
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        onSave={saveApiKey}
+        currentKey={userApiKey}
       />
     </>
   );
