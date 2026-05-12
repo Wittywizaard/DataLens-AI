@@ -447,7 +447,6 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
           </div>
         </div>
       </div>
-      </div>
     </div>
   );
 }
