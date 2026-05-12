@@ -1,6 +1,6 @@
 import React from "react";
 
-export function Header() {
+export function Header({ onSettingsOpen }) {
   return (
     <header style={{ 
       height: 72, 
@@ -30,16 +30,27 @@ export function Header() {
         <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
       </div>
       
-      <nav style={{ display: "flex", gap: 32, alignItems: "center" }}>
+      <nav style={{ display: "flex", gap: 24, alignItems: "center" }}>
         {[
           { name: "Features", id: "features" }
         ].map(link => (
-          <a key={link.name} href={`#${link.id}`} style={{ fontSize: 14, color: "var(--text3)", fontWeight: 500, transition: "color 0.2s" }} 
+          <a key={link.name} href={`#${link.id}`} style={{ fontSize: 14, color: "var(--text3)", fontWeight: 500, transition: "color 0.2s", textDecoration: "none" }} 
              onMouseOver={e => e.target.style.color = "var(--accent)"} 
              onMouseOut={e => e.target.style.color = "var(--text3)"}>
             {link.name}
           </a>
         ))}
+        <button 
+          onClick={onSettingsOpen}
+          style={{ 
+            background: "none", border: "none", color: "var(--text3)", 
+            fontSize: 18, cursor: "pointer", display: "flex", transition: "all 0.2s" 
+          }}
+          onMouseOver={e => e.target.style.color = "var(--accent)"}
+          onMouseOut={e => e.target.style.color = "var(--text3)"}
+        >
+          ⚙️
+        </button>
         <button style={{ 
           background: "rgba(255,255,255,0.03)", 
           border: "1px solid var(--border2)", 

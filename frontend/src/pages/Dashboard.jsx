@@ -577,29 +577,34 @@ export function Dashboard() {
   if (!fileId) {
     return (
       <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", overflowX:"hidden" }}>
-        <Header />
+        <Header onSettingsOpen={() => setIsSettingsOpen(true)} />
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
-          <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "120px 0" }}>
-            <h1 style={{ fontSize:"clamp(48px, 8vw, 96px)", fontWeight:900, marginBottom:28, letterSpacing:"-0.05em", lineHeight:0.95, background:"linear-gradient(135deg, #fff 40%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", maxWidth: 900, margin: "0 auto 28px" }}>
-              Spreadsheets,<br/>Meet Intelligence.
+          <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "120px 0", position: "relative", zIndex: 3 }}>
+            <h1 style={{ fontSize:"clamp(48px, 8vw, 110px)", fontWeight:900, marginBottom:32, letterSpacing:"-0.05em", lineHeight:0.9, color: "#fff", maxWidth: 1000, margin: "0 auto 32px" }}>
+              Spreadsheets,<br/>
+              <span style={{ background:"linear-gradient(135deg, #fff 30%, #f59e0b 80%, #fbbf24 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Meet Intelligence.</span>
             </h1>
             
-            <p style={{ fontSize:22, color:"var(--text2)", maxWidth:720, margin:"0 auto 48px", lineHeight:1.6 }}>
-              Upload your data and start chatting. No pivot tables, no formulas, just instant insights powered by Gemini AI.
+            <p style={{ fontSize:"clamp(18px, 2.5vw, 22px)", color:"#b4b4cf", maxWidth:800, margin:"0 auto 56px", lineHeight:1.5, fontWeight: 500 }}>
+              Stop wrestling with charts. Just drop your file and ask questions.<br/>
+              DataLens AI builds the visualizations you need, instantly.
             </p>
 
-            <div style={{ display:"flex", gap:16, justifyContent:"center" }}>
-              <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", color:"#fff", border:"none", padding:"20px 42px", borderRadius:18, fontSize:18, fontWeight:700, cursor:"pointer", transition:"all 0.3s", boxShadow:"0 10px 40px var(--glow)" }}
-                onMouseEnter={e => e.target.style.transform="translateY(-3px)"} onMouseLeave={e => e.target.style.transform="none"}>
-                Get Started
+            <div style={{ display:"flex", gap:20, justifyContent:"center", alignItems: "center" }}>
+              <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg, #f59e0b, #ea580c)", color:"#fff", border:"none", padding:"22px 48px", borderRadius:16, fontSize:18, fontWeight:700, cursor:"pointer", transition:"all 0.3s", boxShadow:"0 10px 40px rgba(245, 158, 11, 0.3)" }}
+                onMouseEnter={e => { e.target.style.transform="translateY(-3px)"; e.target.style.filter="brightness(1.1)"; }} onMouseLeave={e => { e.target.style.transform="none"; e.target.style.filter="none"; }}>
+                Get Started Free
               </button>
-              <button onClick={() => setIsSettingsOpen(true)} style={{ background:"rgba(255,255,255,0.03)", color:"var(--text2)", border:"1px solid var(--border)", padding:"20px 42px", borderRadius:18, fontSize:18, fontWeight:700, cursor:"pointer", transition:"all 0.3s" }}
-                onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
-                ⚙️ Settings
+              <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} style={{ background:"rgba(255,255,255,0.02)", color:"#fff", border:"1px solid rgba(255,255,255,0.1)", padding:"22px 48px", borderRadius:16, fontSize:18, fontWeight:700, cursor:"pointer", transition:"all 0.3s" }}
+                onMouseEnter={e => { e.target.style.background="rgba(255,255,255,0.05)"; e.target.style.borderColor="rgba(255,255,255,0.2)"; }} onMouseLeave={e => { e.target.style.background="rgba(255,255,255,0.02)"; e.target.style.borderColor="rgba(255,255,255,0.1)"; }}>
+                How It Works
               </button>
             </div>
           </div>
+
+          {/* Background Glows matching the reference */}
+          <div style={{ position: "absolute", top: "10%", left: "-5%", width: "40%", height: "60%", background: "radial-gradient(circle, rgba(120, 53, 15, 0.25) 0%, transparent 70%)", filter: "blur(60px)", zIndex: 1 }}></div>
 
           <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto" }}>
             <div id="how-it-works" style={{ marginBottom: 200, marginTop: 200, textAlign: "center" }}>
@@ -672,7 +677,7 @@ export function Dashboard() {
   const safeFileInfo = fileInfo || {};
   return (
     <>
-      <Header />
+      <Header onSettingsOpen={() => setIsSettingsOpen(true)} />
       <Workspace
         fileInfo={safeFileInfo}
         messages={messages}
