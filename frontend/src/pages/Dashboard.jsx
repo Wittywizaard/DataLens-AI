@@ -574,9 +574,28 @@ export function Dashboard() {
   const uploadSectionRef = useRef(null);
   const scrollToUpload = () => uploadSectionRef.current?.scrollIntoView({ behavior: "smooth" });
 
+  const [mousePos, setMousePos] = useState({ x: 10, y: 20 });
+  const handleMouseMove = (e) => {
+    const x = (e.clientX / window.innerWidth) * 100;
+    const y = (e.clientY / window.innerHeight) * 100;
+    setMousePos({ x, y });
+  };
+
   if (!fileId) {
     return (
-      <div style={{ minHeight:"100vh", background:"radial-gradient(circle at 10% 20%, #080705 0%, #020205 100%)", color:"var(--text)", overflowX:"hidden", position: "relative" }}>
+      <div 
+        onMouseMove={handleMouseMove}
+        className="moving-bg"
+        style={{ 
+          minHeight:"100vh", 
+          "--x": `${mousePos.x}%`, 
+          "--y": `${mousePos.y}%`,
+          color:"var(--text)", 
+          overflowX:"hidden", 
+          position: "relative",
+          transition: "background 0.1s ease-out"
+        }}
+      >
         {/* Dynamic Background Elements */}
         <div className="orb orb-gold" style={{ top: "-10%", left: "-10%", opacity: 0.15 }}></div>
         <div className="orb orb-orange" style={{ bottom: "10%", right: "-5%", opacity: 0.1 }}></div>
@@ -684,7 +703,19 @@ export function Dashboard() {
 
   const safeFileInfo = fileInfo || {};
   return (
-    <>
+    <div 
+      onMouseMove={handleMouseMove}
+      className="moving-bg"
+      style={{ 
+        minHeight:"100vh", 
+        "--x": `${mousePos.x}%`, 
+        "--y": `${mousePos.y}%`,
+        color:"var(--text)", 
+        overflowX:"hidden", 
+        position: "relative",
+        transition: "background 0.1s ease-out"
+      }}
+    >
       <Header onSettingsOpen={() => setIsSettingsOpen(true)} />
       <Workspace
         fileInfo={safeFileInfo}
@@ -700,6 +731,6 @@ export function Dashboard() {
         onSave={saveApiKey}
         currentKey={userApiKey}
       />
-    </>
+    </div>
   );
 }
