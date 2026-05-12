@@ -6,8 +6,10 @@ import {
 import { Bar, Line, Pie, Doughnut, Scatter } from "react-chartjs-2";
 import { useDropzone } from "react-dropzone";
 import html2canvas from "html2canvas";
-import useAnalysis from "../useAnalysis.js";
+import axios from "axios";
 import { Header } from "../components/Header";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler);
 
@@ -526,7 +528,7 @@ const Section = ({ children, style }) => {
   );
 };
 
-export default function Dashboard() {
+export function Dashboard() {
   const [fileId, setFileId] = useState(null);
   const [fileInfo, setFileInfo] = useState(null);
   const [messages, setMessages] = useState([]);
