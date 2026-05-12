@@ -44,11 +44,16 @@ function ThinkingDots() {
   );
 }
 
-function InsightCard({ label, value }) {
+function InsightCard({ label, value, trend }) {
   return (
-    <div style={{ background:"#111128", border:"1px solid #ffffff0f", borderRadius:12, padding:"12px 16px", minWidth:100 }}>
-      <div style={{ fontSize:20, fontWeight:800, color:"#c4a0ff", fontFamily:"'JetBrains Mono'", lineHeight:1.2 }}>{value}</div>
-      <div style={{ fontSize:11, color:"#5c5a7a", marginTop:4, textTransform:"uppercase", letterSpacing:"0.06em" }}>{label}</div>
+    <div style={{ background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", borderRadius:16, padding:"20px", flex:1, minWidth:0, animation:"fadeUp .4s ease" }}>
+      <div style={{ fontSize:11, color:"var(--text3)", textTransform:"uppercase", letterSpacing:"0.05em", fontWeight:700, marginBottom:8 }}>{label}</div>
+      <div style={{ fontSize:24, fontWeight:800, color:"#fff", letterSpacing:"-0.02em" }}>{value}</div>
+      {trend && (
+        <div style={{ fontSize:12, color: trend.startsWith("+") ? "#10b981" : "#ef4444", marginTop:6, fontWeight:600 }}>
+          {trend} from previous period
+        </div>
+      )}
     </div>
   );
 }
@@ -108,10 +113,10 @@ function ChartBlock({ config }) {
   };
 
   return (
-    <div style={{ background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", backdropFilter:"blur(10px)", borderRadius:16, padding:"20px 20px 16px", marginTop:14 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+    <div style={{ background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", backdropFilter:"blur(10px)", borderRadius:20, padding:"24px", marginTop:16, position: "relative" }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         {config.title && (
-          <div style={{ fontSize:12, fontFamily:"var(--mono)", color:"var(--accent)", fontWeight:600 }}>
+          <div style={{ fontSize:14, fontFamily:"var(--mono)", color:"var(--accent)", fontWeight:600 }}>
             <span style={{ marginRight:8 }}>✦</span>{config.title}
           </div>
         )}
@@ -121,21 +126,21 @@ function ChartBlock({ config }) {
             background: 'var(--accent)',
             color: '#fff',
             border: 'none',
-            borderRadius: 8,
-            padding: '6px 14px',
-            fontSize: 11,
-            fontFamily: "var(--mono)",
+            borderRadius: 10,
+            padding: '8px 16px',
+            fontSize: 12,
+            fontWeight: 700,
             cursor: 'pointer',
             transition: 'all 0.2s',
             boxShadow: '0 4px 12px var(--glow)'
           }}
-          onMouseOver={(e) => { e.target.style.transform = 'translateY(-1px)'; e.target.style.boxShadow = '0 6px 16px var(--glow)'; }}
-          onMouseOut={(e) => { e.target.style.transform = 'none'; e.target.style.boxShadow = '0 4px 12px var(--glow)'; }}
+          onMouseOver={(e) => { e.target.style.transform = 'translateY(-1px)'; e.target.style.filter = 'brightness(1.1)'; }}
+          onMouseOut={(e) => { e.target.style.transform = 'none'; e.target.style.filter = 'none'; }}
         >
-          📥 Export
+          Download
         </button>
       </div>
-      <div ref={chartRef} style={{ padding: 10 }}>
+      <div ref={chartRef} style={{ padding: "0 10px" }}>
         <Comp data={data} options={baseOpts(isRadial)} />
       </div>
     </div>
@@ -164,7 +169,7 @@ function DataTable({ headers, rows }) {
 function MessageBubble({ msg }) {
   if (msg.role === "user") return (
     <div style={{ display:"flex", justifyContent:"flex-end", animation:"fadeUp .3s ease" }}>
-      <div style={{ background:"linear-gradient(135deg,#7c3aed,#5b21b6)", borderRadius:"18px 18px 4px 18px", padding:"12px 18px", maxWidth:"75%", fontSize:14, lineHeight:1.6, boxShadow:"0 4px 20px rgba(124,58,237,.3)" }}>
+      <div style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", borderRadius:"18px 18px 4px 18px", padding:"12px 18px", maxWidth:"75%", fontSize:14, lineHeight:1.6, boxShadow:"0 4px 20px var(--glow)", color: "#fff" }}>
         {msg.content}
       </div>
     </div>
@@ -308,8 +313,6 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
               <div style={{ fontSize:14, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", color:"var(--text)" }}>{originalName}</div>
               <div style={{ fontSize:11, color:"var(--text3)", fontFamily:"var(--mono)", marginTop:2, fontWeight:500 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
             </div>
-            <button onClick={onReset} style={{ color:"var(--text4)", fontSize:18, lineHeight:1, padding:6, borderRadius:8, transition:"all 0.2s" }}
-              onMouseEnter={e=>{e.target.style.color="var(--accent2)"; e.target.style.background="rgba(217,70,239,0.1)"}} onMouseLeave={e=>{e.target.style.color="var(--text4)"; e.target.style.background="none"}}>✕</button>
           </div>
           <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:12 }}>
             {numCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(6,182,212,.12)", border:"1px solid rgba(6,182,212,.2)", color:"#06b6d4" }}>📊 {numCols.length} numeric</span>}
@@ -360,15 +363,44 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
         </div>
       </div>
 
-      <div style={{ display:"flex", flexDirection:"column", overflow:"hidden", background:"#05050f" }}>
-        <div style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20 }}>
-          {messages.map((m,i) => <MessageBubble key={i} msg={m} />)}
-          {analyzing && <div style={{ display:"flex", gap:12, animation:"fadeUp .3s ease" }}><ThinkingDots /></div>}
+        <div style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
+          {/* Header Actions */}
+          <div style={{ position: "absolute", top: 20, right: 28, display: "flex", alignItems: "center", gap: 16, zIndex: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }}></span>
+              <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>Session active</span>
+            </div>
+            <button onClick={onReset} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "6px 14px", borderRadius: 10, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+              ↺ New file
+            </button>
+          </div>
+
+          {messages.length === 0 ? (
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, textAlign: "center", paddingBottom: 40 }}>
+              <div style={{ fontSize: 48, filter: "drop-shadow(0 0 20px var(--glow))" }}>✦</div>
+              <div>
+                <h2 style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Ask anything about your data</h2>
+                <p style={{ fontSize: 16, color: "var(--text3)" }}>Try one of these or type your own question</p>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, maxWidth: 800, width: "100%", marginTop: 12 }}>
+                {suggestions.map(s => (
+                  <button key={s} onClick={() => onQuery(s)} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", padding: "20px", borderRadius: 16, color: "var(--text2)", fontSize: 13, fontWeight: 600, textAlign: "left", transition: "all 0.2s", lineHeight: 1.4 }} onMouseEnter={e => { e.target.style.background="rgba(255,255,255,0.04)"; e.target.style.borderColor="var(--accent)"; }} onMouseLeave={e => { e.target.style.background="rgba(255,255,255,0.02)"; e.target.style.borderColor="var(--border)"; }}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              {messages.map((m,i) => <MessageBubble key={i} msg={m} />)}
+              {analyzing && <div style={{ display:"flex", gap:12, animation:"fadeUp .3s ease" }}><ThinkingDots /></div>}
+            </>
+          )}
           <div ref={endRef} />
         </div>
 
-        <div style={{ borderTop:"1px solid var(--border)", padding:"20px", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
-          {suggestions.length > 0 && (
+        <div style={{ borderTop:"1px solid var(--border)", padding:"20px", flexShrink:0, background:"rgba(3, 3, 11, 0.5)", backdropFilter: "blur(10px)" }}>
+          {messages.length > 0 && suggestions.length > 0 && (
             <div style={{ display:"flex", gap:8, marginBottom:16, overflowX:"auto", paddingBottom:8, scrollbarWidth: "none" }}>
               {suggestions.map(s => (
                 <button
@@ -379,7 +411,7 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
                     background:"var(--glass)", border:"1px solid var(--border)", color:"var(--accent)",
                     cursor:"pointer", whiteSpace:"nowrap", transition:"all 0.2s", flexShrink:0, fontWeight:600
                   }}
-                  onMouseEnter={e => { e.target.style.background="rgba(139, 92, 246, 0.1)"; e.target.style.borderColor="rgba(139, 92, 246, 0.3)"; }}
+                  onMouseEnter={e => { e.target.style.background="rgba(245, 158, 11, 0.1)"; e.target.style.borderColor="rgba(245, 158, 11, 0.3)"; }}
                   onMouseLeave={e => { e.target.style.background="var(--glass)"; e.target.style.borderColor="var(--border)"; }}
                 >
                   {s}
