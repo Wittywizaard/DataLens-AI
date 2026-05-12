@@ -575,18 +575,29 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div id="features" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:24, marginBottom:120 }}>
-              {[
-                { t: "Instant Viz", d: "Automatic chart generation based on natural language queries.", i: "📊" },
-                { t: "Deep Insights", d: "Uncover hidden trends and correlations in seconds.", i: "🧠" },
-                { t: "Zero Config", d: "No setup required. Upload any CSV or Excel and start chatting.", i: "⚡" }
-              ].map((f,idx) => (
-                <div key={idx} className="glass" style={{ padding:32, borderRadius:24, textAlign:"left", animation:`fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1) ${0.4 + idx*0.1}s both` }}>
-                  <div style={{ fontSize:32, marginBottom:20 }}>{f.i}</div>
-                  <h3 style={{ fontSize:20, fontWeight:700, marginBottom:12, color:"var(--text)" }}>{f.t}</h3>
-                  <p style={{ fontSize:15, color:"var(--text3)", lineHeight:1.6 }}>{f.d}</p>
+            <div id="features" style={{ marginBottom: 140, textAlign: "center" }}>
+              <Section>
+                <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16 }}>Powerful Features</h2>
+                <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
+                  Everything you need to turn raw data into actionable intelligence.
+                </p>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:24, maxWidth: 1100, margin: "0 auto" }}>
+                  {[
+                    { t: "Instant Viz", d: "Automatic chart generation based on natural language queries. No manual plotting needed.", i: "📊" },
+                    { t: "Deep Insights", d: "Uncover hidden trends, correlations, and anomalies in seconds with Gemini AI.", i: "🧠" },
+                    { t: "Zero Config", d: "No setup required. Upload any CSV or Excel and start chatting with your data immediately.", i: "⚡" }
+                  ].map((f,idx) => (
+                    <div key={idx} className="glass" style={{ padding:32, borderRadius:24, textAlign:"left", transition: "all 0.3s ease" }}
+                      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "var(--accent3)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = "var(--border)"; }}
+                    >
+                      <div style={{ fontSize:32, marginBottom:20, filter: "drop-shadow(0 0 8px var(--glow))" }}>{f.i}</div>
+                      <h3 style={{ fontSize:20, fontWeight:700, marginBottom:12, color:"var(--text)" }}>{f.t}</h3>
+                      <p style={{ fontSize:15, color:"var(--text3)", lineHeight:1.6 }}>{f.d}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </Section>
             </div>
 
             <div ref={uploadSectionRef} style={{ padding:"100px 0", position:"relative" }}>
