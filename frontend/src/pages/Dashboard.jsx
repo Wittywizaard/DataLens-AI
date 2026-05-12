@@ -521,19 +521,19 @@ export function Dashboard() {
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
           <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "80px 0" }}>
-            <h1 style={{ fontSize:"clamp(48px, 6vw, 84px)", fontWeight:900, marginBottom:24, letterSpacing:"-0.04em", lineHeight:1, background:"linear-gradient(135deg, #fff 30%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
-              Spreadsheets,<br/>Meet Intelligence.
+            <h1 style={{ fontSize:"clamp(48px, 8vw, 96px)", fontWeight:900, marginBottom:28, letterSpacing:"-0.05em", lineHeight:0.95, background:"linear-gradient(135deg, #fff 40%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", maxWidth: 900, margin: "0 auto 28px" }}>
+              Analyze data.<br/>Not spreadsheets.
             </h1>
             
             <p style={{ fontSize:22, color:"var(--text2)", maxWidth:720, margin:"0 auto 48px", lineHeight:1.6 }}>
               Stop wrestling with charts. Just drop your file and ask questions. DataLens AI builds the visualizations you need, instantly.
             </p>
             
-            <div style={{ display:"flex", justifyContent:"center", gap:16, marginBottom:100 }}>
-              <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", color:"white", borderRadius:14, padding:"18px 36px", fontSize:16, fontWeight:700, boxShadow:"0 10px 40px var(--glow)", cursor:"pointer", border:"none", transition:"all 0.3s" }} onMouseEnter={e=>e.target.style.transform="translateY(-2px)"} onMouseLeave={e=>e.target.style.transform="none"}>
-                Get Started Free
+            <div style={{ display:"flex", justifyContent:"center", gap:20, marginBottom:160 }}>
+              <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", color:"white", borderRadius:16, padding:"20px 42px", fontSize:17, fontWeight:700, boxShadow:"0 10px 40px var(--glow)", cursor:"pointer", border:"none", transition:"all 0.3s" }} onMouseEnter={e=>e.target.style.transform="translateY(-3px)"} onMouseLeave={e=>e.target.style.transform="none"}>
+                Analyze Your Data
               </button>
-              <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: "smooth" })} style={{ background:"rgba(255,255,255,.03)", color:"var(--text2)", borderRadius:14, padding:"18px 36px", fontSize:16, fontWeight:700, border:"1px solid var(--border2)", cursor:"pointer", transition:"all 0.2s" }} onMouseOver={e=>e.target.style.background="rgba(255,255,255,0.06)"} onMouseOut={e=>e.target.style.background="rgba(255,255,255,0.03)"}>
+              <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: "smooth" })} style={{ background:"rgba(255,255,255,.03)", color:"var(--text2)", borderRadius:16, padding:"20px 42px", fontSize:17, fontWeight:700, border:"1px solid var(--border2)", cursor:"pointer", transition:"all 0.2s" }} onMouseOver={e=>e.target.style.background="rgba(255,255,255,0.06)"} onMouseOut={e=>e.target.style.background="rgba(255,255,255,0.03)"}>
                 How It Works
               </button>
             </div>
@@ -570,9 +570,9 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div id="features" style={{ marginBottom: 140, textAlign: "center" }}>
+            <div id="features" style={{ marginBottom: 180, textAlign: "center" }}>
               <Section>
-                <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16 }}>Powerful Features</h2>
+                <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16, letterSpacing: "-0.02em" }}>Everything you need to analyze safely</h2>
                 <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
                   Everything you need to turn raw data into actionable intelligence.
                 </p>
@@ -595,7 +595,33 @@ export function Dashboard() {
               </Section>
             </div>
 
-            <div ref={uploadSectionRef} style={{ padding:"100px 0", position:"relative" }}>
+            <div id="security" style={{ marginBottom: 180, textAlign: "center", padding: "0 20px" }}>
+              <Section>
+                <div style={{ maxWidth: 800, margin: "0 auto" }}>
+                  <div style={{ display: "inline-block", padding: "8px 16px", borderRadius: 100, background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.2)", color: "var(--accent)", fontSize: 12, fontWeight: 700, fontFamily: "var(--mono)", marginBottom: 24, textTransform: "uppercase" }}>
+                    Security First
+                  </div>
+                  <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 24, letterSpacing: "-0.02em" }}>Protected by DataLens Shield</h2>
+                  <p style={{ fontSize: 18, color: "var(--text3)", lineHeight: 1.8, marginBottom: 48 }}>
+                    Your data is processed in isolated environment. We use end-to-end encryption and never store your files longer than needed for analysis.
+                  </p>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 32 }}>
+                    {[
+                      { t: "E2E Encryption", d: "Data is encrypted in transit and at rest." },
+                      { t: "Private Sessions", d: "Your analysis sessions are private and isolated." },
+                      { t: "Auto-Deletion", d: "Files are permanently deleted after your session ends." }
+                    ].map((s, i) => (
+                      <div key={i} style={{ textAlign: "left" }}>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{s.t}</div>
+                        <div style={{ fontSize: 14, color: "var(--text3)", lineHeight: 1.6 }}>{s.d}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Section>
+            </div>
+
+            <div ref={uploadSectionRef} style={{ padding:"120px 0 180px", position:"relative" }}>
               <div style={{ position:"absolute", inset:0, background:"var(--accent)", filter:"blur(120px)", opacity:0.05, transform:"scale(0.8)" }}></div>
               <div style={{ position:"relative" }}>
                 <h2 style={{ fontSize:32, fontWeight:800, marginBottom:40, letterSpacing:"-0.02em" }}>Ready to analyze?</h2>
