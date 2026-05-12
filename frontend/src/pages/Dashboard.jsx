@@ -299,7 +299,7 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
   };
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"320px 1fr", height:"calc(100vh - 64px)", overflow:"hidden" }}>
+    <div style={{ display:"grid", gridTemplateColumns:"320px 1fr", height:"calc(100vh - 72px)", overflow:"hidden", marginTop: 72 }}>
       <div style={{ background:"var(--bg2)", borderRight:"1px solid var(--border)", display:"flex", flexDirection:"column", overflow:"hidden" }}>
         <div style={{ padding:"20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -431,7 +431,7 @@ const Section = ({ children, style }) => {
           observer.disconnect();
         }
       },
-      { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -5% 0px' }
     );
     observer.observe(ref.current);
     return () => observer.disconnect();
@@ -442,8 +442,8 @@ const Section = ({ children, style }) => {
       ref={ref}
       style={{
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "none" : "translateY(28px)",
-        transition: "opacity .75s ease, transform .75s ease",
+        transform: isVisible ? "none" : "translateY(10px)",
+        transition: "opacity .8s ease, transform .8s ease",
         ...style,
       }}
     >
@@ -513,13 +513,13 @@ export function Dashboard() {
 
   if (!fileInfo?.headers) {
     return (
-      <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", display:"flex", flexDirection:"column", position:"relative", overflow:"hidden" }}>
+      <div style={{ minHeight:"100vh", background:"var(--bg)", color:"var(--text)", display:"flex", flexDirection:"column", position:"relative" }}>
         <div style={{ position:"absolute", top:"-10%", left:"-10%", width:"50%", height:"50%", background:"var(--glow)", filter:"blur(120px)", opacity:0.15, borderRadius:"50%", animation:"glow 8s infinite alternate" }}></div>
         <div style={{ position:"absolute", bottom:"-10%", right:"-10%", width:"60%", height:"60%", background:"var(--glow2)", filter:"blur(140px)", opacity:0.1, borderRadius:"50%", animation:"glow 12s infinite alternate-reverse" }}></div>
         
         <Header />
         
-        <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", padding:"80px 40px", position:"relative", zIndex:2, overflowY:"auto" }}>
+        <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", padding:"120px 40px 80px", position:"relative", zIndex:2 }}>
           <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center" }}>
             <h1 style={{ fontSize:"clamp(48px, 6vw, 84px)", fontWeight:900, marginBottom:24, letterSpacing:"-0.04em", lineHeight:1, background:"linear-gradient(135deg, #fff 30%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
               Spreadsheets,<br/>Meet Intelligence.

@@ -8,9 +8,10 @@ export function Header() {
       background: "rgba(3, 3, 11, 0.7)", 
       backdropFilter: "blur(12px)", 
       WebkitBackdropFilter: "blur(12px)",
-      position: "sticky", 
+      position: "fixed", 
+      width: "100%",
       top: 0, 
-      zIndex: 100,
+      zIndex: 1000,
       display: "flex",
       alignItems: "center",
       padding: "0 40px"
