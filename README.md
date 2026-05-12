@@ -1,147 +1,99 @@
-﻿# DataLens AI 📊
+# DataLens AI 📊✨
 
-> Turn Excel and CSV data into business-ready charts and insights without Power BI or expensive BI tools.
+> **Transform Spreadsheets into Intelligence.**  
+> Turn messy Excel and CSV data into stunning, business-ready visualizations and deep insights instantly—no Power BI or complex data science required.
 
-DataLens AI is built for mid-scale businesses and startups that work with spreadsheets but don't have the budget or expertise for professional BI.
+DataLens AI is a premium, agentic AI platform designed for mid-scale businesses and startups. It bridges the gap between basic spreadsheets and expensive BI tools, giving everyone the power to "chat" with their data.
 
-Users upload a file, type a natural language prompt, and the AI agent generates charts, insights, and KPIs instantly.
+---
+
+## 💎 Premium Design: Aurora Gold
+The latest version features a luxury **Aurora Gold** aesthetic:
+- **High-End Visuals**: Midnight black background with dynamic golden and orange gradients.
+- **Glassmorphism UI**: Semi-transparent containers with backdrop blurs for a modern, state-of-the-art feel.
+- **Micro-animations**: Smooth transitions and glow effects that make data interaction feel alive.
 
 ---
 
 ## ✨ Features
 
-- Natural language queries for spreadsheet analysis
-- Automatic chart selection based on query and data
-- Column intelligence for numeric, categorical, and date data
-- Insight cards for totals, averages, counts, and trends
-- Agentic, multi-turn conversation support for follow-up questions
-- No signup required — upload and analyze immediately
-- Data preview before analysis
-- Download charts as PNG images
-- Temporary data storage with no third-party sharing
+- 🧠 **Agentic AI Intelligence**: Powered by **Gemini 2.0 Flash** for multi-turn reasoning and precise analysis.
+- 💬 **Natural Language Queries**: Simply ask "What are my top 5 products by margin?" and watch the magic happen.
+- 📊 **Automatic Visualization**: The AI intelligently selects the best chart type (Bar, Line, Pie, etc.) for your specific query.
+- 📉 **Insight Cards**: Instant summaries of KPIs, totals, averages, and emerging trends.
+- 🔓 **Zero Friction**: No sign-up or complex configuration. Upload a file and start analyzing in 5 seconds.
+- 💾 **Data Export**: Download your high-resolution charts as PNGs for presentations.
+- 🛡️ **Secure & Private**: Temporary session-based storage. Your data never leaves your control.
 
 ---
 
 ## 🚀 Quick Start (Local)
 
 ### Prerequisites
-- Node.js 18+
-- Google Gemini API key: https://aistudio.google.com/app/apikey
+- **Node.js** 18+
+- **Google Gemini API Key**: Get one at [AI Studio](https://aistudio.google.com/app/apikey)
 
-### Install and Run
+### Installation
 
-```bash
-git clone https://github.com/yourusername/datalens-ai.git
-cd datalens-ai
-npm run install:all
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Wittywizaard/DataLens-AI.git
+   cd DataLens-AI
+   ```
 
-Configure backend environment:
+2. **Install all dependencies**
+   ```bash
+   npm run install:all
+   ```
 
-```bash
-cd backend
-cp .env.example .env
-```
+3. **Configure Environment**
+   Create a `.env` file in the `backend/` directory:
+   ```env
+   GEMINI_API_KEY=your_key_here
+   GEMINI_MODEL=gemini-2.0-flash
+   PORT=3001
+   FRONTEND_URL=http://localhost:5173
+   ```
 
-Update `backend/.env` with your Gemini API key and frontend URL.
+4. **Launch the Engine**
+   ```bash
+   npm run dev
+   ```
 
-Start both services:
-
-```bash
-npm run dev
-```
-
-Open:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3001
-
----
-
-## 🔧 Environment Variables
-
-Copy `backend/.env.example` to `backend/.env` and set values:
-
-```env
-GEMINI_API_KEY=your-gemini-api-key-here
-PORT=3001
-NODE_ENV=development
-JWT_SECRET=your-secret-key-change-in-production
-FRONTEND_URL=http://localhost:5173
-GEMINI_MODEL=gemini-flash-latest
-```
+Open [http://localhost:5173](http://localhost:5173) to see your data come to life.
 
 ---
 
-## 🧩 Project Structure
+## 🧩 Project Architecture
 
 ```
 datalens-ai/
-├── backend/                 # Express API backend
-│   ├── routes/             # API routes and analysis logic
-│   ├── utils/              # helper and storage modules
-│   ├── uploads/            # temporary file uploads
-│   ├── .env.example        # backend environment sample
-│   ├── package.json        # backend dependencies and scripts
-│   └── server.js           # Express app entrypoint
-├── frontend/               # React SPA
-│   ├── src/                # frontend source code
-│   ├── package.json        # frontend dependencies and scripts
-│   ├── vite.config.js      # Vite configuration
-│   └── vercel.json         # Vercel build settings
-├── docker-compose.yml      # local Docker orchestration
-├── Dockerfile              # backend containerization
-├── package.json            # root scripts and dependency management
-└── README.md               # project documentation
+├── backend/                 # Node.js/Express Engine
+│   ├── routes/             # Gemini Prompting & Analysis Logic
+│   ├── utils/              # Spreadsheet Parsing & Storage
+│   └── uploads/            # Temporary File Processing
+├── frontend/               # React (Vite) Visual layer
+│   ├── src/                # Aurora Gold Design System & Components
+│   └── public/             # Static Assets
+└── package.json            # Unified scripts for the entire stack
 ```
 
 ---
 
-## 🔧 Local Commands
-
-```bash
-npm run install:all   # install root, backend, and frontend deps
-npm run dev           # run frontend and backend concurrently
-npm run build         # build the frontend
-npm run start         # run the backend only
-```
-
----
-
-## 🚀 Deployment
+## 🔧 Deployment
 
 ### Frontend: Vercel
+Optimized for Vercel deployment. Ensure `VITE_API_URL` environment variable points to your backend.
 
-The frontend is configured for Vercel in `frontend/vercel.json`.
-
-- Root directory: `frontend`
-- Build command: `npm run build`
-- Output directory: `dist`
-- Environment variable: `VITE_API_URL=https://your-backend-domain.com`
-
-### Backend: Render
-
-The backend deployment workflow triggers a Render webhook after backend changes.
-
----
-
-## ⚙️ GitHub Actions
-
-Deployment workflows are included:
-
-- `.github/workflows/frontend-deploy.yml`
-  - Builds and deploys frontend to Vercel using `vercel/action@v3`
-  - Runs Node.js 24 in the workflow
-- `.github/workflows/backend-deploy.yml`
-  - Triggers Render backend deployment via webhook
-
-### Required GitHub Secrets
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-- `RENDER_DEPLOY_HOOK`
+### Backend: Render / Railway
+The backend is containerized and ready for any cloud provider. Use the provided `Dockerfile` or `docker-compose.yml` for orchestration.
 
 ---
 
 ## 📄 License
 
-MIT License.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+Created with ❤️ by the DataLens AI Team.
