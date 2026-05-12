@@ -519,8 +519,8 @@ export function Dashboard() {
         
         <Header />
         
-        <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", padding:"120px 40px 80px", position:"relative", zIndex:2 }}>
-          <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center" }}>
+        <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
+          <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "80px 0" }}>
             <h1 style={{ fontSize:"clamp(48px, 6vw, 84px)", fontWeight:900, marginBottom:24, letterSpacing:"-0.04em", lineHeight:1, background:"linear-gradient(135deg, #fff 30%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
               Spreadsheets,<br/>Meet Intelligence.
             </h1>
@@ -538,7 +538,7 @@ export function Dashboard() {
               </button>
             </div>
 
-            <div id="how-it-works" style={{ marginBottom: 140, textAlign: "center" }}>
+            <div id="how-it-works" style={{ marginBottom: 140, marginTop: 100, textAlign: "center" }}>
               <Section>
                 <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16 }}>How It Works</h2>
                 <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
