@@ -572,7 +572,7 @@ export function Dashboard() {
 
             <div id="features" style={{ marginBottom: 180, textAlign: "center" }}>
               <Section>
-                <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16, letterSpacing: "-0.02em" }}>Everything you need to analyze safely</h2>
+                <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16, letterSpacing: "-0.02em" }}>Everything you need.</h2>
                 <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
                   Everything you need to turn raw data into actionable intelligence.
                 </p>
