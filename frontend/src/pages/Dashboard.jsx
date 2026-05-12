@@ -475,11 +475,38 @@ export function Dashboard() {
   );
 
   const StepCard = ({ step, title, description }) => (
-    <div style={{ background: "#070718", border: "1px solid #ffffff10", borderRadius:18, padding:20, display:"grid", gap:14 }}>
-      <div style={{ width:40, height:40, borderRadius:14, background: "rgba(124,58,237,.14)", color: "#7c3aed", display:"grid", placeItems:"center", fontWeight:800 }}>{step}</div>
+    <div style={{
+      background: "rgba(255, 255, 255, 0.02)",
+      border: "1px solid rgba(255, 255, 255, 0.06)",
+      borderRadius: 24,
+      padding: "40px 32px",
+      display: "flex",
+      flexDirection: "column",
+      gap: 20,
+      textAlign: "left",
+      transition: "all 0.3s ease",
+      height: "100%",
+    }}
+    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"; e.currentTarget.style.transform = "translateY(-5px)"; }}
+    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.02)"; e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.06)"; e.currentTarget.style.transform = "none"; }}
+    >
+      <div style={{
+        width: 48,
+        height: 48,
+        borderRadius: 14,
+        background: "linear-gradient(135deg, #a855f7, #ec4899)",
+        color: "#fff",
+        display: "grid",
+        placeItems: "center",
+        fontSize: 18,
+        fontWeight: 800,
+        boxShadow: "0 8px 20px rgba(168, 85, 247, 0.3)"
+      }}>
+        {step}
+      </div>
       <div>
-        <div style={{ fontSize:16, fontWeight:700, color:"#f1f0ff", marginBottom:8 }}>{title}</div>
-        <p style={{ margin:0, color:"#b9b6d2", lineHeight:1.8, fontSize:14 }}>{description}</p>
+        <h3 style={{ fontSize: 24, fontWeight: 700, color: "#fff", marginBottom: 12 }}>{title}</h3>
+        <p style={{ margin: 0, color: "var(--text3)", lineHeight: 1.6, fontSize: 16 }}>{description}</p>
       </div>
     </div>
   );
@@ -511,9 +538,41 @@ export function Dashboard() {
               <button onClick={scrollToUpload} style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", color:"white", borderRadius:14, padding:"18px 36px", fontSize:16, fontWeight:700, boxShadow:"0 10px 40px var(--glow)", cursor:"pointer", border:"none", transition:"all 0.3s" }} onMouseEnter={e=>e.target.style.transform="translateY(-2px)"} onMouseLeave={e=>e.target.style.transform="none"}>
                 Get Started Free
               </button>
-              <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: "smooth" })} style={{ background:"rgba(255,255,255,.03)", color:"var(--text2)", borderRadius:14, padding:"18px 36px", fontSize:16, fontWeight:700, border:"1px solid var(--border2)", cursor:"pointer", transition:"all 0.2s" }} onMouseOver={e=>e.target.style.background="rgba(255,255,255,0.06)"} onMouseOut={e=>e.target.style.background="rgba(255,255,255,0.03)"}>
-                Explore Features
+              <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: "smooth" })} style={{ background:"rgba(255,255,255,.03)", color:"var(--text2)", borderRadius:14, padding:"18px 36px", fontSize:16, fontWeight:700, border:"1px solid var(--border2)", cursor:"pointer", transition:"all 0.2s" }} onMouseOver={e=>e.target.style.background="rgba(255,255,255,0.06)"} onMouseOut={e=>e.target.style.background="rgba(255,255,255,0.03)"}>
+                How It Works
               </button>
+            </div>
+
+            <div id="how-it-works" style={{ marginBottom: 140, textAlign: "center" }}>
+              <Section>
+                <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#fff", marginBottom: 16 }}>How It Works</h2>
+                <p style={{ fontSize: 18, color: "var(--text3)", marginBottom: 60, maxWidth: 600, margin: "0 auto 60px" }}>
+                  Three simple steps to unlock deep insights from your data.
+                </p>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                  gap: 32,
+                  maxWidth: 1100,
+                  margin: "0 auto"
+                }}>
+                  <StepCard
+                    step="1"
+                    title="Upload"
+                    description="Drag and drop your dataset. We support CSV, Excel, and TSV files up to 25MB."
+                  />
+                  <StepCard
+                    step="2"
+                    title="Analyze"
+                    description="Ask questions in plain English. Our AI analyzes your data and finds key trends."
+                  />
+                  <StepCard
+                    step="3"
+                    title="Visualize"
+                    description="Get instant charts and insights. Export high-quality visualizations with one click."
+                  />
+                </div>
+              </Section>
             </div>
 
             <div id="features" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:24, marginBottom:120 }}>

@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "../styles/Header.module.css";
 
 export function Header() {
   return (
@@ -31,11 +30,15 @@ export function Header() {
       </div>
       
       <nav style={{ display: "flex", gap: 32, alignItems: "center" }}>
-        {["Product", "Features", "Security"].map(link => (
-          <a key={link} href="#" style={{ fontSize: 14, color: "var(--text3)", fontWeight: 500, transition: "color 0.2s" }} 
+        {[
+          { name: "How It Works", id: "how-it-works" },
+          { name: "Features", id: "features" },
+          { name: "Security", id: "security" }
+        ].map(link => (
+          <a key={link.name} href={`#${link.id}`} style={{ fontSize: 14, color: "var(--text3)", fontWeight: 500, transition: "color 0.2s" }} 
              onMouseOver={e => e.target.style.color = "var(--accent)"} 
              onMouseOut={e => e.target.style.color = "var(--text3)"}>
-            {link}
+            {link.name}
           </a>
         ))}
         <button style={{ 
