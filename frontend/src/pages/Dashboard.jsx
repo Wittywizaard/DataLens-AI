@@ -176,8 +176,12 @@ function MessageBubble({ msg }) {
   );
 
   if (msg.role === "error") return (
-    <div style={{ background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.2)", borderRadius:14, padding:"12px 16px", fontSize:13, color:"#ef4444", animation:"fadeUp .3s ease" }}>
-      ⚠ {msg.content}
+    <div style={{ background:"rgba(239,68,68,0.1)", border:"1px solid rgba(239,68,68,0.2)", borderRadius:16, padding:"16px 20px", fontSize:14, color:"#fca5a5", animation:"fadeUp .3s ease", display:"flex", gap:12, alignItems:"center" }}>
+      <span style={{ fontSize:18 }}>⚠️</span>
+      <div>
+        <div style={{ fontWeight:700, marginBottom:2 }}>Analysis Error</div>
+        <div style={{ opacity:0.8, lineHeight:1.5 }}>{msg.content}</div>
+      </div>
     </div>
   );
 
@@ -364,17 +368,18 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
-        <div style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
-          {/* Header Actions */}
-          <div style={{ position: "absolute", top: 20, right: 28, display: "flex", alignItems: "center", gap: 16, zIndex: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }}></span>
-              <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>Session active</span>
-            </div>
-            <button onClick={onReset} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "6px 14px", borderRadius: 10, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
-              ↺ New file
-            </button>
+        {/* Workspace Header Bar */}
+        <div style={{ height: 64, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "0 28px", gap: 20, background: "rgba(3, 3, 11, 0.5)", backdropFilter: "blur(10px)", flexShrink: 0, zIndex: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }}></span>
+            <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>Session active</span>
           </div>
+          <button onClick={onReset} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+            ↺ New file
+          </button>
+        </div>
+
+        <div style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
 
           {messages.length === 0 ? (
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, textAlign: "center", paddingBottom: 40 }}>
