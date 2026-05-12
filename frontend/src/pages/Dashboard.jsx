@@ -521,11 +521,6 @@ export function Dashboard() {
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", padding:"80px 40px", position:"relative", zIndex:2, overflowY:"auto" }}>
           <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center" }}>
-            <div style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"8px 16px", borderRadius:100, background:"rgba(139, 92, 246, 0.1)", border:"1px solid rgba(139, 92, 246, 0.2)", color:"var(--accent)", fontSize:12, fontWeight:700, fontFamily:"var(--mono)", marginBottom:32, textTransform:"uppercase", letterSpacing:"0.05em" }}>
-              <span style={{ display:"block", width:6, height:6, borderRadius:"50%", background:"var(--accent)", animation:"glow 2s infinite" }}></span>
-              Now Powered by Gemini 2.0 Flash
-            </div>
-            
             <h1 style={{ fontSize:"clamp(48px, 6vw, 84px)", fontWeight:900, marginBottom:24, letterSpacing:"-0.04em", lineHeight:1, background:"linear-gradient(135deg, #fff 30%, var(--accent) 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
               Spreadsheets,<br/>Meet Intelligence.
             </h1>
