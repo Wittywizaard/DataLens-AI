@@ -363,6 +363,7 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
         </div>
       </div>
 
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         <div style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
           {/* Header Actions */}
           <div style={{ position: "absolute", top: 20, right: 28, display: "flex", alignItems: "center", gap: 16, zIndex: 10 }}>
@@ -445,6 +446,7 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset }) {
             </button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
