@@ -1,29 +1,29 @@
 # DataLens AI 📊✨
 
-> **Transform Spreadsheets into Intelligence.**  
+> **Spreadsheets, Meet Intelligence.**  
 > Turn messy Excel and CSV data into stunning, business-ready visualizations and deep insights instantly—no Power BI or complex data science required.
 
 DataLens AI is a premium, agentic AI platform designed for mid-scale businesses and startups. It bridges the gap between basic spreadsheets and expensive BI tools, giving everyone the power to "chat" with their data.
 
 ---
 
-## 💎 Premium Design: Aurora Gold
-The latest version features a luxury **Aurora Gold** aesthetic:
-- **High-End Visuals**: Midnight black background with dynamic golden and orange gradients.
+## 💎 Premium Design System
+The latest version features an elevated luxury aesthetic:
+- **Playfair Display Typography**: Classy, editorial-grade headers.
+- **5 Dynamic Themes**: Seamlessly switch between *Midnight Gold*, *Ocean Blue*, *Emerald Green*, *Cyberpunk Neon*, and *Pastel Dream*. Every chart, bar, and stat card automatically recolors to match your chosen aesthetic.
 - **Glassmorphism UI**: Semi-transparent containers with backdrop blurs for a modern, state-of-the-art feel.
-- **Micro-animations**: Smooth transitions and glow effects that make data interaction feel alive.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- 🧠 **Agentic AI Intelligence**: Powered by **Gemini 2.0 Flash** for multi-turn reasoning and precise analysis.
-- 💬 **Natural Language Queries**: Simply ask "What are my top 5 products by margin?" and watch the magic happen.
+- 🧠 **Agentic AI Intelligence**: Powered by **Groq (Llama 3 70B)** for blazing-fast, multi-turn reasoning and precise analysis.
+- 📂 **Multi-File Merging**: Upload up to 10 Excel/CSV files simultaneously! The backend engine instantly merges them, adding a "Source File" tracker so the AI can run comparative analytics across different datasets.
+- 💬 **Natural Language Queries**: Simply ask "Compare Q1 and Q2 sales" and watch the magic happen.
 - 📊 **Automatic Visualization**: The AI intelligently selects the best chart type (Bar, Line, Pie, etc.) for your specific query.
-- 📉 **Insight Cards**: Instant summaries of KPIs, totals, averages, and emerging trends.
-- 🔓 **Zero Friction**: No sign-up or complex configuration. Upload a file and start analyzing in 5 seconds.
-- 💾 **Data Export**: Download your high-resolution charts as PNGs for presentations.
-- 🛡️ **Secure & Private**: Temporary session-based storage. Your data never leaves your control.
+- 🖨️ **Professional Exports**: Download your full analysis (including high-resolution `<canvas>` chart snapshots) as a perfectly formatted A4-sized **PDF**, **Microsoft Word (.doc)**, or plain text file. You can even set custom filenames!
+- 🔐 **Optional Cloud Storage (MongoDB)**: A fully integrated, JWT-secured authentication system allows users to create accounts to persist their data. Don't want to log in? The app is 100% usable anonymously.
+- 📈 **Vercel Analytics**: Built-in, out-of-the-box support for Vercel Web Analytics to track visitor metrics.
 
 ---
 
@@ -31,7 +31,8 @@ The latest version features a luxury **Aurora Gold** aesthetic:
 
 ### Prerequisites
 - **Node.js** 18+
-- **Google Gemini API Key**: Get one at [AI Studio](https://aistudio.google.com/app/apikey)
+- **Groq API Key**: Get one at [Groq Console](https://console.groq.com/keys)
+- **MongoDB** (Optional, for persistent user accounts)
 
 ### Installation
 
@@ -49,11 +50,14 @@ The latest version features a luxury **Aurora Gold** aesthetic:
 3. **Configure Environment**
    Create a `.env` file in the `backend/` directory:
    ```env
-   GEMINI_API_KEY=your_key_here
-   GEMINI_MODEL=gemini-2.0-flash
+   GROQ_API_KEY=your_key_here
+   GROQ_MODEL=llama-3.3-70b-versatile
    PORT=3001
    FRONTEND_URL=http://localhost:5173
+   MONGODB_URI=mongodb://127.0.0.1:27017/datalens # Required for user accounts
+   JWT_SECRET=super-secure-secret-key
    ```
+   *Note: If you have a Vercel Analytics tracking ID, add `VITE_GA_MEASUREMENT_ID=...` to `frontend/.env`.*
 
 4. **Launch the Engine**
    ```bash
@@ -69,12 +73,13 @@ Open [http://localhost:5173](http://localhost:5173) to see your data come to lif
 ```
 datalens-ai/
 ├── backend/                 # Node.js/Express Engine
-│   ├── routes/             # Gemini Prompting & Analysis Logic
-│   ├── utils/              # Spreadsheet Parsing & Storage
+│   ├── models/             # Mongoose DB Schemas (User)
+│   ├── routes/             # Groq Prompting, File Uploads, & Auth
+│   ├── utils/              # Multi-file Spreadsheet Parsing
 │   └── uploads/            # Temporary File Processing
 ├── frontend/               # React (Vite) Visual layer
-│   ├── src/                # Aurora Gold Design System & Components
-│   └── public/             # Static Assets
+│   ├── src/components/     # Headers, Auth Modals, Charts
+│   └── src/pages/          # Dashboard & Workspace logic
 └── package.json            # Unified scripts for the entire stack
 ```
 
@@ -83,10 +88,10 @@ datalens-ai/
 ## 🔧 Deployment
 
 ### Frontend: Vercel
-Optimized for Vercel deployment. Ensure `VITE_API_URL` environment variable points to your backend.
+Optimized for Vercel deployment. Vercel Analytics is already imported. Ensure `VITE_API_URL` environment variable points to your backend.
 
 ### Backend: Render / Railway
-The backend is containerized and ready for any cloud provider. Use the provided `Dockerfile` or `docker-compose.yml` for orchestration.
+The backend is containerized and ready for any cloud provider. Ensure you provide the production `MONGODB_URI` string in your cloud environment variables.
 
 ---
 
