@@ -46,41 +46,60 @@ const upload = multer({
 });
 
 // POST /api/upload
-router.post("/", upload.single("file"), async (req, res) => {
+router.post("/", upload.array("file", 10), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded." });
+    if (!req.files || req.files.length === 0) {
+      // Also check req.file for backwards compatibility just in case
+      if (req.file) req.files = [req.file];
+      else return res.status(400).json({ error: "No files uploaded." });
     }
 
-    const filePath = req.file.path;
-    const ext = path.extname(req.file.originalname).toLowerCase();
-    let headers = [];
+    let headersSet = new Set();
     let rows = [];
+    let originalNames = [];
 
-    // Parse the file
-    if (ext === ".csv" || ext === ".tsv") {
-      const content = fs.readFileSync(filePath, "utf8");
-      const delimiter = ext === ".tsv" ? "\t" : ",";
-      const result = Papa.parse(content, {
-        header: true,
-        skipEmptyLines: true,
-        dynamicTyping: true,
-        delimiter,
-      });
-      headers = result.meta.fields || [];
-      rows = result.data;
-    } else if (ext === ".xlsx" || ext === ".xls") {
-      const workbook = XLSX.readFile(filePath);
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const json = XLSX.utils.sheet_to_json(sheet, { defval: null });
-      headers = json.length ? Object.keys(json[0]) : [];
-      rows = json;
+    for (const file of req.files) {
+      const filePath = file.path;
+      const ext = path.extname(file.originalname).toLowerCase();
+      originalNames.push(file.originalname);
+      
+      let fileHeaders = [];
+      let fileRows = [];
+
+      // Parse the file
+      if (ext === ".csv" || ext === ".tsv") {
+        const content = fs.readFileSync(filePath, "utf8");
+        const delimiter = ext === ".tsv" ? "\t" : ",";
+        const result = Papa.parse(content, {
+          header: true,
+          skipEmptyLines: true,
+          dynamicTyping: true,
+          delimiter,
+        });
+        fileHeaders = result.meta.fields || [];
+        fileRows = result.data;
+      } else if (ext === ".xlsx" || ext === ".xls") {
+        const workbook = XLSX.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(sheet, { defval: null });
+        fileHeaders = json.length ? Object.keys(json[0]) : [];
+        fileRows = json;
+      }
+
+      fileHeaders.forEach(h => headersSet.add(h));
+      // Add source file identifier so AI can distinguish them
+      fileRows = fileRows.map(r => ({ ...r, "Source File": file.originalname }));
+      rows = rows.concat(fileRows);
+      
+      fs.unlinkSync(filePath);
     }
+    
+    headersSet.add("Source File");
+    const headers = Array.from(headersSet);
 
     if (!headers.length || !rows.length) {
-      fs.unlinkSync(filePath);
-      return res.status(400).json({ error: "File appears to be empty or unreadable." });
+      return res.status(400).json({ error: "Files appear to be empty or unreadable." });
     }
 
     // Detect column types
@@ -129,9 +148,11 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     // Store parsed data in memory
     const fileId = uuidv4();
+    const displayName = originalNames.length > 1 ? `${originalNames.length} files combined` : originalNames[0];
+    
     dataStore.set(fileId, {
       fileId,
-      originalName: req.file.originalname,
+      originalName: displayName,
       headers,
       rows,
       columnTypes,
@@ -139,9 +160,6 @@ router.post("/", upload.single("file"), async (req, res) => {
       rowCount: rows.length,
       uploadedAt: new Date().toISOString(),
     });
-
-    // Clean up the uploaded file (data is in memory now)
-    fs.unlinkSync(filePath);
 
     // Auto-delete after 1 hour
     setTimeout(() => {
@@ -151,7 +169,7 @@ router.post("/", upload.single("file"), async (req, res) => {
     res.json({
       success: true,
       fileId,
-      originalName: req.file.originalname,
+      originalName: displayName,
       rowCount: rows.length,
       headers,
       columnTypes,
@@ -160,10 +178,12 @@ router.post("/", upload.single("file"), async (req, res) => {
     });
   } catch (err) {
     console.error("Upload error:", err);
-    if (req.file?.path && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+    if (req.files) {
+      req.files.forEach(f => {
+        if (fs.existsSync(f.path)) fs.unlinkSync(f.path);
+      });
     }
-    res.status(500).json({ error: err.message || "Failed to process file." });
+    res.status(500).json({ error: err.message || "Failed to process files." });
   }
 });
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const userStore = require("../utils/userStore");
+const User = require("../models/User");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
@@ -29,19 +29,21 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ error: "Email, password, and name required" });
     }
     
-    if (userStore.findByEmail(email)) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(409).json({ error: "Email already registered" });
     }
     
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = userStore.create(email, passwordHash, name);
+    const user = new User({ email, passwordHash, name });
+    await user.save();
     
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
     
     res.status(201).json({
       token,
       user: {
-        id: user.id,
+        id: user._id,
         email: user.email,
         name: user.name
       }
@@ -60,7 +62,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Email and password required" });
     }
     
-    const user = userStore.findByEmail(email);
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
@@ -70,14 +72,15 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
     
-    userStore.update(user.id, { lastLogin: new Date() });
+    user.lastLogin = new Date();
+    await user.save();
     
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
     
     res.json({
       token,
       user: {
-        id: user.id,
+        id: user._id,
         email: user.email,
         name: user.name
       }
@@ -88,35 +91,47 @@ router.post("/login", async (req, res) => {
 });
 
 // Verify Token (get current user)
-router.get("/me", verifyToken, (req, res) => {
-  const user = userStore.findById(req.userId);
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
-  
-  res.json({
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      filesAnalyzed: user.filesAnalyzed
+router.get("/me", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
-  });
+    
+    res.json({
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        filesAnalyzed: user.filesAnalyzed
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch user" });
+  }
 });
 
 // Get all users (admin only - you can add role checking later)
-router.get("/users", verifyToken, (req, res) => {
-  const users = userStore.getAll();
-  res.json({ users, total: users.length });
+router.get("/users", verifyToken, async (req, res) => {
+  try {
+    const users = await User.find({}, "-passwordHash");
+    res.json({ users, total: users.length });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
 });
 
 // Delete user
-router.delete("/users/:id", verifyToken, (req, res) => {
-  const deleted = userStore.delete(parseInt(req.params.id));
-  if (deleted) {
-    res.json({ message: "User deleted" });
-  } else {
-    res.status(404).json({ error: "User not found" });
+router.delete("/users/:id", verifyToken, async (req, res) => {
+  try {
+    const deleted = await User.findByIdAndDelete(req.params.id);
+    if (deleted) {
+      res.json({ message: "User deleted" });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete user" });
   }
 });
 

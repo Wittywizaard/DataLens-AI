@@ -1,6 +1,6 @@
 import React from "react";
 
-export function Header({ onSettingsOpen }) {
+export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
   return (
     <header style={{ 
       height: 72, 
@@ -51,21 +51,49 @@ export function Header({ onSettingsOpen }) {
         >
           ⚙️
         </button>
-        <button style={{ 
-          background: "rgba(255,255,255,0.03)", 
-          border: "1px solid var(--border2)", 
-          color: "var(--text2)", 
-          padding: "8px 20px", 
-          borderRadius: 10, 
-          fontSize: 13, 
-          fontWeight: 600,
-          cursor: "pointer",
-          transition: "all 0.2s"
-        }}
-        onMouseOver={e => { e.target.style.background="rgba(255,255,255,0.06)"; e.target.style.borderColor="var(--border3)"; }}
-        onMouseOut={e => { e.target.style.background="rgba(255,255,255,0.03)"; e.target.style.borderColor="var(--border2)"; }}>
-          Sign In
-        </button>
+        {user ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, var(--accent), var(--accent2))", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, color: "#fff", fontSize: 14 }}>
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{user.name}</span>
+            </div>
+            <button style={{ 
+              background: "rgba(239,68,68,0.1)", 
+              border: "1px solid rgba(239,68,68,0.2)", 
+              color: "#fca5a5", 
+              padding: "8px 20px", 
+              borderRadius: 10, 
+              fontSize: 13, 
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.2s"
+            }}
+            onClick={onSignOut}
+            onMouseOver={e => { e.target.style.background="rgba(239,68,68,0.15)"; e.target.style.borderColor="rgba(239,68,68,0.3)"; }}
+            onMouseOut={e => { e.target.style.background="rgba(239,68,68,0.1)"; e.target.style.borderColor="rgba(239,68,68,0.2)"; }}>
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <button style={{ 
+            background: "rgba(255,255,255,0.03)", 
+            border: "1px solid var(--border2)", 
+            color: "var(--text2)", 
+            padding: "8px 20px", 
+            borderRadius: 10, 
+            fontSize: 13, 
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "all 0.2s"
+          }}
+          onClick={onAuthOpen}
+          onMouseOver={e => { e.target.style.background="rgba(255,255,255,0.06)"; e.target.style.borderColor="var(--border3)"; }}
+          onMouseOut={e => { e.target.style.background="rgba(255,255,255,0.03)"; e.target.style.borderColor="var(--border2)"; }}>
+            Sign In
+          </button>
+        )}
       </nav>
     </header>
   );

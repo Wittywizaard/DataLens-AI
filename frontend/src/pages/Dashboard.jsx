@@ -7,13 +7,22 @@ import { Bar, Line, Pie, Doughnut, Scatter } from "react-chartjs-2";
 import { useDropzone } from "react-dropzone";
 import html2canvas from "html2canvas";
 import axios from "axios";
+import html2pdf from "html2pdf.js";
 import { Header } from "../components/Header";
+import { AuthModal } from "../components/AuthModal";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler);
 
-const COLORS = ["#f59e0b","#fbbf24","#facc15","#ea580c","#d97706","#78350f","#b45309","#a16207","#ca8a04","#eab308","#fb923c","#fdba74"];
+const PALETTES = {
+  "Midnight Gold": ["#f59e0b","#fbbf24","#facc15","#ea580c","#d97706","#78350f","#b45309","#a16207","#ca8a04","#eab308","#fb923c","#fdba74", "#fde68a", "#fef3c7", "#fffbeb"],
+  "Ocean Blue": ["#0ea5e9","#38bdf8","#0284c7","#0369a1","#0c4a6e","#7dd3fc","#bae6fd","#075985","#2dd4bf","#14b8a6","#0f766e", "#3b82f6", "#2563eb", "#1d4ed8", "#eff6ff"],
+  "Emerald Green": ["#10b981","#34d399","#059669","#047857","#064e3b","#6ee7b7","#a7f3d0","#065f46","#84cc16","#65a30d","#4d7c0f", "#22c55e", "#16a34a", "#15803d", "#f0fdf4"],
+  "Cyberpunk Neon": ["#c026d3","#d946ef","#a21caf","#86198f","#4a044e","#f0abfc","#fae8ff","#e879f9","#4f46e5","#6366f1","#4338ca","#3730a3", "#f43f5e", "#e11d48", "#fff0f2"],
+  "Pastel Dream": ["#fca5a5","#fcd34d","#fef08a","#a7f3d0","#99f6e4","#bae6fd","#c7d2fe","#ddd6fe","#fbcfe8","#fecdd3","#fed7aa","#d9f99d", "#bfdbfe", "#e9d5ff", "#fdf4ff"]
+};
+
 const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter: Scatter };
 
 const baseOpts = (isRadial) => ({
@@ -46,11 +55,11 @@ function ThinkingDots() {
   );
 }
 
-function InsightCard({ label, value, trend }) {
+function InsightCard({ label, value, trend, color }) {
   return (
-    <div style={{ background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", borderRadius:16, padding:"20px", flex:1, minWidth:0, animation:"fadeUp .4s ease" }}>
+    <div style={{ background:"rgba(255,255,255,0.02)", borderLeft:`4px solid ${color}`, borderTop:"1px solid var(--border)", borderRight:"1px solid var(--border)", borderBottom:"1px solid var(--border)", borderRadius:16, padding:"20px", flex:1, minWidth:0, animation:"fadeUp .4s ease" }}>
       <div style={{ fontSize:11, color:"var(--text3)", textTransform:"uppercase", letterSpacing:"0.05em", fontWeight:700, marginBottom:8 }}>{label}</div>
-      <div style={{ fontSize:24, fontWeight:800, color:"#fff", letterSpacing:"-0.02em" }}>{value}</div>
+      <div style={{ fontSize:24, fontWeight:800, color, letterSpacing:"-0.02em", textShadow: `0 0 15px ${color}40` }}>{value}</div>
       {trend && (
         <div style={{ fontSize:12, color: trend.startsWith("+") ? "#10b981" : "#ef4444", marginTop:6, fontWeight:600 }}>
           {trend} from previous period
@@ -60,7 +69,7 @@ function InsightCard({ label, value, trend }) {
   );
 }
 
-function ChartBlock({ config }) {
+function ChartBlock({ config, colors }) {
   const chartRef = useRef(null);
   const isRadial = ["pie","doughnut"].includes(config.type);
   const Comp = CHART_MAP[config.type];
@@ -89,26 +98,22 @@ function ChartBlock({ config }) {
         const n = parseFloat(v); return isNaN(n) ? 0 : n;
       });
       let bgColor;
-      if (isRadial) {
-        if (Array.isArray(ds.backgroundColor) && ds.backgroundColor.length > 0) {
-          bgColor = labels.map((_, j) => ds.backgroundColor[j] || COLORS[j % COLORS.length]);
-        } else {
-          bgColor = labels.map((_, j) => COLORS[j % COLORS.length]);
-        }
+      if (isRadial || config.type === "bar") {
+        bgColor = labels.map((_, j) => colors[(j + i) % colors.length]);
       } else {
-        bgColor = Array.isArray(ds.backgroundColor) ? ds.backgroundColor : (ds.backgroundColor || COLORS[i % COLORS.length]);
+        bgColor = colors[i % colors.length];
       }
       return {
         label: ds.label || "Value",
         data: cleanData,
         backgroundColor: bgColor,
-        borderColor: isRadial ? "#05050f" : (ds.borderColor || COLORS[i % COLORS.length]),
+        borderColor: isRadial ? "#05050f" : (config.type === "bar" ? bgColor : colors[i % colors.length]),
         borderWidth: isRadial ? 2 : config.type === "line" ? 2.5 : 1,
         fill: config.type === "line" ? false : undefined,
         tension: 0.4,
         pointRadius: config.type === "line" ? 4 : 0,
         pointHoverRadius: 7,
-        pointBackgroundColor: COLORS[i%COLORS.length],
+        pointBackgroundColor: colors[i % colors.length],
         hoverOffset: isRadial ? 10 : 0,
       };
     }),
@@ -168,7 +173,7 @@ function DataTable({ headers, rows }) {
   );
 }
 
-function MessageBubble({ msg }) {
+function MessageBubble({ msg, colors }) {
   if (msg.role === "user") return (
     <div style={{ display:"flex", justifyContent:"flex-end", animation:"fadeUp .3s ease" }}>
       <div style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", borderRadius:"18px 18px 4px 18px", padding:"12px 18px", maxWidth:"75%", fontSize:14, lineHeight:1.6, boxShadow:"0 4px 20px var(--glow)", color: "#fff" }}>
@@ -203,11 +208,11 @@ function MessageBubble({ msg }) {
 
       {result.insights?.length > 0 && (
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(100px,1fr))", gap:8, marginBottom:4 }}>
-          {result.insights.map((ins,i) => <InsightCard key={i} {...ins} />)}
+          {result.insights.map((ins,i) => <InsightCard key={i} {...ins} color={colors[i % colors.length]} />)}
         </div>
       )}
 
-      {result.chartConfig?.type && <ChartBlock config={result.chartConfig} />}
+      {result.chartConfig?.type && <ChartBlock config={result.chartConfig} colors={colors} />}
 
       {result.tableData?.headers && result.tableData?.rows && (
         <DataTable headers={result.tableData.headers} rows={result.tableData.rows} />
@@ -219,8 +224,8 @@ function MessageBubble({ msg }) {
 function UploadZone({ onUpload, uploading, progress }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "text/csv":[".csv"], "text/tab-separated-values":[".tsv"], "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":[".xlsx"], "application/vnd.ms-excel":[".xls"] },
-    maxFiles: 1, maxSize: 25*1024*1024, disabled: uploading,
-    onDrop: (f) => f[0] && onUpload(f[0]),
+    maxFiles: 10, maxSize: 25*1024*1024, disabled: uploading,
+    onDrop: (f) => f && f.length > 0 && onUpload(f),
   });
 
   return (
@@ -277,11 +282,15 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, onQuery, onReset, onSettingsOpen }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange }) {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("preview");
+  const [showExportOptions, setShowExportOptions] = useState(false);
+  const [showThemeOptions, setShowThemeOptions] = useState(false);
   const endRef = useRef(null);
   const inputRef = useRef(null);
+  const messagesRef = useRef(null);
+  const fileInputRef = useRef(null);
   const headers = fileInfo?.headers ?? [];
   const columnTypes = fileInfo?.columnTypes ?? {};
   const stats = fileInfo?.stats ?? {};
@@ -307,6 +316,100 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset, onSettings
     const q = input.trim();
     if (!q || analyzing) return;
     setInput(""); onQuery(q); inputRef.current?.focus();
+  };
+
+  const exportPDF = () => {
+    if (!messagesRef.current) return;
+    
+    const filename = window.prompt("Enter a name for your PDF report:", "DataLens_Report");
+    if (filename === null) return; // User cancelled
+    
+    // Add temporary styles for PDF rendering to fix dark mode
+    const el = messagesRef.current.cloneNode(true);
+    el.style.padding = "20px";
+    el.style.background = "#05050f";
+    el.style.color = "#ffffff";
+    el.style.height = "auto";
+    el.style.overflow = "visible";
+
+    // Fix missing charts: Convert canvases to images since cloned DOM loses canvas context
+    const originalCanvases = messagesRef.current.querySelectorAll('canvas');
+    const clonedCanvases = el.querySelectorAll('canvas');
+    originalCanvases.forEach((canvas, index) => {
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL("image/png", 1.0);
+      img.style.width = canvas.style.width || canvas.width + 'px';
+      img.style.height = canvas.style.height || canvas.height + 'px';
+      img.style.display = 'block';
+      img.style.margin = '0 auto';
+      clonedCanvases[index].parentNode.replaceChild(img, clonedCanvases[index]);
+    });
+    
+    html2pdf().from(el).set({
+      margin: 15,
+      filename: `${filename.trim() || 'DataLens_Report'}.pdf`,
+      image: { type: 'jpeg', quality: 1.0 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#05050f', windowWidth: 1000 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    }).save();
+    setShowExportOptions(false);
+  };
+
+  const exportDOC = () => {
+    if (!messagesRef.current) return;
+    
+    const filename = window.prompt("Enter a name for your Word document:", "DataLens_Report");
+    if (filename === null) return;
+    
+    // Fix missing charts: Convert canvases to images
+    const el = messagesRef.current.cloneNode(true);
+    const originalCanvases = messagesRef.current.querySelectorAll('canvas');
+    const clonedCanvases = el.querySelectorAll('canvas');
+    originalCanvases.forEach((canvas, index) => {
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL("image/png");
+      img.style.width = "100%"; // Fit word document
+      img.style.maxWidth = "600px";
+      clonedCanvases[index].parentNode.replaceChild(img, clonedCanvases[index]);
+    });
+
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word</title><style>body { font-family: sans-serif; background: #05050f; color: #ffffff; }</style></head><body>";
+    const footer = "</body></html>";
+    const sourceHTML = header + el.innerHTML + footer;
+    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    const fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    fileDownload.href = source;
+    fileDownload.download = `${filename.trim() || 'DataLens_Report'}.doc`;
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
+    setShowExportOptions(false);
+  };
+
+  const exportTXT = () => {
+    const filename = window.prompt("Enter a name for your text report:", "DataLens_Report");
+    if (filename === null) return;
+    
+    let text = "DataLens AI Analysis Report\n============================\n\n";
+    messages.forEach(msg => {
+      if (msg.role === "user") text += `User: ${msg.content}\n\n`;
+      if (msg.role === "assistant" && msg.result) {
+        text += `DataLens:\n`;
+        if (msg.result.summary) text += `${msg.result.summary}\n`;
+        if (msg.result.insights?.length) {
+          msg.result.insights.forEach(ins => text += `- ${ins.label}: ${ins.value}\n`);
+        }
+        text += `\n`;
+      }
+    });
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${filename.trim() || 'DataLens_Report'}.txt`;
+    a.click();
+    setShowExportOptions(false);
   };
 
   return (
@@ -372,19 +475,74 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset, onSettings
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
         <div style={{ height: 64, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "0 28px", gap: 20, background: "rgba(3, 3, 11, 0.5)", backdropFilter: "blur(10px)", flexShrink: 0, zIndex: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }}></span>
             <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>Session active</span>
           </div>
+            <div style={{ position: "relative" }}>
+              <button onClick={() => {setShowThemeOptions(!showThemeOptions); setShowExportOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+                🎨 Theme
+              </button>
+              {showThemeOptions && (
+                <div style={{ position: "absolute", top: "110%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 160, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+                  {Object.keys(PALETTES).map(paletteName => (
+                    <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptions(false); }} style={{ padding: "10px 16px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseEnter={e => theme !== paletteName && (e.target.style.background="rgba(255,255,255,0.05)")} onMouseLeave={e => theme !== paletteName && (e.target.style.background="none")}>
+                      <span style={{ width: 12, height: 12, borderRadius: "50%", background: PALETTES[paletteName][0] }}></span>
+                      {paletteName}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div style={{ position: "relative" }}>
+              <button onClick={() => {setShowExportOptions(!showExportOptions); setShowThemeOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+                📥 Export Report
+              </button>
+              {showExportOptions && (
+                <div style={{ position: "absolute", top: "110%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 120, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+                  <button onClick={exportPDF} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>PDF Document</button>
+                  <button onClick={exportDOC} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Word (.doc)</button>
+                  <button onClick={exportTXT} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Plain Text</button>
+                </div>
+              )}
+            </div>
             <button onClick={onSettingsOpen} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px", borderRadius: 12, fontSize: 18, transition: "all 0.2s", cursor: "pointer", display: "flex" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
               ⚙️
             </button>
-            <button onClick={onReset} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
-              ↺ New file
-            </button>
+            <div style={{ position: "relative" }}>
+              <input 
+                type="file"
+                multiple 
+                ref={fileInputRef} 
+                style={{ display: "none" }} 
+                accept=".csv,.tsv,.xlsx,.xls" 
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    onUpload(Array.from(e.target.files));
+                  }
+                  e.target.value = null;
+                }}
+              />
+              <button onClick={() => fileInputRef.current?.click()} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
+                ↺ New file
+              </button>
+            </div>
         </div>
 
-        <div style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
+        <div ref={messagesRef} style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
+
+          {uploading && (
+            <div style={{ position: "absolute", inset: 0, background: "rgba(5,5,15,0.85)", backdropFilter: "blur(6px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", borderRadius: "16px" }}>
+              <div style={{ position:"relative", width:84, height:84, margin:"0 auto 24px" }}>
+                <svg viewBox="0 0 72 72" style={{ width:84, height:84, transform:"rotate(-90deg)" }}>
+                  <circle cx="36" cy="36" r="32" fill="none" stroke="var(--border2)" strokeWidth="3"/>
+                  <circle cx="36" cy="36" r="32" fill="none" stroke="var(--accent)" strokeWidth="3" strokeDasharray={`${(progress/100)*201} 201`} strokeLinecap="round" style={{ transition: "stroke-dasharray 0.3s ease" }}/>
+                </svg>
+                <span style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, fontFamily:"var(--mono)", color:"var(--accent)", fontWeight:700 }}>{progress}%</span>
+              </div>
+              <p style={{ color:"#fff", fontSize:16, fontWeight:600 }}>Analyzing new data stream…</p>
+            </div>
+          )}
 
           {messages.length === 0 ? (
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, textAlign: "center", paddingBottom: 40 }}>
@@ -403,7 +561,7 @@ function Workspace({ fileInfo, messages, analyzing, onQuery, onReset, onSettings
             </div>
           ) : (
             <>
-              {messages.map((m,i) => <MessageBubble key={i} msg={m} />)}
+              {messages.map((m,i) => <MessageBubble key={i} msg={m} colors={PALETTES[theme]} />)}
               {analyzing && <div style={{ display:"flex", gap:12, animation:"fadeUp .3s ease" }}><ThinkingDots /></div>}
             </>
           )}
@@ -536,20 +694,48 @@ export function Dashboard() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [analyzing, setAnalyzing] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [activeTheme, setActiveTheme] = useState("Midnight Gold");
   const [userApiKey, setUserApiKey] = useState(() => localStorage.getItem("datalens_api_key") || "");
+  const [user, setUser] = useState(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("datalens_user");
+    if (storedUser) {
+      try { setUser(JSON.parse(storedUser)); } catch (e) { }
+    }
+  }, []);
+
+  const handleLogin = (authData) => {
+    const userData = { ...authData.user, token: authData.token };
+    setUser(userData);
+    localStorage.setItem("datalens_user", JSON.stringify(userData));
+  };
+
+  const handleSignOut = () => {
+    setUser(null);
+    localStorage.removeItem("datalens_user");
+  };
 
   const saveApiKey = (key) => {
     setUserApiKey(key);
     localStorage.setItem("datalens_api_key", key);
   };
 
-  const handleUpload = async (file) => {
+  const handleUpload = async (fileOrFiles) => {
     setUploading(true); setUploadProgress(0);
     const interval = setInterval(() => setUploadProgress(p => p < 90 ? p + 10 : p), 200);
-    const formData = new FormData(); formData.append("file", file);
+    const formData = new FormData(); 
+    if (Array.isArray(fileOrFiles)) {
+      fileOrFiles.forEach(f => formData.append("file", f));
+    } else {
+      formData.append("file", fileOrFiles);
+    }
+    
     try {
       const res = await axios.post(`${API_URL}/api/upload`, formData, { headers: { "Content-Type": "multipart/form-data" } });
-      setFileId(res.data.fileId); setFileInfo(res.data.fileInfo);
+      setFileId(res.data.fileId); setFileInfo(res.data);
+      setMessages([]);
     } catch (e) { alert(e.response?.data?.error || "Upload failed"); }
     finally { clearInterval(interval); setUploadProgress(100); setTimeout(() => setUploading(false), 500); }
   };
@@ -563,7 +749,7 @@ export function Dashboard() {
       const res = await axios.post(`${API_URL}/api/analyze`, {
         fileId, query, conversationHistory: messages, userApiKey
       });
-      setMessages(prev => [...prev, { role: "assistant", result: res.data }]);
+      setMessages(prev => [...prev, { role: "assistant", result: res.data.result }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: "error", content: e.response?.data?.error || "Analysis failed" }]);
     } finally { setAnalyzing(false); }
@@ -600,13 +786,18 @@ export function Dashboard() {
         <div className="orb orb-gold" style={{ top: "-10%", left: "-10%", opacity: 0.15 }}></div>
         <div className="orb orb-orange" style={{ bottom: "10%", right: "-5%", opacity: 0.1 }}></div>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "100%", background: "linear-gradient(180deg, rgba(245, 158, 11, 0.03) 0%, transparent 40%)", pointerEvents: "none" }}></div>
-        <Header onSettingsOpen={() => setIsSettingsOpen(true)} />
+        <Header 
+          onSettingsOpen={() => setIsSettingsOpen(true)} 
+          user={user} 
+          onAuthOpen={() => setIsAuthOpen(true)} 
+          onSignOut={handleSignOut} 
+        />
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
           <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "120px 0", position: "relative", zIndex: 3 }}>
-            <h1 style={{ fontSize:"clamp(48px, 8vw, 110px)", fontWeight:900, marginBottom:32, letterSpacing:"-0.05em", lineHeight:0.9, color: "#fff", maxWidth: 1000, margin: "0 auto 32px" }}>
+            <h1 style={{ fontFamily: "var(--classy)", fontSize:"clamp(48px, 8vw, 110px)", fontWeight:700, marginBottom:32, letterSpacing:"-0.02em", lineHeight:1.0, color: "#fff", maxWidth: 1000, margin: "0 auto 32px" }}>
               Spreadsheets,<br/>
-              <span style={{ background:"linear-gradient(135deg, #fff 30%, #f59e0b 80%, #fbbf24 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Meet Intelligence.</span>
+              <span style={{ fontStyle: "italic", background:"linear-gradient(135deg, #fff 30%, #f59e0b 80%, #fbbf24 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Meet Intelligence.</span>
             </h1>
             
             <p style={{ fontSize:"clamp(18px, 2.5vw, 22px)", color:"#b4b4cf", maxWidth:800, margin:"0 auto 56px", lineHeight:1.5, fontWeight: 500 }}>
@@ -697,6 +888,11 @@ export function Dashboard() {
           onSave={saveApiKey}
           currentKey={userApiKey}
         />
+        <AuthModal 
+          isOpen={isAuthOpen} 
+          onClose={() => setIsAuthOpen(false)} 
+          onLogin={handleLogin} 
+        />
       </div>
     );
   }
@@ -716,20 +912,34 @@ export function Dashboard() {
         transition: "background 0.1s ease-out"
       }}
     >
-      <Header onSettingsOpen={() => setIsSettingsOpen(true)} />
+      <Header 
+        onSettingsOpen={() => setIsSettingsOpen(true)} 
+        user={user} 
+        onAuthOpen={() => setIsAuthOpen(true)} 
+        onSignOut={handleSignOut} 
+      />
       <Workspace
         fileInfo={safeFileInfo}
         messages={messages}
         analyzing={analyzing}
+        uploading={uploading}
+        progress={uploadProgress}
         onQuery={queryAnalysis}
-        onReset={handleReset}
+        onUpload={handleUpload}
         onSettingsOpen={() => setIsSettingsOpen(true)}
+        theme={activeTheme}
+        onThemeChange={setActiveTheme}
       />
       <SettingsModal 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
         onSave={saveApiKey}
         currentKey={userApiKey}
+      />
+      <AuthModal 
+        isOpen={isAuthOpen} 
+        onClose={() => setIsAuthOpen(false)} 
+        onLogin={handleLogin} 
       />
     </div>
   );

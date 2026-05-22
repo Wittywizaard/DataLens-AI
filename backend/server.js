@@ -13,6 +13,13 @@ const authRoutes = require("./routes/auth");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// MongoDB Connection
+const mongoose = require("mongoose");
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/datalens";
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log("✓ MongoDB Connected Successfully"))
+  .catch(err => console.error("✗ MongoDB Connection Error:", err));
+
 // Ensure uploads directory exists at startup
 const fs = require("fs");
 const uploadsDir = path.join(__dirname, "uploads");
@@ -89,3 +96,4 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+// Triggering nodemon restart 2

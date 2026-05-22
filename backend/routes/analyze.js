@@ -1,5 +1,5 @@
 const express = require("express");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const Groq = require("groq-sdk");
 const dataStore = require("../utils/dataStore");
 
 const router = express.Router();
@@ -153,13 +153,13 @@ router.post("/", async (req, res) => {
     const { fileId, query, conversationHistory = [], userApiKey } = req.body;
 
     // Use user-provided key if available, otherwise fallback to system key
-    const apiKeyToUse = userApiKey || process.env.GEMINI_API_KEY;
+    const apiKeyToUse = userApiKey || process.env.GROQ_API_KEY;
     
     if (!apiKeyToUse) {
-      return res.status(400).json({ error: "No API key found. Please provide your own Gemini API key in Settings." });
+      return res.status(400).json({ error: "No API key found. Please provide your own Groq API key in Settings." });
     }
 
-    const currentGenAI = new GoogleGenerativeAI(apiKeyToUse);
+    const groq = new Groq({ apiKey: apiKeyToUse });
 
     if (!fileId || !query) {
       return res.status(400).json({ error: "fileId and query are required." });
@@ -191,17 +191,20 @@ router.post("/", async (req, res) => {
       query,
     });
 
-    const model = currentGenAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL || "gemini-2.0-flash",
-      generationConfig: {
-        temperature: 0.1,       // very low — maximises JSON consistency
-        maxOutputTokens: 3000,
-        responseMimeType: "application/json",  // force JSON output mode
-      },
+    const modelName = process.env.GROQ_MODEL || "llama3-70b-8192";
+
+    const result = await groq.chat.completions.create({
+      model: modelName,
+      messages: [
+        { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.1,
+      max_tokens: 3000,
+      response_format: { type: "json_object" },
     });
 
-    const result = await model.generateContent(prompt);
-    const rawText = result.response.text().trim();
+    const rawText = result.choices[0]?.message?.content?.trim();
 
     if (!rawText) {
       return res.status(500).json({ error: "Empty response from AI." });
@@ -237,11 +240,11 @@ router.post("/", async (req, res) => {
   } catch (err) {
     console.error("Analyze error:", err.message);
 
-    if (err.message?.includes("API_KEY_INVALID") || err.message?.includes("API key not valid")) {
-      return res.status(500).json({ error: "Invalid Gemini API key. Double-check GEMINI_API_KEY in backend/.env" });
+    if (err.status === 401 || err.message?.includes("API_KEY_INVALID") || err.message?.includes("API key not valid")) {
+      return res.status(500).json({ error: "Invalid Groq API key. Double-check GROQ_API_KEY in backend/.env" });
     }
-    if (err.message?.includes("RESOURCE_EXHAUSTED") || err.message?.includes("quota") || err.status === 429) {
-      return res.status(429).json({ error: "Free tier limit reached for today. Resets in 24 hours." });
+    if (err.status === 429 || err.message?.includes("RESOURCE_EXHAUSTED") || err.message?.includes("quota")) {
+      return res.status(429).json({ error: "Rate limit reached. Please try again later." });
     }
     if (err.message?.includes("SAFETY")) {
       return res.status(400).json({ error: "Request blocked by safety filters. Try rephrasing." });
