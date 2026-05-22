@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Trigger Render Deploy
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -28,7 +28,6 @@ jobs:
           echo "Triggering Render deployment..."
           curl -X POST "$DEPLOY_HOOK" \
             -H "Content-Type: application/json" \
-            -d '{"ref":"main"}' \
             -w "\nHTTP Status: %{http_code}\n"
           
           echo "Deployment webhook triggered successfully"
