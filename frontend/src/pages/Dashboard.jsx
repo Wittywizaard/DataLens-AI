@@ -312,6 +312,7 @@ function UploadZone({ onUpload, uploading, progress }) {
 function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange }) {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("preview");
+  const [mainView, setMainView] = useState("chat");
   const [showExportOptions, setShowExportOptions] = useState(false);
   const [showThemeOptions, setShowThemeOptions] = useState(false);
   const endRef = useRef(null);
@@ -503,8 +504,10 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         {/* Workspace Header Bar */}
         <div className="chat-header">
           <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }}></span>
-            <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>Session active</span>
+            <div style={{ display: "flex", background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 4, border: "1px solid var(--border)" }}>
+              <button onClick={() => setMainView("chat")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "chat" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "chat" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>💬 Chat</button>
+              <button onClick={() => setMainView("dashboard")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>📊 Dashboard</button>
+            </div>
           </div>
             <div style={{ position: "relative" }}>
               <button onClick={() => {setShowThemeOptions(!showThemeOptions); setShowExportOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
@@ -571,7 +574,23 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             </div>
           )}
 
-          {messages.length === 0 ? (
+          {mainView === "dashboard" ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 24 }}>
+              {messages.filter(m => m.role === "assistant" && m.result?.chartConfig).length === 0 ? (
+                <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: 60, color: "var(--text3)" }}>
+                  <div style={{ fontSize: 48, filter: "drop-shadow(0 0 20px var(--glow))", marginBottom: 16 }}>📊</div>
+                  <h3 style={{ color: "#fff", fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Your Dashboard is empty</h3>
+                  <p style={{ fontSize: 16 }}>Ask a question in the Chat that generates a chart, and it will automatically appear here!</p>
+                </div>
+              ) : (
+                messages.filter(m => m.role === "assistant" && m.result?.chartConfig).map((m, i) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", borderRadius: 24, padding: 24, display: "flex", flexDirection: "column" }}>
+                    <ChartBlock config={m.result.chartConfig} colors={PALETTES[theme]} />
+                  </div>
+                ))
+              )}
+            </div>
+          ) : messages.length === 0 ? (
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, textAlign: "center", paddingBottom: 40 }}>
               <div style={{ fontSize: 48, filter: "drop-shadow(0 0 20px var(--glow))" }}>✦</div>
               <div>
