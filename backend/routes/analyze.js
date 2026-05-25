@@ -148,18 +148,58 @@ User question: ${query}
 Remember: respond with ONLY the JSON object. Nothing else.`;
 }
 
+class ApiKeyPool {
+  constructor() {
+    this.keys = [];
+    this.initialized = false;
+  }
+
+  init() {
+    if (this.initialized) return;
+    const envKeys = Object.keys(process.env)
+      .filter(k => k.startsWith('GROQ_API_KEY'))
+      .map(k => process.env[k])
+      .filter(Boolean);
+      
+    this.keys = envKeys.map(k => ({ value: k, isDead: false, deadUntil: 0 }));
+    this.initialized = true;
+  }
+
+  getKey() {
+    this.init();
+    if (this.keys.length === 0) return null;
+    
+    const now = Date.now();
+    for (let keyObj of this.keys) {
+      if (keyObj.isDead && now > keyObj.deadUntil) keyObj.isDead = false;
+    }
+
+    const availableKeys = this.keys.filter(k => !k.isDead);
+    if (availableKeys.length === 0) return null;
+    
+    const keyObj = availableKeys[0];
+    const idx = this.keys.indexOf(keyObj);
+    this.keys.splice(idx, 1);
+    this.keys.push(keyObj);
+    
+    return keyObj.value;
+  }
+
+  markDead(keyValue) {
+    const keyObj = this.keys.find(k => k.value === keyValue);
+    if (keyObj) {
+      keyObj.isDead = true;
+      keyObj.deadUntil = Date.now() + (1000 * 60 * 60 * 4); // Dead for 4 hours
+      console.warn(`[Key Pool] Key ${keyValue.substring(0, 5)}... marked dead for 4 hours due to rate limit.`);
+    }
+  }
+}
+
+const keyPool = new ApiKeyPool();
+
 router.post("/", async (req, res) => {
   try {
     const { fileId, query, conversationHistory = [], userApiKey } = req.body;
-
-    // Use user-provided key if available, otherwise fallback to system key
-    const apiKeyToUse = userApiKey || process.env.GROQ_API_KEY;
-    
-    if (!apiKeyToUse) {
-      return res.status(400).json({ error: "No API key found. Please provide your own Groq API key in Settings." });
-    }
-
-    const groq = new Groq({ apiKey: apiKeyToUse });
 
     if (!fileId || !query) {
       return res.status(400).json({ error: "fileId and query are required." });
@@ -192,17 +232,66 @@ router.post("/", async (req, res) => {
     });
 
     const modelName = process.env.GROQ_MODEL || "llama3-70b-8192";
+    let result;
 
-    const result = await groq.chat.completions.create({
-      model: modelName,
-      messages: [
-        { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.1,
-      max_tokens: 3000,
-      response_format: { type: "json_object" },
-    });
+    if (userApiKey) {
+      const groq = new Groq({ apiKey: userApiKey });
+      result = await groq.chat.completions.create({
+        model: modelName,
+        messages: [
+          { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.1,
+        max_tokens: 3000,
+        response_format: { type: "json_object" },
+      });
+    } else {
+      keyPool.init();
+      if (keyPool.keys.length === 0) {
+        return res.status(400).json({ error: "No system API keys found. Please provide your own Groq API key in Settings." });
+      }
+
+      let maxAttempts = keyPool.keys.length;
+      let attempt = 0;
+      let success = false;
+      let lastError = null;
+
+      while (attempt < maxAttempts && !success) {
+        const apiKeyToUse = keyPool.getKey();
+        if (!apiKeyToUse) {
+           return res.status(429).json({ error: "All system API keys are exhausted for today. Please provide your own API key in Settings." });
+        }
+
+        const groq = new Groq({ apiKey: apiKeyToUse });
+        
+        try {
+          result = await groq.chat.completions.create({
+            model: modelName,
+            messages: [
+              { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+              { role: "user", content: prompt }
+            ],
+            temperature: 0.1,
+            max_tokens: 3000,
+            response_format: { type: "json_object" },
+          });
+          success = true;
+        } catch (error) {
+          lastError = error;
+          const isRateLimit = error.status === 429 || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota");
+          
+          if (isRateLimit) {
+            keyPool.markDead(apiKeyToUse);
+            attempt++;
+          } else {
+            throw error;
+          }
+        }
+      }
+      
+      if (!success) throw lastError;
+    }
 
     const rawText = result.choices[0]?.message?.content?.trim();
 

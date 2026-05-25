@@ -49,8 +49,35 @@ function ThinkingDots() {
   return (
     <div style={{ display:"flex", alignItems:"center", gap:5 }}>
       {[0,1,2].map(i => (
-        <span key={i} style={{ width:6, height:6, borderRadius:"50%", background:"#7c3aed", display:"inline-block", animation:`dot 1.2s ${i*0.2}s infinite` }} />
+        <span key={i} style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", display:"inline-block", animation:`dot 1.2s ${i*0.2}s infinite` }} />
       ))}
+    </div>
+  );
+}
+
+function AnalyzingState() {
+  const [textIndex, setTextIndex] = useState(0);
+  const loadingTexts = [
+    "Reading dataset context...",
+    "Extracting key insights...",
+    "Running multi-variate analysis...",
+    "Generating visual charts...",
+    "Finalizing report..."
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTextIndex((prev) => Math.min(prev + 1, loadingTexts.length - 1));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:12, animation:"fadeUp .3s ease", padding: "12px 18px", background: "rgba(255,255,255,0.02)", borderRadius: "18px 18px 18px 4px", width: "fit-content", border: "1px solid var(--border)" }}>
+      <ThinkingDots />
+      <span style={{ fontSize: 13, color: "var(--text3)", fontFamily: "var(--mono)", fontWeight: 500, letterSpacing: "0.02em" }}>
+        {loadingTexts[textIndex]}
+      </span>
     </div>
   );
 }
@@ -224,7 +251,7 @@ function MessageBubble({ msg, colors }) {
 function UploadZone({ onUpload, uploading, progress }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "text/csv":[".csv"], "text/tab-separated-values":[".tsv"], "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":[".xlsx"], "application/vnd.ms-excel":[".xls"] },
-    maxFiles: 10, maxSize: 25*1024*1024, disabled: uploading,
+    maxFiles: 10, maxSize: 1024*1024*1024, disabled: uploading, // 1GB
     onDrop: (f) => f && f.length > 0 && onUpload(f),
   });
 
@@ -413,8 +440,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   };
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"320px 1fr", height:"calc(100vh - 72px)", overflow:"hidden", marginTop: 72 }}>
-      <div style={{ background:"var(--bg2)", borderRight:"1px solid var(--border)", display:"flex", flexDirection:"column", overflow:"hidden" }}>
+    <div className="workspace-container">
+      <div className="workspace-sidebar">
         <div style={{ padding:"20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
             <div style={{ width:40, height:40, background:"rgba(139, 92, 246, 0.15)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, border:"1px solid rgba(139, 92, 246, 0.2)" }}>📄</div>
@@ -474,8 +501,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
-        <div style={{ height: 64, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "0 28px", gap: 20, background: "rgba(3, 3, 11, 0.5)", backdropFilter: "blur(10px)", flexShrink: 0, zIndex: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
+        <div className="chat-header">
+          <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }}></span>
             <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>Session active</span>
           </div>
@@ -562,7 +589,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           ) : (
             <>
               {messages.map((m,i) => <MessageBubble key={i} msg={m} colors={PALETTES[theme]} />)}
-              {analyzing && <div style={{ display:"flex", gap:12, animation:"fadeUp .3s ease" }}><ThinkingDots /></div>}
+              {analyzing && <AnalyzingState />}
             </>
           )}
           <div ref={endRef} />
