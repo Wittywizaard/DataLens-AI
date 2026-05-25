@@ -189,7 +189,7 @@ a { text-decoration: none; color: inherit; }
     padding: 0 16px !important;
   }
   .header-logo-text {
-    display: none !important;
+    font-size: 16px !important;
   }
   .header-nav {
     gap: 12px !important;
