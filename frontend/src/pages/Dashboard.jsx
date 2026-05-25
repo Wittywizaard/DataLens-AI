@@ -28,6 +28,7 @@ const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter:
 const baseOpts = (isRadial) => ({
   responsive: true, maintainAspectRatio: false,
   width: isRadial ? 300 : 400, height: isRadial ? 300 : 300,
+  devicePixelRatio: 4, // Forces ultra-high resolution rendering
   animation: { duration: 600, easing: "easeInOutQuart" },
   plugins: {
     legend: { labels: { color: "#b4b4cf", font: { family: "'JetBrains Mono'", size: 11 }, padding: 20, boxWidth: 10 } },
