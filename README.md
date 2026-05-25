@@ -23,6 +23,7 @@ The latest version features an elevated luxury aesthetic:
 - 📊 **Automatic Visualization**: The AI intelligently selects the best chart type (Bar, Line, Pie, etc.) for your specific query.
 - 🖨️ **Professional Exports**: Download your full analysis (including high-resolution `<canvas>` chart snapshots) as a perfectly formatted A4-sized **PDF**, **Microsoft Word (.doc)**, or plain text file. You can even set custom filenames!
 - 🔐 **Optional Cloud Storage (MongoDB)**: A fully integrated, JWT-secured authentication system allows users to create accounts to persist their data. Don't want to log in? The app is 100% usable anonymously.
+- 🔑 **Bring Your Own Key (BYOK)**: Built-in settings modal allowing power users to plug in their own free Groq API key, bypassing any shared server rate limits for massive data processing.
 - 📈 **Vercel Analytics**: Built-in, out-of-the-box support for Vercel Web Analytics to track visitor metrics.
 
 ---
