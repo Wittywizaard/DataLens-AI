@@ -735,9 +735,29 @@ const Section = ({ children, style }) => {
 };
 
 export function Dashboard() {
-  const [fileId, setFileId] = useState(null);
-  const [fileInfo, setFileInfo] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [fileId, setFileId] = useState(() => sessionStorage.getItem("datalens_fileId") || null);
+  const [fileInfo, setFileInfo] = useState(() => {
+    const saved = sessionStorage.getItem("datalens_fileInfo");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [messages, setMessages] = useState(() => {
+    const saved = sessionStorage.getItem("datalens_messages");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    if (fileId) sessionStorage.setItem("datalens_fileId", fileId);
+    else sessionStorage.removeItem("datalens_fileId");
+  }, [fileId]);
+
+  useEffect(() => {
+    if (fileInfo) sessionStorage.setItem("datalens_fileInfo", JSON.stringify(fileInfo));
+    else sessionStorage.removeItem("datalens_fileInfo");
+  }, [fileInfo]);
+
+  useEffect(() => {
+    sessionStorage.setItem("datalens_messages", JSON.stringify(messages));
+  }, [messages]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [analyzing, setAnalyzing] = useState(false);
