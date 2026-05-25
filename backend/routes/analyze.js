@@ -18,7 +18,7 @@ function sanitizeResult(parsed, headers, columnTypes) {
     const cfg = parsed.chartConfig;
 
     // Ensure type is valid
-    const validTypes = ["bar","line","pie","doughnut","scatter"];
+    const validTypes = ["bar","line","pie","doughnut","scatter","radar","polarArea","bubble"];
     if (!validTypes.includes(cfg.type)) cfg.type = "bar";
 
     // Ensure labels is an array
@@ -27,7 +27,7 @@ function sanitizeResult(parsed, headers, columnTypes) {
     // Ensure datasets is an array
     if (!Array.isArray(cfg.datasets)) cfg.datasets = [];
 
-    const isRadial = ["pie","doughnut"].includes(cfg.type);
+    const isRadial = ["pie","doughnut","polarArea"].includes(cfg.type);
 
     cfg.datasets = cfg.datasets.map((ds, i) => {
       // Ensure data is array of numbers
@@ -38,7 +38,7 @@ function sanitizeResult(parsed, headers, columnTypes) {
         return isNaN(n) ? 0 : n;
       });
 
-      // FIX: For pie/doughnut, backgroundColor MUST be an array
+      // FIX: For pie/doughnut/polarArea, backgroundColor MUST be an array
       if (isRadial) {
         if (!Array.isArray(ds.backgroundColor)) {
           // AI returned a string — generate array
@@ -52,12 +52,18 @@ function sanitizeResult(parsed, headers, columnTypes) {
         ds.borderColor = "#05050f";
         ds.borderWidth = 2;
       } else {
-        // For bar/line: ensure backgroundColor is a string or valid array
+        // For bar/line/radar/bubble: ensure backgroundColor is a string or valid array
         if (Array.isArray(ds.backgroundColor) && ds.backgroundColor.length === 0) {
           ds.backgroundColor = COLORS[i % COLORS.length];
         }
         if (!ds.backgroundColor) ds.backgroundColor = COLORS[i % COLORS.length];
         if (!ds.borderColor) ds.borderColor = COLORS[i % COLORS.length];
+        
+        // Add transparency for radar charts so they don't block the grid
+        if (cfg.type === "radar" && typeof ds.backgroundColor === "string") {
+            ds.backgroundColor = ds.backgroundColor + "40"; // 25% opacity hex
+            ds.borderWidth = 2;
+        }
       }
 
       if (!ds.label) ds.label = "Value";
@@ -119,11 +125,14 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
 - Use "line" for data over time / trends
 - Use "pie" or "doughnut" for showing percentages/proportions (max 8 slices)
 - Use "scatter" for correlation between two numeric columns
+- Use "radar" for comparing multiple quantitative variables across a single category (like skill sets or performance metrics)
+- Use "polarArea" similar to pie charts but when you also want the radius/size of the slice to represent the magnitude
+- Use "bubble" when you have 3 numeric dimensions (x, y, and r for bubble size)
 
 ==CRITICAL COLOR RULES==
-- For "bar" and "line": backgroundColor MUST be a single color string like "#f59e0b"
-- For "pie" and "doughnut": backgroundColor MUST be an ARRAY of color strings from this palette: ["#f59e0b", "#fbbf24", "#d97706", "#b45309", "#78350f", "#fcd34d", "#fb923c", "#ea580c"]
-- NEVER use a single string for pie/doughnut backgroundColor.
+- For "bar", "line", "radar" and "bubble": backgroundColor MUST be a single color string like "#f59e0b"
+- For "pie", "doughnut", and "polarArea": backgroundColor MUST be an ARRAY of color strings from this palette: ["#f59e0b", "#fbbf24", "#d97706", "#b45309", "#78350f", "#fcd34d", "#fb923c", "#ea580c"]
+- NEVER use a single string for pie/doughnut/polarArea backgroundColor.
 
 ==OTHER RULES==
 - labels: max 12 items. If more, group the smallest values as "Other"

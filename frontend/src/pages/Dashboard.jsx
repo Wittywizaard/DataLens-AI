@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
-  Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement,
+  Chart as ChartJS, CategoryScale, LinearScale, RadialLinearScale, BarElement, LineElement,
   PointElement, ArcElement, Title, Tooltip, Legend, Filler,
 } from "chart.js";
-import { Bar, Line, Pie, Doughnut, Scatter } from "react-chartjs-2";
+import { Bar, Line, Pie, Doughnut, Scatter, Radar, PolarArea, Bubble } from "react-chartjs-2";
 import { useDropzone } from "react-dropzone";
 import html2canvas from "html2canvas";
 import axios from "axios";
@@ -13,7 +13,7 @@ import { AuthModal } from "../components/AuthModal";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(CategoryScale, LinearScale, RadialLinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler);
 
 const PALETTES = {
   "Midnight Gold": ["#f59e0b","#fbbf24","#facc15","#ea580c","#d97706","#78350f","#b45309","#a16207","#ca8a04","#eab308","#fb923c","#fdba74", "#fde68a", "#fef3c7", "#fffbeb"],
@@ -23,11 +23,11 @@ const PALETTES = {
   "Pastel Dream": ["#fca5a5","#fcd34d","#fef08a","#a7f3d0","#99f6e4","#bae6fd","#c7d2fe","#ddd6fe","#fbcfe8","#fecdd3","#fed7aa","#d9f99d", "#bfdbfe", "#e9d5ff", "#fdf4ff"]
 };
 
-const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter: Scatter };
+const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter: Scatter, radar: Radar, polarArea: PolarArea, bubble: Bubble };
 
 const baseOpts = (isRadial) => ({
   responsive: true, maintainAspectRatio: false,
-  width: isRadial ? 300 : 400, height: isRadial ? 250 : 300,
+  width: isRadial ? 300 : 400, height: isRadial ? 300 : 300,
   animation: { duration: 600, easing: "easeInOutQuart" },
   plugins: {
     legend: { labels: { color: "#b4b4cf", font: { family: "'JetBrains Mono'", size: 11 }, padding: 20, boxWidth: 10 } },
@@ -98,9 +98,9 @@ function InsightCard({ label, value, trend, color }) {
 
 function ChartBlock({ config, colors }) {
   const chartRef = useRef(null);
-  const isRadial = ["pie","doughnut"].includes(config.type);
-  const Comp = CHART_MAP[config.type];
-  if (!Comp) return null;
+  if (!config) return null;
+  const Comp = CHART_MAP[config.type] || Bar;
+  const isRadial = ["pie", "doughnut", "polarArea", "radar"].includes(config.type);
 
   const handleDownload = async () => {
     if (chartRef.current) {
