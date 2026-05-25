@@ -153,6 +153,13 @@ a { text-decoration: none; color: inherit; }
   z-index: 10;
 }
 
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
 @media (max-width: 800px) {
   .workspace-container {
     display: flex;
@@ -175,5 +182,27 @@ a { text-decoration: none; color: inherit; }
   }
   .hide-on-mobile {
     display: none !important;
+  }
+  
+  /* Landing Page Mobile Fixes */
+  .main-header {
+    padding: 0 16px !important;
+  }
+  .header-logo-text {
+    display: none !important;
+  }
+  .header-nav {
+    gap: 12px !important;
+  }
+  .header-nav-link {
+    display: none !important;
+  }
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px;
+  }
+  .hero-buttons button {
+    width: 100%;
   }
 }
