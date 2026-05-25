@@ -233,23 +233,49 @@ router.post("/", async (req, res) => {
 
     const modelName = process.env.GROQ_MODEL || "llama3-70b-8192";
     let result;
+    let rawText = "";
 
     if (userApiKey) {
-      const groq = new Groq({ apiKey: userApiKey });
-      result = await groq.chat.completions.create({
-        model: modelName,
-        messages: [
-          { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.1,
-        max_tokens: 3000,
-        response_format: { type: "json_object" },
-      });
+      if (userApiKey.startsWith("sk-")) {
+        const OpenAI = require("openai");
+        const openai = new OpenAI({ apiKey: userApiKey });
+        result = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.1,
+          response_format: { type: "json_object" },
+        });
+        rawText = result.choices[0]?.message?.content?.trim();
+      } else if (userApiKey.startsWith("AIza")) {
+        const { GoogleGenerativeAI } = require("@google/generative-ai");
+        const genAI = new GoogleGenerativeAI(userApiKey);
+        const model = genAI.getGenerativeModel({ 
+          model: "gemini-1.5-flash",
+          generationConfig: { responseMimeType: "application/json" }
+        });
+        const chatResponse = await model.generateContent(`You MUST respond with only valid JSON. No text before or after.\n\n${prompt}`);
+        rawText = chatResponse.response.text().trim();
+      } else {
+        const groq = new Groq({ apiKey: userApiKey });
+        result = await groq.chat.completions.create({
+          model: modelName,
+          messages: [
+            { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.1,
+          max_tokens: 3000,
+          response_format: { type: "json_object" },
+        });
+        rawText = result.choices[0]?.message?.content?.trim();
+      }
     } else {
       keyPool.init();
       if (keyPool.keys.length === 0) {
-        return res.status(400).json({ error: "No system API keys found. Please provide your own Groq API key in Settings." });
+        return res.status(400).json({ error: "No system API keys found. Please provide your own API key in Settings." });
       }
 
       let maxAttempts = keyPool.keys.length;
@@ -277,6 +303,7 @@ router.post("/", async (req, res) => {
             response_format: { type: "json_object" },
           });
           success = true;
+          rawText = result.choices[0]?.message?.content?.trim();
         } catch (error) {
           lastError = error;
           const isRateLimit = error.status === 429 || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota");
@@ -292,8 +319,6 @@ router.post("/", async (req, res) => {
       
       if (!success) throw lastError;
     }
-
-    const rawText = result.choices[0]?.message?.content?.trim();
 
     if (!rawText) {
       return res.status(500).json({ error: "Empty response from AI." });

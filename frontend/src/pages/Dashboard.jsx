@@ -658,15 +658,15 @@ function SettingsModal({ isOpen, onClose, onSave, currentKey }) {
         </div>
         <p style={{ fontSize: 14, color: "var(--text3)", marginBottom: 24, lineHeight: 1.6 }}>
           <strong>Power User? Bypass server limits.</strong><br/>
-          If the site is experiencing heavy traffic, you can provide your own free Groq API key to guarantee zero downtime and instant processing for massive files. Get one instantly at <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Groq Console</a>.
+          Provide your own API key to guarantee zero downtime and instant processing. Our Universal Detection automatically supports keys from <strong>OpenAI (ChatGPT)</strong>, <strong>Google Gemini</strong>, or <strong>Groq</strong>.
         </p>
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--text2)", marginBottom: 8, textTransform: "uppercase", fontFamily: "var(--mono)" }}>Groq API Key</label>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--text2)", marginBottom: 8, textTransform: "uppercase", fontFamily: "var(--mono)" }}>API Key (OpenAI / Gemini / Groq)</label>
           <input
             type="password"
             value={key}
             onChange={e => setKey(e.target.value)}
-            placeholder="Enter gsk_..."
+            placeholder="sk-..., AIza..., or gsk_..."
             style={{ width: "100%", background: "var(--bg3)", border: "1px solid var(--border2)", borderRadius: 12, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none", transition: "border 0.2s" }}
             onFocus={e => e.target.style.borderColor = "var(--accent)"}
             onBlur={e => e.target.style.borderColor = "var(--border2)"}
@@ -883,7 +883,7 @@ export function Dashboard() {
                     { t: "Instant Visualization", d: "Automatic chart generation based on natural language queries. No manual plotting needed.", i: "📊" },
                     { t: "Deep Insights", d: "Uncover hidden trends, correlations, and anomalies in seconds with Groq AI.", i: "🧠" },
                     { t: "Zero Config", d: "No setup required. Upload any CSV or Excel and start chatting with your data immediately.", i: "⚡" },
-                    { t: "Bring Your Own Key", d: "Power user? Plug in your own free Groq API key in the settings to bypass server rate limits.", i: "🔑" }
+                    { t: "Bring Your Own Key", d: "Power user? Plug in your own OpenAI, Google Gemini, or Groq API key to instantly bypass server limits.", i: "🔑" }
                   ].map((f,idx) => (
                     <div key={idx} className="glass" style={{ padding:32, borderRadius:24, textAlign:"left", transition: "all 0.3s ease" }}
                       onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "var(--accent3)"; }}
