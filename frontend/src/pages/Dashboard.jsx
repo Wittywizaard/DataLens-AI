@@ -657,15 +657,16 @@ function SettingsModal({ isOpen, onClose, onSave, currentKey }) {
           <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--text4)", fontSize: 24, cursor: "pointer" }}>✕</button>
         </div>
         <p style={{ fontSize: 14, color: "var(--text3)", marginBottom: 24, lineHeight: 1.6 }}>
-          Provide your own Gemini API key to bypass shared limits. Get one for free at <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Google AI Studio</a>.
+          <strong>Power User? Bypass shared server limits.</strong><br/>
+          DataLens AI runs on a shared pool of API keys. If the site is experiencing heavy traffic, you can provide your own free Groq API key to guarantee zero downtime and instant processing for massive files. Get one instantly at <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Groq Console</a>.
         </p>
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--text2)", marginBottom: 8, textTransform: "uppercase", fontFamily: "var(--mono)" }}>Gemini API Key</label>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--text2)", marginBottom: 8, textTransform: "uppercase", fontFamily: "var(--mono)" }}>Groq API Key</label>
           <input
             type="password"
             value={key}
             onChange={e => setKey(e.target.value)}
-            placeholder="Enter AIzaSy..."
+            placeholder="Enter gsk_..."
             style={{ width: "100%", background: "var(--bg3)", border: "1px solid var(--border2)", borderRadius: 12, padding: "14px 16px", color: "#fff", fontSize: 14, outline: "none", transition: "border 0.2s" }}
             onFocus={e => e.target.style.borderColor = "var(--accent)"}
             onBlur={e => e.target.style.borderColor = "var(--border2)"}
@@ -880,8 +881,9 @@ export function Dashboard() {
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:24, maxWidth: 1100, margin: "0 auto" }}>
                   {[
                     { t: "Instant Visualization", d: "Automatic chart generation based on natural language queries. No manual plotting needed.", i: "📊" },
-                    { t: "Deep Insights", d: "Uncover hidden trends, correlations, and anomalies in seconds with Gemini AI.", i: "🧠" },
-                    { t: "Zero Config", d: "No setup required. Upload any CSV or Excel and start chatting with your data immediately.", i: "⚡" }
+                    { t: "Deep Insights", d: "Uncover hidden trends, correlations, and anomalies in seconds with Groq AI.", i: "🧠" },
+                    { t: "Zero Config", d: "No setup required. Upload any CSV or Excel and start chatting with your data immediately.", i: "⚡" },
+                    { t: "Bring Your Own Key", d: "Power user? Plug in your own free Groq API key in the settings to bypass all shared server rate limits.", i: "🔑" }
                   ].map((f,idx) => (
                     <div key={idx} className="glass" style={{ padding:32, borderRadius:24, textAlign:"left", transition: "all 0.3s ease" }}
                       onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "var(--accent3)"; }}
