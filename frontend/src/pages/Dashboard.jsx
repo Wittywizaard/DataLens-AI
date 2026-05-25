@@ -657,8 +657,8 @@ function SettingsModal({ isOpen, onClose, onSave, currentKey }) {
           <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--text4)", fontSize: 24, cursor: "pointer" }}>✕</button>
         </div>
         <p style={{ fontSize: 14, color: "var(--text3)", marginBottom: 24, lineHeight: 1.6 }}>
-          <strong>Power User? Bypass shared server limits.</strong><br/>
-          DataLens AI runs on a shared pool of API keys. If the site is experiencing heavy traffic, you can provide your own free Groq API key to guarantee zero downtime and instant processing for massive files. Get one instantly at <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Groq Console</a>.
+          <strong>Power User? Bypass server limits.</strong><br/>
+          If the site is experiencing heavy traffic, you can provide your own free Groq API key to guarantee zero downtime and instant processing for massive files. Get one instantly at <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600 }}>Groq Console</a>.
         </p>
         <div style={{ marginBottom: 24 }}>
           <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "var(--text2)", marginBottom: 8, textTransform: "uppercase", fontFamily: "var(--mono)" }}>Groq API Key</label>
@@ -883,7 +883,7 @@ export function Dashboard() {
                     { t: "Instant Visualization", d: "Automatic chart generation based on natural language queries. No manual plotting needed.", i: "📊" },
                     { t: "Deep Insights", d: "Uncover hidden trends, correlations, and anomalies in seconds with Groq AI.", i: "🧠" },
                     { t: "Zero Config", d: "No setup required. Upload any CSV or Excel and start chatting with your data immediately.", i: "⚡" },
-                    { t: "Bring Your Own Key", d: "Power user? Plug in your own free Groq API key in the settings to bypass all shared server rate limits.", i: "🔑" }
+                    { t: "Bring Your Own Key", d: "Power user? Plug in your own free Groq API key in the settings to bypass server rate limits.", i: "🔑" }
                   ].map((f,idx) => (
                     <div key={idx} className="glass" style={{ padding:32, borderRadius:24, textAlign:"left", transition: "all 0.3s ease" }}
                       onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "var(--accent3)"; }}
