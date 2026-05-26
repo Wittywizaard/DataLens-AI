@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
 import {
   Chart as ChartJS, CategoryScale, LinearScale, RadialLinearScale, BarElement, LineElement,
   PointElement, ArcElement, Title, Tooltip, Legend, Filler,
@@ -10,6 +10,7 @@ import axios from "axios";
 import html2pdf from "html2pdf.js";
 import { Header } from "../components/Header";
 import { AuthModal } from "../components/AuthModal";
+import { AuthContext } from "../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
@@ -764,25 +765,15 @@ export function Dashboard() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTheme, setActiveTheme] = useState("Midnight Gold");
   const [userApiKey, setUserApiKey] = useState(() => localStorage.getItem("datalens_api_key") || "");
-  const [user, setUser] = useState(null);
+  const { user, logout, loginWithToken } = useContext(AuthContext);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("datalens_user");
-    if (storedUser) {
-      try { setUser(JSON.parse(storedUser)); } catch (e) { }
-    }
-  }, []);
-
   const handleLogin = (authData) => {
-    const userData = { ...authData.user, token: authData.token };
-    setUser(userData);
-    localStorage.setItem("datalens_user", JSON.stringify(userData));
+    loginWithToken(authData.token);
   };
 
   const handleSignOut = () => {
-    setUser(null);
-    localStorage.removeItem("datalens_user");
+    logout();
   };
 
   const saveApiKey = (key) => {

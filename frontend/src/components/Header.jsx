@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <header className="main-header" style={{ 
       height: 72, 
@@ -52,29 +65,44 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
           ⚙️
         </button>
         {user ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, var(--accent), var(--accent2))", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, color: "#fff", fontSize: 14 }}>
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{user.name}</span>
-            </div>
-            <button style={{ 
-              background: "rgba(239,68,68,0.1)", 
-              border: "1px solid rgba(239,68,68,0.2)", 
-              color: "#fca5a5", 
-              padding: "8px 20px", 
-              borderRadius: 10, 
-              fontSize: 13, 
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "all 0.2s"
-            }}
-            onClick={onSignOut}
-            onMouseOver={e => { e.target.style.background="rgba(239,68,68,0.15)"; e.target.style.borderColor="rgba(239,68,68,0.3)"; }}
-            onMouseOut={e => { e.target.style.background="rgba(239,68,68,0.1)"; e.target.style.borderColor="rgba(239,68,68,0.2)"; }}>
-              Sign Out
+          <div ref={menuRef} style={{ position: "relative" }}>
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{ 
+                width: 38, height: 38, borderRadius: "50%", 
+                background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
+                display: "flex", alignItems: "center", justifyContent: "center", 
+                fontWeight: 700, color: "#fff", fontSize: 15, cursor: "pointer",
+                border: "2px solid transparent", transition: "all 0.2s",
+                boxShadow: isMenuOpen ? "0 0 0 2px var(--bg), 0 0 0 4px var(--accent)" : "none"
+              }}
+              onMouseOver={e => e.target.style.transform = "scale(1.05)"}
+              onMouseOut={e => e.target.style.transform = "none"}
+            >
+              {user.name.charAt(0).toUpperCase()}
             </button>
+            
+            {isMenuOpen && (
+              <div style={{
+                position: "absolute", top: "calc(100% + 12px)", right: 0,
+                background: "var(--bg2)", border: "1px solid var(--border)",
+                borderRadius: 16, overflow: "hidden", minWidth: 180,
+                boxShadow: "0 10px 40px rgba(0,0,0,0.5)", animation: "fadeUp 0.2s ease"
+              }}>
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
+                  <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
+                </div>
+                <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
+                  <button onClick={() => { setIsMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
+                    <span style={{ fontSize: 16 }}>⚙️</span> Preferences
+                  </button>
+                  <button onClick={() => { setIsMenuOpen(false); onSignOut(); }} style={{ background: "none", border: "none", color: "#fca5a5", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => e.target.style.background = "rgba(239,68,68,0.1)"} onMouseOut={e => e.target.style.background = "none"}>
+                    <span style={{ fontSize: 16 }}>👋</span> Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <button style={{ 
