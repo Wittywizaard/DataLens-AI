@@ -8,9 +8,13 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  googleId: {
+    type: String,
+    sparse: true, // Allows multiple null values
+  },
   passwordHash: {
     type: String,
-    required: true,
+    required: false,
   },
   name: {
     type: String,

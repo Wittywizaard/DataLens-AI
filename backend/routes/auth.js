@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 const User = require("../models/User");
 
 const router = express.Router();
@@ -134,5 +135,20 @@ router.delete("/users/:id", verifyToken, async (req, res) => {
     res.status(500).json({ error: "Failed to delete user" });
   }
 });
+
+// Google OAuth
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false, failureRedirect: `${process.env.FRONTEND_URL || "http://localhost:5173"}?error=login_failed` }),
+  (req, res) => {
+    // Generate JWT token
+    const token = jwt.sign({ id: req.user._id, email: req.user.email }, JWT_SECRET, { expiresIn: "7d" });
+    
+    // Redirect back to frontend with token
+    res.redirect(`${process.env.FRONTEND_URL || "http://localhost:5173"}/auth/success?token=${token}`);
+  }
+);
 
 module.exports = router;

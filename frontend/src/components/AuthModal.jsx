@@ -34,8 +34,7 @@ export function AuthModal({ isOpen, onClose, onLogin }) {
   };
 
   const handleGoogleLogin = () => {
-    // In a real app, this would redirect to Google OAuth flow
-    alert("Google OAuth flow would initiate here. Please use email/password for this demo.");
+    window.location.href = `${API_URL}/api/auth/google`;
   };
 
   return (

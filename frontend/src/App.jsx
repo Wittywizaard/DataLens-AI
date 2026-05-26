@@ -6,6 +6,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
 import { UsersPage } from "./pages/UsersPage";
+import { AuthSuccess } from "./pages/AuthSuccess";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/auth/success" element={<AuthSuccess />} />
           <Route path="/users" element={<PrivateRoute><UsersPage /></PrivateRoute>} />
         </Routes>
       </BrowserRouter>

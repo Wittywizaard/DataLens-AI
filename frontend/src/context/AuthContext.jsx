@@ -63,8 +63,22 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const loginWithToken = async (newToken) => {
+    localStorage.setItem("authToken", newToken);
+    setToken(newToken);
+    try {
+      const res = await axios.get(`${API_BASE}/auth/me`, {
+        headers: { Authorization: `Bearer ${newToken}` }
+      });
+      setUser(res.data.user);
+    } catch (err) {
+      localStorage.removeItem("authToken");
+      setToken(null);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, signup, login, logout, loginWithToken }}>
       {children}
     </AuthContext.Provider>
   );

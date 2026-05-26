@@ -4,6 +4,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
+const passport = require("passport");
+require("./config/passport");
 
 const uploadRoutes = require("./routes/upload");
 const analyzeRoutes = require("./routes/analyze");
@@ -54,6 +56,7 @@ app.use("/api/analyze", analyzeLimiter);
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -70,13 +73,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-  });
-}
+// Root route
+app.get("/", (req, res) => {
+  res.send("DataLens AI Backend API is running.");
+});
 
 // Global error handler
 app.use((err, req, res, next) => {
