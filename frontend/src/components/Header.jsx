@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,7 +30,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
       alignItems: "center",
       padding: "0 40px"
     }}>
-      <a href="/" style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, textDecoration: "none" }}>
+      <Link to="/" style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, textDecoration: "none" }}>
         <div style={{ 
           width: 36, height: 36, 
           background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
@@ -42,7 +43,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
           color: "white"
         }}>✦</div>
         <span className="header-logo-text" style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
-      </a>
+      </Link>
       
       <nav className="header-nav" style={{ display: "flex", gap: 24, alignItems: "center" }}>
         {[

@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node --max-old-space-size=8192 server.js",
-    "dev": "nodemon --exec \"node --max-old-space-size=8192\" server.js"
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
