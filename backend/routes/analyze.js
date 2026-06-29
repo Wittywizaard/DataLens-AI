@@ -165,12 +165,18 @@ class ApiKeyPool {
 
   init() {
     if (this.initialized) return;
-    const envKeys = Object.keys(process.env)
+    const rawKeys = Object.keys(process.env)
       .filter(k => k.startsWith('GROQ_API_KEY'))
       .map(k => process.env[k])
       .filter(Boolean);
       
-    this.keys = envKeys.map(k => ({ value: k, isDead: false, deadUntil: 0 }));
+    // Handle comma-separated keys in a single env var
+    let allKeys = [];
+    for (const val of rawKeys) {
+      allKeys = allKeys.concat(val.split(',').map(s => s.trim()).filter(Boolean));
+    }
+      
+    this.keys = allKeys.map(k => ({ value: k, isDead: false, deadUntil: 0 }));
     this.initialized = true;
   }
 
@@ -326,7 +332,9 @@ router.post("/", async (req, res) => {
         }
       }
       
-      if (!success) throw lastError;
+      if (!success) {
+        throw new Error("EXHAUSTED_ALL_KEYS");
+      }
     }
 
     if (!rawText) {
@@ -365,6 +373,9 @@ router.post("/", async (req, res) => {
 
     if (err.status === 401 || err.message?.includes("API_KEY_INVALID") || err.message?.includes("API key not valid")) {
       return res.status(500).json({ error: "Invalid Groq API key. Double-check GROQ_API_KEY in backend/.env" });
+    }
+    if (err.message === "EXHAUSTED_ALL_KEYS") {
+      return res.status(429).json({ error: "All system API keys are currently exhausted. Please provide your own API key in Settings." });
     }
     if (err.status === 429 || err.message?.includes("RESOURCE_EXHAUSTED") || err.message?.includes("quota")) {
       return res.status(429).json({ error: "Rate limit reached. Please try again later." });
