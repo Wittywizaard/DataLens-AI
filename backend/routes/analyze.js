@@ -264,7 +264,7 @@ router.post("/", async (req, res) => {
           response_format: { type: "json_object" },
         });
         rawText = result.choices[0]?.message?.content?.trim();
-      } else if (userApiKey.startsWith("AIza")) {
+      } else if (userApiKey.startsWith("AIza") || userApiKey.startsWith("AQ.")) {
         const { GoogleGenerativeAI } = require("@google/generative-ai");
         const genAI = new GoogleGenerativeAI(userApiKey);
         const model = genAI.getGenerativeModel({ 
@@ -306,7 +306,7 @@ router.post("/", async (req, res) => {
 
 
         try {
-          if (apiKeyToUse.startsWith("AIza")) {
+          if (apiKeyToUse.startsWith("AIza") || apiKeyToUse.startsWith("AQ.")) {
             const { GoogleGenerativeAI } = require("@google/generative-ai");
             const genAI = new GoogleGenerativeAI(apiKeyToUse);
             const model = genAI.getGenerativeModel({ 
