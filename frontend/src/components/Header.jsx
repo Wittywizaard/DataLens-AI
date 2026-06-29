@@ -29,7 +29,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
       alignItems: "center",
       padding: "0 40px"
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+      <a href="/" style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, textDecoration: "none" }}>
         <div style={{ 
           width: 36, height: 36, 
           background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
@@ -38,10 +38,11 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
           alignItems: "center", 
           justifyContent: "center", 
           fontSize: 20,
-          boxShadow: "0 0 20px var(--glow)"
+          boxShadow: "0 0 20px var(--glow)",
+          color: "white"
         }}>✦</div>
         <span className="header-logo-text" style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
-      </div>
+      </a>
       
       <nav className="header-nav" style={{ display: "flex", gap: 24, alignItems: "center" }}>
         {[

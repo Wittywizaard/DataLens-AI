@@ -333,9 +333,9 @@ router.post("/", async (req, res) => {
           }
         } catch (error) {
           lastError = error;
-          const isRateLimit = error.status === 429 || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota");
+          const shouldRotate = error.status === 429 || error.status === 401 || error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not valid") || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota");
           
-          if (isRateLimit) {
+          if (shouldRotate) {
             keyPool.markDead(apiKeyToUse);
             attempt++;
           } else {
