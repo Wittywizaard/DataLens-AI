@@ -166,7 +166,7 @@ class ApiKeyPool {
   init() {
     if (this.initialized) return;
     const rawKeys = Object.keys(process.env)
-      .filter(k => k.startsWith('GROQ_API_KEY'))
+      .filter(k => k.startsWith('GROQ_API_KEY') || k.startsWith('GEMINI_API_KEY'))
       .map(k => process.env[k])
       .filter(Boolean);
       
@@ -304,21 +304,33 @@ router.post("/", async (req, res) => {
            return res.status(429).json({ error: "All system API keys are exhausted for today. Please provide your own API key in Settings." });
         }
 
-        const groq = new Groq({ apiKey: apiKeyToUse });
-        
+
         try {
-          result = await groq.chat.completions.create({
-            model: modelName,
-            messages: [
-              { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
-              { role: "user", content: prompt }
-            ],
-            temperature: 0.1,
-            max_tokens: 3000,
-            response_format: { type: "json_object" },
-          });
-          success = true;
-          rawText = result.choices[0]?.message?.content?.trim();
+          if (apiKeyToUse.startsWith("AIza")) {
+            const { GoogleGenerativeAI } = require("@google/generative-ai");
+            const genAI = new GoogleGenerativeAI(apiKeyToUse);
+            const model = genAI.getGenerativeModel({ 
+              model: "gemini-1.5-flash",
+              generationConfig: { responseMimeType: "application/json" }
+            });
+            const chatResponse = await model.generateContent(`You MUST respond with only valid JSON. No text before or after.\n\n${prompt}`);
+            rawText = chatResponse.response.text().trim();
+            success = true;
+          } else {
+            const groq = new Groq({ apiKey: apiKeyToUse });
+            result = await groq.chat.completions.create({
+              model: modelName,
+              messages: [
+                { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+                { role: "user", content: prompt }
+              ],
+              temperature: 0.1,
+              max_tokens: 3000,
+              response_format: { type: "json_object" },
+            });
+            success = true;
+            rawText = result.choices[0]?.message?.content?.trim();
+          }
         } catch (error) {
           lastError = error;
           const isRateLimit = error.status === 429 || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota");
