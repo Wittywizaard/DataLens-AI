@@ -33,9 +33,13 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 // CORS
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    methods: ["GET", "POST", "DELETE"],
+    origin: function (origin, callback) {
+      // Allow any origin for maximum compatibility in this demo/tool
+      callback(null, true);
+    },
+    methods: ["GET", "POST", "DELETE", "OPTIONS", "PUT", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 

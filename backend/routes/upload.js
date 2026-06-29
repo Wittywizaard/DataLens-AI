@@ -12,17 +12,7 @@ const router = express.Router();
 const dataStore = require("../utils/dataStore");
 
 // Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "../uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
-  },
-});
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowed = [".csv", ".tsv", ".xlsx", ".xls"];
@@ -68,7 +58,7 @@ router.post("/", upload.array("file", 10), async (req, res) => {
 
       // Parse the file
       if (ext === ".csv" || ext === ".tsv") {
-        const content = fs.readFileSync(filePath, "utf8");
+        const content = file.buffer.toString("utf8");
         const delimiter = ext === ".tsv" ? "\t" : ",";
         const result = Papa.parse(content, {
           header: true,
@@ -79,7 +69,7 @@ router.post("/", upload.array("file", 10), async (req, res) => {
         fileHeaders = result.meta.fields || [];
         fileRows = result.data;
       } else if (ext === ".xlsx" || ext === ".xls") {
-        const workbook = XLSX.readFile(filePath);
+        const workbook = XLSX.read(file.buffer, { type: "buffer" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const json = XLSX.utils.sheet_to_json(sheet, { defval: null });
@@ -91,8 +81,6 @@ router.post("/", upload.array("file", 10), async (req, res) => {
       // Add source file identifier so AI can distinguish them
       fileRows = fileRows.map(r => ({ ...r, "Source File": file.originalname }));
       rows = rows.concat(fileRows);
-      
-      fs.unlinkSync(filePath);
     }
     
     headersSet.add("Source File");
@@ -179,9 +167,7 @@ router.post("/", upload.array("file", 10), async (req, res) => {
   } catch (err) {
     console.error("Upload error:", err);
     if (req.files) {
-      req.files.forEach(f => {
-        if (fs.existsSync(f.path)) fs.unlinkSync(f.path);
-      });
+      // Memory storage means no files to unlink
     }
     res.status(500).json({ error: err.message || "Failed to process files." });
   }
