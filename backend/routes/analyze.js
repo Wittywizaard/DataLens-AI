@@ -268,7 +268,7 @@ router.post("/", async (req, res) => {
         const { GoogleGenerativeAI } = require("@google/generative-ai");
         const genAI = new GoogleGenerativeAI(userApiKey);
         const model = genAI.getGenerativeModel({ 
-          model: "gemini-1.5-flash",
+          model: "gemini-1.5-flash-latest",
           generationConfig: { responseMimeType: "application/json" }
         });
         const chatResponse = await model.generateContent(`You MUST respond with only valid JSON. No text before or after.\n\n${prompt}`);
@@ -310,7 +310,7 @@ router.post("/", async (req, res) => {
             const { GoogleGenerativeAI } = require("@google/generative-ai");
             const genAI = new GoogleGenerativeAI(apiKeyToUse);
             const model = genAI.getGenerativeModel({ 
-              model: "gemini-1.5-flash",
+              model: "gemini-1.5-flash-latest",
               generationConfig: { responseMimeType: "application/json" }
             });
             const chatResponse = await model.generateContent(`You MUST respond with only valid JSON. No text before or after.\n\n${prompt}`);
