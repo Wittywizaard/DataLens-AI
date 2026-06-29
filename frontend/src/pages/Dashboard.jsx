@@ -17,11 +17,17 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 ChartJS.register(CategoryScale, LinearScale, RadialLinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler);
 
 const PALETTES = {
-  "Midnight Gold": ["#f59e0b","#fbbf24","#facc15","#ea580c","#d97706","#78350f","#b45309","#a16207","#ca8a04","#eab308","#fb923c","#fdba74", "#fde68a", "#fef3c7", "#fffbeb"],
-  "Ocean Blue": ["#0ea5e9","#38bdf8","#0284c7","#0369a1","#0c4a6e","#7dd3fc","#bae6fd","#075985","#2dd4bf","#14b8a6","#0f766e", "#3b82f6", "#2563eb", "#1d4ed8", "#eff6ff"],
-  "Emerald Green": ["#10b981","#34d399","#059669","#047857","#064e3b","#6ee7b7","#a7f3d0","#065f46","#84cc16","#65a30d","#4d7c0f", "#22c55e", "#16a34a", "#15803d", "#f0fdf4"],
-  "Cyberpunk Neon": ["#c026d3","#d946ef","#a21caf","#86198f","#4a044e","#f0abfc","#fae8ff","#e879f9","#4f46e5","#6366f1","#4338ca","#3730a3", "#f43f5e", "#e11d48", "#fff0f2"],
-  "Pastel Dream": ["#fca5a5","#fcd34d","#fef08a","#a7f3d0","#99f6e4","#bae6fd","#c7d2fe","#ddd6fe","#fbcfe8","#fecdd3","#fed7aa","#d9f99d", "#bfdbfe", "#e9d5ff", "#fdf4ff"]
+  "Midnight Gold":   ["#f59e0b","#fbbf24","#facc15","#ea580c","#d97706","#78350f","#b45309","#a16207","#ca8a04","#eab308","#fb923c","#fdba74","#fde68a","#fef3c7","#fffbeb"],
+  "Ocean Blue":      ["#0ea5e9","#38bdf8","#0284c7","#0369a1","#0c4a6e","#7dd3fc","#bae6fd","#075985","#2dd4bf","#14b8a6","#0f766e","#3b82f6","#2563eb","#1d4ed8","#eff6ff"],
+  "Emerald Green":   ["#10b981","#34d399","#059669","#047857","#064e3b","#6ee7b7","#a7f3d0","#065f46","#84cc16","#65a30d","#4d7c0f","#22c55e","#16a34a","#15803d","#f0fdf4"],
+  "Cyberpunk Neon":  ["#c026d3","#d946ef","#a21caf","#86198f","#4a044e","#f0abfc","#fae8ff","#e879f9","#4f46e5","#6366f1","#4338ca","#3730a3","#f43f5e","#e11d48","#fff0f2"],
+  "Pastel Dream":    ["#fca5a5","#fcd34d","#fef08a","#a7f3d0","#99f6e4","#bae6fd","#c7d2fe","#ddd6fe","#fbcfe8","#fecdd3","#fed7aa","#d9f99d","#bfdbfe","#e9d5ff","#fdf4ff"],
+  "Sunset Blaze":    ["#f97316","#ef4444","#ec4899","#f59e0b","#fb923c","#fca5a5","#fda4af","#fed7aa","#fde68a","#fbbf24","#e879f9","#c084fc","#ff6b6b","#ff8e53","#ffe259"],
+  "Arctic Frost":    ["#e0f2fe","#bae6fd","#7dd3fc","#38bdf8","#0ea5e9","#dbeafe","#bfdbfe","#93c5fd","#60a5fa","#e0e7ff","#c7d2fe","#a5b4fc","#f0fdf4","#dcfce7","#bbf7d0"],
+  "Cherry Blossom":  ["#f9a8d4","#f472b6","#ec4899","#db2777","#be185d","#fce7f3","#fbcfe8","#fda4af","#fb7185","#f43f5e","#e11d48","#fef9c3","#fef08a","#c084fc","#e9d5ff"],
+  "Lush Forest":     ["#4ade80","#22c55e","#16a34a","#15803d","#166534","#86efac","#bbf7d0","#d9f99d","#bef264","#a3e635","#84cc16","#65a30d","#facc15","#fbbf24","#fef9c3"],
+  "Cosmic Violet":   ["#a78bfa","#8b5cf6","#7c3aed","#6d28d9","#5b21b6","#c4b5fd","#ddd6fe","#ede9fe","#f5f3ff","#e879f9","#d946ef","#c026d3","#6366f1","#4f46e5","#4338ca"],
+  "Golden Hour":     ["#fbbf24","#f59e0b","#d97706","#b45309","#92400e","#fde68a","#fef3c7","#fcd34d","#fb923c","#f97316","#ea580c","#dc2626","#fca5a5","#fed7aa","#fffbeb"],
 };
 
 const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter: Scatter, radar: Radar, polarArea: PolarArea, bubble: Bubble };
@@ -516,11 +522,17 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 🎨 Theme
               </button>
               {showThemeOptions && (
-                <div style={{ position: "absolute", top: "110%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 160, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+                <div style={{ position: "absolute", top: "110%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
+                  <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
                   {Object.keys(PALETTES).map(paletteName => (
-                    <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptions(false); }} style={{ padding: "10px 16px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseEnter={e => theme !== paletteName && (e.target.style.background="rgba(255,255,255,0.05)")} onMouseLeave={e => theme !== paletteName && (e.target.style.background="none")}>
-                      <span style={{ width: 12, height: 12, borderRadius: "50%", background: PALETTES[paletteName][0] }}></span>
-                      {paletteName}
+                    <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptions(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }} onMouseEnter={e => { if(theme !== paletteName) e.currentTarget.style.background="rgba(255,255,255,0.04)"; }} onMouseLeave={e => { if(theme !== paletteName) e.currentTarget.style.background="none"; }}>
+                      <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                        {PALETTES[paletteName].slice(0, 4).map((c, i) => (
+                          <span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />
+                        ))}
+                      </span>
+                      <span>{paletteName}</span>
+                      {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
                     </button>
                   ))}
                 </div>
