@@ -40,28 +40,33 @@ const baseOpts = (isRadial) => ({
   plugins: {
     legend: {
       labels: {
-        color: "#64748b", // Slate 500: visible on both dark background and pure white backgrounds
-        font: { family: "system-ui, -apple-system, sans-serif", size: 11, weight: "600" },
+        color: "#0f172a", // Slate 900: razor sharp on white background
+        font: { family: "system-ui, -apple-system, sans-serif", size: 12, weight: "700" },
         padding: 20,
-        boxWidth: 10
+        boxWidth: 12
       }
     },
-    tooltip: { backgroundColor: "#0f172a", titleColor: "#ffffff", bodyColor: "#cbd5e1", borderColor: "rgba(255,255,255,0.1)", borderWidth: 1, padding: 12, cornerRadius: 10 },
+    tooltip: { backgroundColor: "#0f172a", titleColor: "#ffffff", bodyColor: "#cbd5e1", borderColor: "rgba(0,0,0,0.05)", borderWidth: 1, padding: 12, cornerRadius: 10 },
   },
-  ...(isRadial ? {} : {
-    scales: {
-      x: {
-        ticks: { color: "#64748b", font: { size: 11 }, maxRotation: 40 },
-        grid: { color: "rgba(148,163,184,0.15)" }, // slate-400 opacity
-        border: { color: "rgba(148,163,184,0.2)" }
-      },
-      y: {
-        ticks: { color: "#64748b", font: { size: 11 } },
-        grid: { color: "rgba(148,163,184,0.15)" },
-        border: { color: "rgba(148,163,184,0.2)" }
-      },
+  scales: isRadial ? {
+    r: {
+      ticks: { color: "#334155", backdropColor: "transparent", font: { size: 10, weight: "700" } },
+      grid: { color: "rgba(0, 0, 0, 0.08)" },
+      angleLines: { color: "rgba(0, 0, 0, 0.1)" },
+      pointLabels: { color: "#0f172a", font: { size: 11, weight: "700" } }
+    }
+  } : {
+    x: {
+      ticks: { color: "#334155", font: { size: 11, weight: "700" }, maxRotation: 40 },
+      grid: { color: "rgba(0, 0, 0, 0.06)" },
+      border: { color: "rgba(0, 0, 0, 0.1)" }
     },
-  }),
+    y: {
+      ticks: { color: "#334155", font: { size: 11, weight: "700" } },
+      grid: { color: "rgba(0, 0, 0, 0.06)" },
+      border: { color: "rgba(0, 0, 0, 0.1)" }
+    },
+  },
 });
 
 function Spinner() {
@@ -170,11 +175,11 @@ function ChartBlock({ config, colors }) {
   };
 
   return (
-    <div data-role="chart-block" style={{ background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", backdropFilter:"blur(10px)", borderRadius:20, padding:"24px", marginTop:16, position: "relative" }}>
+    <div data-role="chart-block" style={{ background:"#ffffff", border:"1px solid rgba(0,0,0,0.08)", borderRadius:20, padding:"24px", marginTop:16, position: "relative", boxShadow: "0 10px 30px rgba(0,0,0,0.04)" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         {config.title && (
-          <div data-role="chart-title" style={{ fontSize:14, fontFamily:"var(--mono)", color:"var(--accent)", fontWeight:600 }}>
-            <span style={{ marginRight:8 }}>✦</span>{config.title}
+          <div data-role="chart-title" style={{ fontSize:14, fontFamily:"system-ui, -apple-system, sans-serif", color:"#0f172a", fontWeight:700 }}>
+            <span style={{ marginRight:8, color:"var(--accent)" }}>✦</span>{config.title}
           </div>
         )}
         <button
