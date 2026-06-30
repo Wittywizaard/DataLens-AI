@@ -210,7 +210,15 @@ class ApiKeyPool {
     const availableKeys = this.keys.filter(k => !k.isDead);
     if (availableKeys.length === 0) return null;
     
-    const keyObj = availableKeys[0];
+    // Prioritize Gemini first (blazing fast & high quota), then OpenRouter, then Groq
+    let keyObj = availableKeys.find(k => k.value.startsWith("AIza") || k.value.startsWith("AQ."));
+    if (!keyObj) {
+      keyObj = availableKeys.find(k => k.value.startsWith("sk-or-"));
+    }
+    if (!keyObj) {
+      keyObj = availableKeys[0];
+    }
+    
     const idx = this.keys.indexOf(keyObj);
     this.keys.splice(idx, 1);
     this.keys.push(keyObj);
@@ -238,7 +246,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "fileId and query are required." });
     }
 
-    const fileData = dataStore.get(fileId);
+    const fileData = await dataStore.get(fileId);
     if (!fileData) {
       return res.status(404).json({ error: "Session expired — please re-upload your file." });
     }
@@ -264,7 +272,7 @@ router.post("/", async (req, res) => {
       query,
     });
 
-    const modelName = process.env.GROQ_MODEL || "llama3-70b-8192";
+    const modelName = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
     let result;
     let rawText = "";
 
@@ -401,7 +409,7 @@ router.post("/", async (req, res) => {
           }
         } catch (error) {
           lastError = error;
-          const shouldRotate = error.status === 429 || error.status === 401 || error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not valid") || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota");
+          const shouldRotate = error.status === 429 || error.status === 401 || error.status === 400 || error.status === 404 || error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not valid") || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota") || error.message?.includes("model") || error.message?.includes("not found");
           
           if (shouldRotate) {
             keyPool.markDead(apiKeyToUse);

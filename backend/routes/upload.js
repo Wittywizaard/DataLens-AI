@@ -138,7 +138,7 @@ router.post("/", upload.array("file", 10), async (req, res) => {
     const fileId = uuidv4();
     const displayName = originalNames.length > 1 ? `${originalNames.length} files combined` : originalNames[0];
     
-    dataStore.set(fileId, {
+    await dataStore.set(fileId, {
       fileId,
       originalName: displayName,
       headers,
@@ -149,9 +149,9 @@ router.post("/", upload.array("file", 10), async (req, res) => {
       uploadedAt: new Date().toISOString(),
     });
 
-    // Auto-delete after 24 hours
-    setTimeout(() => {
-      dataStore.delete(fileId);
+    // Auto-delete after 24 hours (MongoDB does this automatically, but keeping fallback cleanup)
+    setTimeout(async () => {
+      await dataStore.delete(fileId);
     }, 24 * 60 * 60 * 1000);
 
     res.json({
