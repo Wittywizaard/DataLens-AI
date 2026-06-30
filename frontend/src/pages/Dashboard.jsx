@@ -428,18 +428,9 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       msg.style.width = "100%";
     });
 
-    // 4. Restyle Assistant Headers
+    // 4. Remove Assistant Headers completely (hides "DataLens Intelligence")
     el.querySelectorAll('[data-role="assistant-header"]').forEach(hdr => {
-      hdr.style.color = "#4f46e5";
-      hdr.style.fontWeight = "700";
-      // Hide the circular logo container to make it clean
-      const icon = hdr.querySelector('div');
-      if (icon) icon.remove();
-      const textSpan = hdr.querySelector('span');
-      if (textSpan) {
-        textSpan.style.fontSize = "12px";
-        textSpan.style.color = "#4f46e5";
-      }
+      hdr.remove();
     });
 
     // 5. Restyle Assistant Summary
@@ -550,19 +541,130 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     const filename = window.prompt("Enter a name for your Word document:", "DataLens_Report");
     if (filename === null) return;
     
-    // Fix missing charts: Convert canvases to images
     const el = messagesRef.current.cloneNode(true);
+
+    // 1. Remove all download buttons and action buttons
+    el.querySelectorAll('button').forEach(btn => {
+      btn.remove();
+    });
+
+    // 2. Remove assistant header completely (hides "DataLens Intelligence")
+    el.querySelectorAll('[data-role="assistant-header"]').forEach(hdr => {
+      hdr.remove();
+    });
+
+    // 3. Remove error messages
+    el.querySelectorAll('[data-role="error-msg"]').forEach(err => {
+      err.remove();
+    });
+
+    // 4. Restyle user queries as clear document headings with page breaks
+    const userMsgs = el.querySelectorAll('[data-role="user-msg"]');
+    userMsgs.forEach((msg, idx) => {
+      const inner = msg.querySelector('div');
+      if (inner) {
+        const heading = document.createElement('h2');
+        heading.innerText = `${idx + 1}. Analysis: "${inner.innerText}"`;
+        if (idx > 0) {
+          heading.className = "page-break";
+        }
+        msg.parentNode.replaceChild(heading, msg);
+      }
+    });
+
+    // 5. Restyle assistant message containers
+    el.querySelectorAll('[data-role="assistant-msg"]').forEach(msg => {
+      msg.style.margin = "0 0 20px 0";
+    });
+
+    // 6. Restyle assistant summaries
+    el.querySelectorAll('[data-role="assistant-summary"]').forEach(p => {
+      p.style.fontSize = "11pt";
+      p.style.lineHeight = "1.5";
+      p.style.color = "#334155";
+      p.style.margin = "0 0 12pt 0";
+    });
+
+    // 7. Restyle insights
+    el.querySelectorAll('[data-role="insight-card"]').forEach(card => {
+      card.className = "insight-card";
+      card.style.background = "#f8fafc";
+      card.style.border = "1px solid #cbd5e1";
+      card.style.borderLeft = "4px solid #4f46e5";
+      card.style.padding = "12px";
+      card.style.borderRadius = "8px";
+      card.style.marginBottom = "8px";
+      
+      const label = card.querySelector('[data-role="insight-label"]');
+      if (label) {
+        label.style.fontSize = "9pt";
+        label.style.color = "#475569";
+        label.style.fontWeight = "bold";
+      }
+      
+      const val = card.querySelector('[data-role="insight-value"]');
+      if (val) {
+        val.style.fontSize = "16pt";
+        val.style.fontWeight = "bold";
+        val.style.color = "#1e293b";
+        val.style.textShadow = "none";
+      }
+    });
+
+    // 8. Convert canvases to clean resized images
     const originalCanvases = messagesRef.current.querySelectorAll('canvas');
     const clonedCanvases = el.querySelectorAll('canvas');
     originalCanvases.forEach((canvas, index) => {
       const img = document.createElement('img');
-      img.src = canvas.toDataURL("image/png");
-      img.style.width = "100%"; // Fit word document
-      img.style.maxWidth = "600px";
+      img.src = canvas.toDataURL("image/png", 1.0);
+      img.style.width = "100%";
+      img.style.maxWidth = "550px";
+      img.style.height = "auto";
+      img.style.display = 'block';
+      img.style.margin = '10px auto';
       clonedCanvases[index].parentNode.replaceChild(img, clonedCanvases[index]);
     });
 
-    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word</title><style>body { font-family: sans-serif; background: #05050f; color: #ffffff; }</style></head><body>";
+    el.querySelectorAll('[data-role="chart-block"]').forEach(block => {
+      block.className = "chart-container";
+      block.style.background = "#ffffff";
+      block.style.border = "1px solid #cbd5e1";
+      block.style.borderRadius = "8px";
+      block.style.padding = "16px";
+      block.style.marginTop = "12px";
+      
+      const title = block.querySelector('[data-role="chart-title"]');
+      if (title) {
+        title.className = "chart-title";
+        title.style.fontSize = "11pt";
+        title.style.fontWeight = "bold";
+        title.style.color = "#0f172a";
+      }
+    });
+
+    // 9. Restyle tables
+    el.querySelectorAll('[data-role="data-table"]').forEach(table => {
+      table.style.background = "#ffffff";
+      table.style.border = "1px solid #cbd5e1";
+      table.style.borderRadius = "8px";
+      
+      const ths = table.querySelectorAll('th');
+      ths.forEach(th => {
+        th.style.background = "#f1f5f9";
+        th.style.color = "#1e293b";
+        th.style.borderBottom = "2px solid #cbd5e1";
+        th.style.padding = "8px";
+      });
+
+      const tds = table.querySelectorAll('td');
+      tds.forEach(td => {
+        td.style.color = "#334155";
+        td.style.borderBottom = "1px solid #e2e8f0";
+        td.style.padding = "6px";
+      });
+    });
+
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word</title><style>body { font-family: Arial, sans-serif; background: #ffffff; color: #333333; margin: 1in; } h2 { color: #1e1b4b; font-size: 16pt; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 24pt; } .page-break { page-break-before: always; clear: both; } .chart-container { text-align: center; margin: 16px 0; page-break-inside: avoid; } img { max-width: 550px; height: auto; } table { width: 100%; border-collapse: collapse; margin-top: 12px; page-break-inside: avoid; } th { background: #f1f5f9; color: #1e293b; font-weight: bold; border-bottom: 2px solid #cbd5e1; padding: 8px; text-align: left; } td { color: #334155; border-bottom: 1px solid #e2e8f0; padding: 6px; }</style></head><body>";
     const footer = "</body></html>";
     const sourceHTML = header + el.innerHTML + footer;
     const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
@@ -579,18 +681,36 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     const filename = window.prompt("Enter a name for your text report:", "DataLens_Report");
     if (filename === null) return;
     
-    let text = "DataLens AI Analysis Report\n============================\n\n";
-    messages.forEach(msg => {
-      if (msg.role === "user") text += `User: ${msg.content}\n\n`;
+    let text = "ANALYSIS REPORT\n============================\n\n";
+    messages.forEach((msg, idx) => {
+      if (msg.role === "user") {
+        text += `\n[Analysis ${idx + 1}] Question: ${msg.content}\n`;
+        text += "------------------------------------------------------------\n";
+      }
       if (msg.role === "assistant" && msg.result) {
-        text += `DataLens:\n`;
-        if (msg.result.summary) text += `${msg.result.summary}\n`;
-        if (msg.result.insights?.length) {
-          msg.result.insights.forEach(ins => text += `- ${ins.label}: ${ins.value}\n`);
+        if (msg.result.summary) {
+          text += `Summary:\n${msg.result.summary}\n\n`;
         }
-        text += `\n`;
+        if (msg.result.insights?.length) {
+          text += `Key Metrics:\n`;
+          msg.result.insights.forEach(ins => {
+            text += `  * ${ins.label}: ${ins.value}${ins.trend ? ` (${ins.trend})` : ""}\n`;
+          });
+          text += `\n`;
+        }
+        if (msg.result.chartConfig?.title) {
+          text += `Chart Generated: "${msg.result.chartConfig.title}" (${msg.result.chartConfig.type.toUpperCase()} Chart)\n\n`;
+        }
+        if (msg.result.chartConfigs?.length > 0) {
+          text += `Charts Generated:\n`;
+          msg.result.chartConfigs.forEach(cfg => {
+            text += `  * "${cfg.title}" (${cfg.type.toUpperCase()} Chart)\n`;
+          });
+          text += `\n`;
+        }
       }
     });
+    
     const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
