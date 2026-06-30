@@ -166,7 +166,7 @@ class ApiKeyPool {
   init() {
     if (this.initialized) return;
     const rawKeys = Object.keys(process.env)
-      .filter(k => k.startsWith('GROQ_API_KEY') || k.startsWith('GEMINI_API_KEY'))
+      .filter(k => k.startsWith('GROQ_API_KEY') || k.startsWith('GEMINI_API_KEY') || k.startsWith('OPENROUTER_API_KEY'))
       .map(k => process.env[k])
       .filter(Boolean);
       
@@ -251,7 +251,30 @@ router.post("/", async (req, res) => {
     let rawText = "";
 
     if (userApiKey) {
-      if (userApiKey.startsWith("sk-")) {
+      if (userApiKey.startsWith("sk-or-")) {
+        // ── OpenRouter (user key) ─────────────────────────────────────
+        const OpenAI = require("openai");
+        const openRouter = new OpenAI({
+          apiKey: userApiKey,
+          baseURL: "https://openrouter.ai/api/v1",
+          defaultHeaders: {
+            "HTTP-Referer": process.env.FRONTEND_URL || "https://datalens-ai.vercel.app",
+            "X-Title": "DataLens AI",
+          },
+        });
+        result = await openRouter.chat.completions.create({
+          model: "meta-llama/llama-3.1-8b-instruct:free",
+          messages: [
+            { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.1,
+          max_tokens: 3000,
+          response_format: { type: "json_object" },
+        });
+        rawText = result.choices[0]?.message?.content?.trim();
+      } else if (userApiKey.startsWith("sk-")) {
+        // ── OpenAI (user key) ─────────────────────────────────────────
         const OpenAI = require("openai");
         const openai = new OpenAI({ apiKey: userApiKey });
         result = await openai.chat.completions.create({
@@ -265,6 +288,7 @@ router.post("/", async (req, res) => {
         });
         rawText = result.choices[0]?.message?.content?.trim();
       } else if (userApiKey.startsWith("AIza") || userApiKey.startsWith("AQ.")) {
+        // ── Gemini (user key) ─────────────────────────────────────────
         const { GoogleGenerativeAI } = require("@google/generative-ai");
         const genAI = new GoogleGenerativeAI(userApiKey);
         const model = genAI.getGenerativeModel({ 
@@ -274,6 +298,7 @@ router.post("/", async (req, res) => {
         const chatResponse = await model.generateContent(`You MUST respond with only valid JSON. No text before or after.\n\n${prompt}`);
         rawText = chatResponse.response.text().trim();
       } else {
+        // ── Groq (user key) ───────────────────────────────────────────
         const groq = new Groq({ apiKey: userApiKey });
         result = await groq.chat.completions.create({
           model: modelName,
@@ -307,6 +332,7 @@ router.post("/", async (req, res) => {
 
         try {
           if (apiKeyToUse.startsWith("AIza") || apiKeyToUse.startsWith("AQ.")) {
+            // ── Gemini path ──────────────────────────────────────────────
             const { GoogleGenerativeAI } = require("@google/generative-ai");
             const genAI = new GoogleGenerativeAI(apiKeyToUse);
             const model = genAI.getGenerativeModel({ 
@@ -316,7 +342,31 @@ router.post("/", async (req, res) => {
             const chatResponse = await model.generateContent(`You MUST respond with only valid JSON. No text before or after.\n\n${prompt}`);
             rawText = chatResponse.response.text().trim();
             success = true;
+          } else if (apiKeyToUse.startsWith("sk-or-")) {
+            // ── OpenRouter path ──────────────────────────────────────────
+            const OpenAI = require("openai");
+            const openRouter = new OpenAI({
+              apiKey: apiKeyToUse,
+              baseURL: "https://openrouter.ai/api/v1",
+              defaultHeaders: {
+                "HTTP-Referer": process.env.FRONTEND_URL || "https://datalens-ai.vercel.app",
+                "X-Title": "DataLens AI",
+              },
+            });
+            const orResult = await openRouter.chat.completions.create({
+              model: "meta-llama/llama-3.1-8b-instruct:free",
+              messages: [
+                { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
+                { role: "user", content: prompt }
+              ],
+              temperature: 0.1,
+              max_tokens: 3000,
+              response_format: { type: "json_object" },
+            });
+            rawText = orResult.choices[0]?.message?.content?.trim();
+            success = true;
           } else {
+            // ── Groq path ────────────────────────────────────────────────
             const groq = new Groq({ apiKey: apiKeyToUse });
             result = await groq.chat.completions.create({
               model: modelName,
