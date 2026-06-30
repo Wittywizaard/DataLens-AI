@@ -263,7 +263,7 @@ router.post("/", async (req, res) => {
           },
         });
         result = await openRouter.chat.completions.create({
-          model: "meta-llama/llama-3.1-8b-instruct:free",
+          model: "meta-llama/llama-3.3-70b-instruct:free",
           messages: [
             { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
             { role: "user", content: prompt }
@@ -354,7 +354,7 @@ router.post("/", async (req, res) => {
               },
             });
             const orResult = await openRouter.chat.completions.create({
-              model: "meta-llama/llama-3.1-8b-instruct:free",
+              model: "meta-llama/llama-3.3-70b-instruct:free",
               messages: [
                 { role: "system", content: "You MUST respond with only valid JSON. No text before or after." },
                 { role: "user", content: prompt }
