@@ -32,7 +32,7 @@ const PALETTES = {
 
 const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter: Scatter, radar: Radar, polarArea: PolarArea, bubble: Bubble };
 
-const baseOpts = (isRadial) => ({
+const baseOpts = (isRadial, isLightMode = false) => ({
   responsive: true,
   maintainAspectRatio: false,
   devicePixelRatio: 4, // Forces ultra-high resolution rendering
@@ -40,7 +40,7 @@ const baseOpts = (isRadial) => ({
   plugins: {
     legend: {
       labels: {
-        color: "#0f172a", // Slate 900: razor sharp on white background
+        color: isLightMode ? "#0f172a" : "#cbd5e1", // Dark Slate in reports, high contrast Slate-300 on web dashboard
         font: { family: "system-ui, -apple-system, sans-serif", size: 12, weight: "700" },
         padding: 20,
         boxWidth: 12
@@ -50,21 +50,21 @@ const baseOpts = (isRadial) => ({
   },
   scales: isRadial ? {
     r: {
-      ticks: { color: "#334155", backdropColor: "transparent", font: { size: 10, weight: "700" } },
-      grid: { color: "rgba(0, 0, 0, 0.08)" },
-      angleLines: { color: "rgba(0, 0, 0, 0.1)" },
-      pointLabels: { color: "#0f172a", font: { size: 11, weight: "700" } }
+      ticks: { color: isLightMode ? "#475569" : "#94a3b8", backdropColor: "transparent", font: { size: 10, weight: "700" } },
+      grid: { color: isLightMode ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)" },
+      angleLines: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" },
+      pointLabels: { color: isLightMode ? "#0f172a" : "#cbd5e1", font: { size: 11, weight: "700" } }
     }
   } : {
     x: {
-      ticks: { color: "#334155", font: { size: 11, weight: "700" }, maxRotation: 40 },
-      grid: { color: "rgba(0, 0, 0, 0.06)" },
-      border: { color: "rgba(0, 0, 0, 0.1)" }
+      ticks: { color: isLightMode ? "#475569" : "#94a3b8", font: { size: 11, weight: "700" }, maxRotation: 40 },
+      grid: { color: isLightMode ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)" },
+      border: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" }
     },
     y: {
-      ticks: { color: "#334155", font: { size: 11, weight: "700" } },
-      grid: { color: "rgba(0, 0, 0, 0.06)" },
-      border: { color: "rgba(0, 0, 0, 0.1)" }
+      ticks: { color: isLightMode ? "#475569" : "#94a3b8", font: { size: 11, weight: "700" } },
+      grid: { color: isLightMode ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)" },
+      border: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" }
     },
   },
 });
@@ -124,6 +124,71 @@ function InsightCard({ label, value, trend, color }) {
   );
 }
 
+const renderLightModeChartImage = (config) => {
+  const tempCanvas = document.createElement("canvas");
+  tempCanvas.width = 1200;
+  tempCanvas.height = 600;
+  tempCanvas.style.width = "600px";
+  tempCanvas.style.height = "300px";
+  tempCanvas.style.position = "absolute";
+  tempCanvas.style.left = "-9999px";
+  document.body.appendChild(tempCanvas);
+
+  const ctx = tempCanvas.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+  const isRadial = ["pie", "doughnut", "polarArea", "radar"].includes(config.type);
+  const labels = config.labels || [];
+  const colors = ["#8b5cf6", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#14b8a6", "#f43f5e"];
+  
+  const chartData = {
+    labels,
+    datasets: (Array.isArray(config.datasets) ? config.datasets : []).map((ds, i) => {
+      const cleanData = (Array.isArray(ds.data) ? ds.data : []).map(v => {
+        if (typeof v === "object" && v !== null && "x" in v) return v;
+        const n = parseFloat(v); return isNaN(n) ? 0 : n;
+      });
+      let bgColor;
+      if (isRadial || config.type === "bar") {
+        bgColor = labels.map((_, j) => colors[(j + i) % colors.length]);
+      } else {
+        bgColor = colors[i % colors.length];
+      }
+      return {
+        label: ds.label || "Value",
+        data: cleanData,
+        backgroundColor: bgColor,
+        borderColor: isRadial ? "#ffffff" : (config.type === "bar" ? bgColor : colors[i % colors.length]),
+        borderWidth: isRadial ? 2 : config.type === "line" ? 2.5 : 1,
+        fill: config.type === "line" ? false : undefined,
+        tension: 0.4,
+        pointRadius: config.type === "line" ? 4 : 0,
+        pointHoverRadius: 7,
+        pointBackgroundColor: colors[i % colors.length],
+        hoverOffset: isRadial ? 10 : 0,
+      };
+    })
+  };
+
+  const options = baseOpts(isRadial, true);
+  options.animation = false;
+  options.responsive = false;
+  options.maintainAspectRatio = false;
+  options.devicePixelRatio = 2;
+
+  const chart = new ChartJS(ctx, {
+    type: config.type === "polarArea" ? "polarArea" : config.type,
+    data: chartData,
+    options: options
+  });
+
+  const imgUrl = tempCanvas.toDataURL("image/png");
+  chart.destroy();
+  document.body.removeChild(tempCanvas);
+  return imgUrl;
+};
+
 function ChartBlock({ config, colors }) {
   const chartRef = useRef(null);
   if (!config) return null;
@@ -175,10 +240,10 @@ function ChartBlock({ config, colors }) {
   };
 
   return (
-    <div data-role="chart-block" style={{ background:"#ffffff", border:"1px solid rgba(0,0,0,0.08)", borderRadius:20, padding:"24px", marginTop:16, position: "relative", boxShadow: "0 10px 30px rgba(0,0,0,0.04)" }}>
+    <div data-role="chart-block" style={{ background:"rgba(17, 17, 35, 0.45)", border:"1px solid rgba(255, 255, 255, 0.08)", backdropFilter:"blur(12px)", borderRadius:20, padding:"24px", marginTop:16, position: "relative", boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         {config.title && (
-          <div data-role="chart-title" style={{ fontSize:14, fontFamily:"system-ui, -apple-system, sans-serif", color:"#0f172a", fontWeight:700 }}>
+          <div data-role="chart-title" style={{ fontSize:14, fontFamily:"system-ui, -apple-system, sans-serif", color:"#e2e8f0", fontWeight:700 }}>
             <span style={{ marginRight:8, color:"var(--accent)" }}>✦</span>{config.title}
           </div>
         )}
@@ -203,7 +268,7 @@ function ChartBlock({ config, colors }) {
         </button>
       </div>
       <div ref={chartRef} style={{ padding: "0 10px", height: isRadial ? "260px" : "320px", position: "relative" }}>
-        <Comp data={data} options={baseOpts(isRadial)} />
+        <Comp data={data} options={baseOpts(isRadial, false)} data-config={JSON.stringify(config)} />
       </div>
     </div>
   );
@@ -465,12 +530,26 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       }
     });
 
-    // 7. Restyle Chart Blocks & Convert Canvases to Resized Images
+    // 7. Restyle Chart Blocks & Convert Canvases to Resized Images (forcing light mode)
     const originalCanvases = messagesRef.current.querySelectorAll('canvas');
     const clonedCanvases = el.querySelectorAll('canvas');
     originalCanvases.forEach((canvas, index) => {
+      const configStr = canvas.getAttribute("data-config");
+      let imgSrc;
+      if (configStr) {
+        try {
+          const config = JSON.parse(configStr);
+          imgSrc = renderLightModeChartImage(config);
+        } catch (e) {
+          console.error("Failed to render light mode chart for PDF:", e);
+          imgSrc = canvas.toDataURL("image/png", 1.0);
+        }
+      } else {
+        imgSrc = canvas.toDataURL("image/png", 1.0);
+      }
+
       const img = document.createElement('img');
-      img.src = canvas.toDataURL("image/png", 1.0);
+      img.src = imgSrc;
       
       // Constraint dimensions to fit standard A4 page perfectly
       img.style.width = "100%";
@@ -616,12 +695,26 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       }
     });
 
-    // 8. Convert canvases to clean resized images
+    // 8. Convert canvases to clean resized images (forcing light mode)
     const originalCanvases = messagesRef.current.querySelectorAll('canvas');
     const clonedCanvases = el.querySelectorAll('canvas');
     originalCanvases.forEach((canvas, index) => {
+      const configStr = canvas.getAttribute("data-config");
+      let imgSrc;
+      if (configStr) {
+        try {
+          const config = JSON.parse(configStr);
+          imgSrc = renderLightModeChartImage(config);
+        } catch (e) {
+          console.error("Failed to render light mode chart for Word:", e);
+          imgSrc = canvas.toDataURL("image/png", 1.0);
+        }
+      } else {
+        imgSrc = canvas.toDataURL("image/png", 1.0);
+      }
+
       const img = document.createElement('img');
-      img.src = canvas.toDataURL("image/png", 1.0);
+      img.src = imgSrc;
       img.style.width = "100%";
       img.style.maxWidth = "550px";
       img.style.height = "auto";
