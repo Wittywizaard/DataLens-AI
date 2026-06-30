@@ -33,18 +33,33 @@ const PALETTES = {
 const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter: Scatter, radar: Radar, polarArea: PolarArea, bubble: Bubble };
 
 const baseOpts = (isRadial) => ({
-  responsive: true, maintainAspectRatio: false,
-  width: isRadial ? 300 : 400, height: isRadial ? 300 : 300,
+  responsive: true,
+  maintainAspectRatio: false,
   devicePixelRatio: 4, // Forces ultra-high resolution rendering
   animation: { duration: 600, easing: "easeInOutQuart" },
   plugins: {
-    legend: { labels: { color: "#b4b4cf", font: { family: "'JetBrains Mono'", size: 11 }, padding: 20, boxWidth: 10 } },
-    tooltip: { backgroundColor: "#0d0d1f", titleColor: "#ffffff", bodyColor: "#b4b4cf", borderColor: "rgba(255,255,255,0.1)", borderWidth: 1, padding: 12, cornerRadius: 10 },
+    legend: {
+      labels: {
+        color: "#64748b", // Slate 500: visible on both dark background and pure white backgrounds
+        font: { family: "system-ui, -apple-system, sans-serif", size: 11, weight: "600" },
+        padding: 20,
+        boxWidth: 10
+      }
+    },
+    tooltip: { backgroundColor: "#0f172a", titleColor: "#ffffff", bodyColor: "#cbd5e1", borderColor: "rgba(255,255,255,0.1)", borderWidth: 1, padding: 12, cornerRadius: 10 },
   },
   ...(isRadial ? {} : {
     scales: {
-      x: { ticks: { color: "#71719a", font: { size: 11 }, maxRotation: 40 }, grid: { color: "rgba(255,255,255,0.03)" }, border: { color: "rgba(255,255,255,0.08)" } },
-      y: { ticks: { color: "#71719a", font: { size: 11 } }, grid: { color: "rgba(255,255,255,0.03)" }, border: { color: "rgba(255,255,255,0.08)" } },
+      x: {
+        ticks: { color: "#64748b", font: { size: 11 }, maxRotation: 40 },
+        grid: { color: "rgba(148,163,184,0.15)" }, // slate-400 opacity
+        border: { color: "rgba(148,163,184,0.2)" }
+      },
+      y: {
+        ticks: { color: "#64748b", font: { size: 11 } },
+        grid: { color: "rgba(148,163,184,0.15)" },
+        border: { color: "rgba(148,163,184,0.2)" }
+      },
     },
   }),
 });
@@ -92,9 +107,9 @@ function AnalyzingState() {
 
 function InsightCard({ label, value, trend, color }) {
   return (
-    <div style={{ background:"rgba(255,255,255,0.02)", borderLeft:`4px solid ${color}`, borderTop:"1px solid var(--border)", borderRight:"1px solid var(--border)", borderBottom:"1px solid var(--border)", borderRadius:16, padding:"20px", flex:1, minWidth:0, animation:"fadeUp .4s ease" }}>
-      <div style={{ fontSize:11, color:"var(--text3)", textTransform:"uppercase", letterSpacing:"0.05em", fontWeight:700, marginBottom:8 }}>{label}</div>
-      <div style={{ fontSize:24, fontWeight:800, color, letterSpacing:"-0.02em", textShadow: `0 0 15px ${color}40` }}>{value}</div>
+    <div data-role="insight-card" style={{ background:"rgba(255,255,255,0.02)", borderLeft:`4px solid ${color}`, borderTop:"1px solid var(--border)", borderRight:"1px solid var(--border)", borderBottom:"1px solid var(--border)", borderRadius:16, padding:"20px", flex:1, minWidth:0, animation:"fadeUp .4s ease" }}>
+      <div data-role="insight-label" style={{ fontSize:11, color:"var(--text3)", textTransform:"uppercase", letterSpacing:"0.05em", fontWeight:700, marginBottom:8 }}>{label}</div>
+      <div data-role="insight-value" style={{ fontSize:24, fontWeight:800, color, letterSpacing:"-0.02em", textShadow: `0 0 15px ${color}40` }}>{value}</div>
       {trend && (
         <div style={{ fontSize:12, color: trend.startsWith("+") ? "#10b981" : "#ef4444", marginTop:6, fontWeight:600 }}>
           {trend} from previous period
@@ -155,10 +170,10 @@ function ChartBlock({ config, colors }) {
   };
 
   return (
-    <div style={{ background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", backdropFilter:"blur(10px)", borderRadius:20, padding:"24px", marginTop:16, position: "relative" }}>
+    <div data-role="chart-block" style={{ background:"rgba(255,255,255,0.02)", border:"1px solid var(--border)", backdropFilter:"blur(10px)", borderRadius:20, padding:"24px", marginTop:16, position: "relative" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         {config.title && (
-          <div style={{ fontSize:14, fontFamily:"var(--mono)", color:"var(--accent)", fontWeight:600 }}>
+          <div data-role="chart-title" style={{ fontSize:14, fontFamily:"var(--mono)", color:"var(--accent)", fontWeight:600 }}>
             <span style={{ marginRight:8 }}>✦</span>{config.title}
           </div>
         )}
@@ -182,7 +197,7 @@ function ChartBlock({ config, colors }) {
           Download
         </button>
       </div>
-      <div ref={chartRef} style={{ padding: "0 10px" }}>
+      <div ref={chartRef} style={{ padding: "0 10px", height: isRadial ? "260px" : "320px", position: "relative" }}>
         <Comp data={data} options={baseOpts(isRadial)} />
       </div>
     </div>
@@ -191,7 +206,7 @@ function ChartBlock({ config, colors }) {
 
 function DataTable({ headers, rows }) {
   return (
-    <div style={{ overflowX:"auto", marginTop:14, borderRadius:16, border:"1px solid var(--border)", background:"var(--glass)" }}>
+    <div data-role="data-table" style={{ overflowX:"auto", marginTop:14, borderRadius:16, border:"1px solid var(--border)", background:"var(--glass)" }}>
       <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12, fontFamily:"var(--mono)" }}>
         <thead>
           <tr>{headers.map(h => <th key={h} style={{ background:"var(--bg3)", color:"var(--accent)", padding:"12px 16px", textAlign:"left", borderBottom:"1px solid var(--border)", whiteSpace:"nowrap", fontWeight:600 }}>{h}</th>)}</tr>
@@ -210,7 +225,7 @@ function DataTable({ headers, rows }) {
 
 function MessageBubble({ msg, colors }) {
   if (msg.role === "user") return (
-    <div style={{ display:"flex", justifyContent:"flex-end", animation:"fadeUp .3s ease" }}>
+    <div data-role="user-msg" style={{ display:"flex", justifyContent:"flex-end", animation:"fadeUp .3s ease" }}>
       <div style={{ background:"linear-gradient(135deg, var(--accent), var(--accent2))", borderRadius:"18px 18px 4px 18px", padding:"12px 18px", maxWidth:"75%", fontSize:14, lineHeight:1.6, boxShadow:"0 4px 20px var(--glow)", color: "#fff" }}>
         {msg.content}
       </div>
@@ -218,7 +233,7 @@ function MessageBubble({ msg, colors }) {
   );
 
   if (msg.role === "error") return (
-    <div style={{ background:"rgba(239,68,68,0.1)", border:"1px solid rgba(239,68,68,0.2)", borderRadius:16, padding:"16px 20px", fontSize:14, color:"#fca5a5", animation:"fadeUp .3s ease", display:"flex", gap:12, alignItems:"center" }}>
+    <div data-role="error-msg" style={{ background:"rgba(239,68,68,0.1)", border:"1px solid rgba(239,68,68,0.2)", borderRadius:16, padding:"16px 20px", fontSize:14, color:"#fca5a5", animation:"fadeUp .3s ease", display:"flex", gap:12, alignItems:"center" }}>
       <span style={{ fontSize:18 }}>⚠️</span>
       <div>
         <div style={{ fontWeight:700, marginBottom:2 }}>Analysis Error</div>
@@ -231,14 +246,14 @@ function MessageBubble({ msg, colors }) {
   if (!result) return null;
 
   return (
-    <div style={{ animation:"fadeUp .3s ease" }}>
-      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
+    <div data-role="assistant-msg" style={{ animation:"fadeUp .3s ease" }}>
+      <div data-role="assistant-header" style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
         <div style={{ width:32, height:32, background:"linear-gradient(135deg, var(--accent), var(--accent2))", borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, boxShadow:"0 4px 12px var(--glow)" }}>✦</div>
         <span style={{ fontSize:11, color:"var(--text3)", fontFamily:"var(--mono)", textTransform:"uppercase", letterSpacing:"0.1em", fontWeight:700 }}>DataLens Intelligence</span>
       </div>
 
       {result.summary && (
-        <p style={{ fontSize:14, lineHeight:1.7, color:"#c4c2df", marginBottom:14 }}>{result.summary}</p>
+        <p data-role="assistant-summary" style={{ fontSize:14, lineHeight:1.7, color:"#c4c2df", marginBottom:14 }}>{result.summary}</p>
       )}
 
       {result.insights?.length > 0 && (
@@ -368,30 +383,161 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     
     // Add temporary styles for PDF rendering to fix dark mode
     const el = messagesRef.current.cloneNode(true);
-    el.style.padding = "20px";
-    el.style.background = "#05050f";
-    el.style.color = "#ffffff";
+    el.style.padding = "40px";
+    el.style.background = "#ffffff";
+    el.style.color = "#1e293b";
     el.style.height = "auto";
     el.style.overflow = "visible";
+    el.style.display = "flex";
+    el.style.flexDirection = "column";
+    el.style.gap = "24px";
+    el.style.maxWidth = "1000px";
 
-    // Fix missing charts: Convert canvases to images since cloned DOM loses canvas context
+    // 1. Remove all download buttons and action buttons
+    el.querySelectorAll('button').forEach(btn => {
+      btn.remove();
+    });
+
+    // 2. Restyle User Messages to look like professional section headers
+    const userMsgs = el.querySelectorAll('[data-role="user-msg"]');
+    userMsgs.forEach((msg, idx) => {
+      msg.style.justifyContent = "flex-start";
+      msg.style.margin = "20px 0 10px 0";
+      msg.style.width = "100%";
+      if (idx > 0) {
+        msg.style.pageBreakBefore = "always"; // Start each query on a new page
+      }
+      
+      const inner = msg.querySelector('div');
+      if (inner) {
+        inner.style.background = "none";
+        inner.style.borderBottom = "2px solid #e2e8f0";
+        inner.style.borderRadius = "0";
+        inner.style.padding = "0 0 8px 0";
+        inner.style.color = "#1e1b4b"; // Deep corporate Indigo
+        inner.style.fontSize = "20px";
+        inner.style.fontWeight = "800";
+        inner.style.boxShadow = "none";
+        inner.style.maxWidth = "100%";
+        inner.innerHTML = `${idx + 1}. Analysis: "${inner.innerText}"`;
+      }
+    });
+
+    // 3. Restyle Assistant Message Containers
+    el.querySelectorAll('[data-role="assistant-msg"]').forEach(msg => {
+      msg.style.width = "100%";
+    });
+
+    // 4. Restyle Assistant Headers
+    el.querySelectorAll('[data-role="assistant-header"]').forEach(hdr => {
+      hdr.style.color = "#4f46e5";
+      hdr.style.fontWeight = "700";
+      // Hide the circular logo container to make it clean
+      const icon = hdr.querySelector('div');
+      if (icon) icon.remove();
+      const textSpan = hdr.querySelector('span');
+      if (textSpan) {
+        textSpan.style.fontSize = "12px";
+        textSpan.style.color = "#4f46e5";
+      }
+    });
+
+    // 5. Restyle Assistant Summary
+    el.querySelectorAll('[data-role="assistant-summary"]').forEach(p => {
+      p.style.color = "#334155";
+      p.style.fontSize = "14px";
+      p.style.lineHeight = "1.6";
+      p.style.marginBottom = "16px";
+    });
+
+    // 6. Restyle Insight Cards
+    el.querySelectorAll('[data-role="insight-card"]').forEach(card => {
+      card.style.background = "#f8fafc"; // light gray-blue
+      card.style.border = "1px solid #cbd5e1";
+      card.style.borderLeftWidth = "4px"; // Keep the accent color bar!
+      card.style.boxShadow = "none";
+      card.style.borderRadius = "12px";
+      card.style.padding = "16px";
+      
+      const label = card.querySelector('[data-role="insight-label"]');
+      if (label) label.style.color = "#475569";
+      
+      const val = card.querySelector('[data-role="insight-value"]');
+      if (val) {
+        val.style.textShadow = "none";
+        val.style.fontSize = "22px";
+      }
+    });
+
+    // 7. Restyle Chart Blocks & Convert Canvases to Resized Images
     const originalCanvases = messagesRef.current.querySelectorAll('canvas');
     const clonedCanvases = el.querySelectorAll('canvas');
     originalCanvases.forEach((canvas, index) => {
       const img = document.createElement('img');
       img.src = canvas.toDataURL("image/png", 1.0);
-      img.style.width = canvas.style.width || canvas.width + 'px';
-      img.style.height = canvas.style.height || canvas.height + 'px';
+      
+      // Constraint dimensions to fit standard A4 page perfectly
+      img.style.width = "100%";
+      img.style.maxWidth = "550px";
+      img.style.height = "auto";
       img.style.display = 'block';
       img.style.margin = '0 auto';
+      
       clonedCanvases[index].parentNode.replaceChild(img, clonedCanvases[index]);
     });
-    
+
+    el.querySelectorAll('[data-role="chart-block"]').forEach(block => {
+      block.style.background = "#ffffff";
+      block.style.border = "1px solid #cbd5e1";
+      block.style.borderRadius = "16px";
+      block.style.boxShadow = "none";
+      block.style.padding = "20px";
+      block.style.marginTop = "16px";
+      block.style.backdropFilter = "none";
+      block.style.pageBreakInside = "avoid"; // Prevent chart splitting across page boundaries!
+
+      const title = block.querySelector('[data-role="chart-title"]');
+      if (title) {
+        title.style.color = "#0f172a";
+        title.style.fontSize = "14px";
+        title.style.fontWeight = "700";
+      }
+    });
+
+    // 8. Restyle Data Tables
+    el.querySelectorAll('[data-role="data-table"]').forEach(table => {
+      table.style.background = "#ffffff";
+      table.style.border = "1px solid #cbd5e1";
+      table.style.boxShadow = "none";
+      table.style.borderRadius = "12px";
+      table.style.pageBreakInside = "avoid";
+
+      const ths = table.querySelectorAll('th');
+      ths.forEach(ths => {
+        ths.style.background = "#f1f5f9";
+        ths.style.color = "#1e293b";
+        ths.style.borderBottom = "2px solid #cbd5e1";
+        ths.style.padding = "10px 14px";
+      });
+
+      const tds = table.querySelectorAll('td');
+      tds.forEach(td => {
+        td.style.color = "#334155";
+        td.style.borderBottom = "1px solid #e2e8f0";
+        td.style.padding = "8px 14px";
+      });
+    });
+
+    // 9. Hide any error messages from the report
+    el.querySelectorAll('[data-role="error-msg"]').forEach(err => {
+      err.remove();
+    });
+
     html2pdf().from(el).set({
-      margin: 15,
+      margin: [15, 15, 15, 15],
       filename: `${filename.trim() || 'DataLens_Report'}.pdf`,
       image: { type: 'jpeg', quality: 1.0 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#05050f', windowWidth: 1000 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 1000 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     }).save();
