@@ -831,9 +831,16 @@ export function Dashboard() {
     const userMsg = { role: "user", content: query };
     setMessages(prev => [...prev, userMsg]);
     setAnalyzing(true);
+
+    // Map conversation history to a lightweight format to reduce network payload and LLM context size
+    const cleanHistory = messages.slice(-6).map(m => ({
+      role: m.role,
+      content: m.role === "user" ? m.content : (m.result?.summary || m.content || "")
+    }));
+
     try {
       const res = await axios.post(`${API_URL}/api/analyze`, {
-        fileId, query, conversationHistory: messages, userApiKey
+        fileId, query, conversationHistory: cleanHistory, userApiKey
       });
       setMessages(prev => [...prev, { role: "assistant", result: res.data.result }]);
     } catch (e) {
