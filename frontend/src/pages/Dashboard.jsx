@@ -805,8 +805,12 @@ export function Dashboard() {
     
     try {
       const res = await axios.post(`${API_URL}/api/upload`, formData, { headers: { "Content-Type": "multipart/form-data" } });
-      setFileId(res.data.fileId); setFileInfo(res.data);
-      setMessages([]);
+      const isSameFile = fileInfo && fileInfo.originalName === res.data.originalName;
+      setFileId(res.data.fileId); 
+      setFileInfo(res.data);
+      if (!isSameFile) {
+        setMessages([]);
+      }
     } catch (e) { alert(e.response?.data?.error || "Upload failed"); }
     finally { clearInterval(interval); setUploadProgress(100); setTimeout(() => setUploading(false), 500); }
   };

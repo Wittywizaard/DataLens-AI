@@ -149,10 +149,10 @@ router.post("/", upload.array("file", 10), async (req, res) => {
       uploadedAt: new Date().toISOString(),
     });
 
-    // Auto-delete after 1 hour
+    // Auto-delete after 24 hours
     setTimeout(() => {
       dataStore.delete(fileId);
-    }, 60 * 60 * 1000);
+    }, 24 * 60 * 60 * 1000);
 
     res.json({
       success: true,
