@@ -9,71 +9,80 @@ const COLORS = [
   "#fcd34d", "#fb923c", "#ea580c", "#c2410c", "#9a3412"
 ];
 
+function sanitizeSingleChartConfig(cfg) {
+  if (!cfg || typeof cfg !== "object") return null;
+
+  // Ensure type is valid
+  const validTypes = ["bar","line","pie","doughnut","scatter","radar","polarArea","bubble"];
+  if (!validTypes.includes(cfg.type)) cfg.type = "bar";
+
+  // Ensure labels is an array
+  if (!Array.isArray(cfg.labels)) cfg.labels = [];
+
+  // Ensure datasets is an array
+  if (!Array.isArray(cfg.datasets)) cfg.datasets = [];
+
+  const isRadial = ["pie","doughnut","polarArea"].includes(cfg.type);
+
+  cfg.datasets = cfg.datasets.map((ds, i) => {
+    // Ensure data is array of numbers
+    if (!Array.isArray(ds.data)) ds.data = [];
+    ds.data = ds.data.map(v => {
+      if (typeof v === "object" && v !== null && "x" in v) return v; // scatter / bubble
+      const n = parseFloat(v);
+      return isNaN(n) ? 0 : n;
+    });
+
+    // FIX: For pie/doughnut/polarArea, backgroundColor MUST be an array
+    if (isRadial) {
+      if (!Array.isArray(ds.backgroundColor)) {
+        ds.backgroundColor = cfg.labels.map((_, j) => COLORS[j % COLORS.length]);
+      } else {
+        while (ds.backgroundColor.length < cfg.labels.length) {
+          ds.backgroundColor.push(COLORS[ds.backgroundColor.length % COLORS.length]);
+        }
+      }
+      ds.borderColor = "#05050f";
+      ds.borderWidth = 2;
+    } else {
+      if (Array.isArray(ds.backgroundColor) && ds.backgroundColor.length === 0) {
+        ds.backgroundColor = COLORS[i % COLORS.length];
+      }
+      if (!ds.backgroundColor) ds.backgroundColor = COLORS[i % COLORS.length];
+      if (!ds.borderColor) ds.borderColor = COLORS[i % COLORS.length];
+      
+      if (cfg.type === "radar" && typeof ds.backgroundColor === "string") {
+          ds.backgroundColor = ds.backgroundColor + "40"; // 25% opacity hex
+          ds.borderWidth = 2;
+      }
+    }
+
+    if (!ds.label) ds.label = "Value";
+    return ds;
+  });
+
+  if (cfg.datasets.length === 0 || cfg.labels.length === 0) {
+    return null;
+  }
+  return cfg;
+}
+
 // Sanitize and guarantee the parsed result always has valid chart data
 function sanitizeResult(parsed, headers, columnTypes) {
   if (!parsed || typeof parsed !== "object") return null;
 
-  // Fix chartConfig
-  if (parsed.chartConfig && parsed.chartConfig !== null) {
-    const cfg = parsed.chartConfig;
+  // Fix single chartConfig
+  if (parsed.chartConfig) {
+    parsed.chartConfig = sanitizeSingleChartConfig(parsed.chartConfig);
+  }
 
-    // Ensure type is valid
-    const validTypes = ["bar","line","pie","doughnut","scatter","radar","polarArea","bubble"];
-    if (!validTypes.includes(cfg.type)) cfg.type = "bar";
-
-    // Ensure labels is an array
-    if (!Array.isArray(cfg.labels)) cfg.labels = [];
-
-    // Ensure datasets is an array
-    if (!Array.isArray(cfg.datasets)) cfg.datasets = [];
-
-    const isRadial = ["pie","doughnut","polarArea"].includes(cfg.type);
-
-    cfg.datasets = cfg.datasets.map((ds, i) => {
-      // Ensure data is array of numbers
-      if (!Array.isArray(ds.data)) ds.data = [];
-      ds.data = ds.data.map(v => {
-        if (typeof v === "object" && v !== null && "x" in v) return v; // scatter
-        const n = parseFloat(v);
-        return isNaN(n) ? 0 : n;
-      });
-
-      // FIX: For pie/doughnut/polarArea, backgroundColor MUST be an array
-      if (isRadial) {
-        if (!Array.isArray(ds.backgroundColor)) {
-          // AI returned a string — generate array
-          ds.backgroundColor = cfg.labels.map((_, j) => COLORS[j % COLORS.length]);
-        } else {
-          // Ensure enough colors
-          while (ds.backgroundColor.length < cfg.labels.length) {
-            ds.backgroundColor.push(COLORS[ds.backgroundColor.length % COLORS.length]);
-          }
-        }
-        ds.borderColor = "#05050f";
-        ds.borderWidth = 2;
-      } else {
-        // For bar/line/radar/bubble: ensure backgroundColor is a string or valid array
-        if (Array.isArray(ds.backgroundColor) && ds.backgroundColor.length === 0) {
-          ds.backgroundColor = COLORS[i % COLORS.length];
-        }
-        if (!ds.backgroundColor) ds.backgroundColor = COLORS[i % COLORS.length];
-        if (!ds.borderColor) ds.borderColor = COLORS[i % COLORS.length];
-        
-        // Add transparency for radar charts so they don't block the grid
-        if (cfg.type === "radar" && typeof ds.backgroundColor === "string") {
-            ds.backgroundColor = ds.backgroundColor + "40"; // 25% opacity hex
-            ds.borderWidth = 2;
-        }
-      }
-
-      if (!ds.label) ds.label = "Value";
-      return ds;
-    });
-
-    // If datasets is empty after processing, set chartConfig to null
-    if (cfg.datasets.length === 0 || cfg.labels.length === 0) {
-      parsed.chartConfig = null;
-    }
+  // Fix multiple chartConfigs array
+  if (Array.isArray(parsed.chartConfigs)) {
+    parsed.chartConfigs = parsed.chartConfigs
+      .map(cfg => sanitizeSingleChartConfig(cfg))
+      .filter(cfg => cfg !== null);
+  } else {
+    parsed.chartConfigs = [];
   }
 
   // Ensure insights is array
@@ -101,17 +110,26 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
   "summary": "2-3 sentence plain English explanation of what you found",
   "chartConfig": {
     "type": "bar",
-    "title": "Descriptive title for the chart",
+    "title": "Descriptive title for the chart (set to null if returning multiple charts in chartConfigs)",
     "labels": ["Category A", "Category B", "Category C"],
     "datasets": [
       {
         "label": "Value",
-        "data": [100, 200, 150],
-        "backgroundColor": "#f59e0b",
-        "borderColor": "#f59e0b"
+        "data": [100, 200, 150]
       }
     ]
   },
+  "chartConfigs": [
+    // IMPORTANT: If the user explicitly asks for MULTIPLE charts or a full dashboard, 
+    // set "chartConfig" to null and provide all requested charts here as objects in this array.
+    // If they only asked for one chart or a general question, leave this array empty.
+    {
+      "type": "line",
+      "title": "Descriptive title for chart 1",
+      "labels": ["Jan", "Feb", "Mar"],
+      "datasets": [{ "label": "Sales", "data": [10, 20, 15] }]
+    }
+  ],
   "insights": [
     { "label": "Total Revenue", "value": "$1,234.50", "trend": "+12.4%" },
     { "label": "Average Sale", "value": "$411.50" },
