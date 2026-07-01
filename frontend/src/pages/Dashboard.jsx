@@ -411,8 +411,55 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat }) {
   const { user, token } = useContext(AuthContext);
+  const renderSidebarItem = ({ icon, label, onClick, active, tooltip, collapsed }) => {
+    return (
+      <button
+        onClick={onClick}
+        title={collapsed ? tooltip || label : undefined}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsed ? "center" : "flex-start",
+          gap: collapsed ? "0" : "12px",
+          background: active ? "rgba(139, 92, 246, 0.15)" : "transparent",
+          border: active ? "1px solid rgba(139, 92, 246, 0.25)" : "1px solid transparent",
+          borderRadius: "10px",
+          padding: collapsed ? "10px" : "10px 14px",
+          color: active ? "var(--accent)" : "var(--text2)",
+          fontSize: "13px",
+          fontWeight: "600",
+          cursor: "pointer",
+          textAlign: "left",
+          transition: "all 0.2s",
+          boxSizing: "border-box"
+        }}
+        onMouseEnter={e => {
+          if (!active) {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+            e.currentTarget.style.color = "var(--text)";
+          }
+        }}
+        onMouseLeave={e => {
+          if (!active) {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "var(--text2)";
+          }
+        }}
+      >
+        <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, color: active ? "var(--accent)" : "inherit" }}>
+          {icon}
+        </span>
+        {!collapsed && (
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {label}
+          </span>
+        )}
+      </button>
+    );
+  };
   const [saving, setSaving] = useState(false);
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("preview");
@@ -921,28 +968,135 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   };
 
   return (
-    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : "56px 264px 1fr", height: "100vh", marginTop: 0 }}>
-      {/* Activity Bar */}
-      <div style={{
-        width: 56,
+    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : mainView === "dataview" ? "320px 1fr" : "280px 1fr", height: "100vh", marginTop: 0 }}>
+      {/* Unified Sidebar */}
+      <div className="workspace-sidebar-unified" style={{
+        width: isSidebarCollapsed ? 56 : mainView === "dataview" ? 320 : 280,
         background: "#080818",
         borderRight: "1px solid var(--border)",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: mainView === "dataview" ? "row" : "column",
         justifyContent: "space-between",
-        alignItems: "center",
-        padding: "0 0 16px 0",
+        alignItems: mainView === "dataview" ? "stretch" : "center",
+        padding: mainView === "dataview" ? 0 : "0 0 16px 0",
         flexShrink: 0,
-        zIndex: 10
+        zIndex: 10,
+        transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        height: "100vh",
+        position: "relative",
+        boxSizing: "border-box",
+        overflow: "hidden"
       }}>
-        {/* Top Icons */}
-        <div style={{ display: "flex", flexDirection: "column", width: "100%", alignItems: "center" }}>
-          
-          {/* Top Header Logo Zone (matching height 56px of chat-header) */}
-          {isSidebarCollapsed ? (
-            <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+      {mainView === "dataview" && (
+        <>
+          {/* Icon strip */}
+          <div style={{ width: 56, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "0 0 16px 0", borderRight: "1px solid var(--border)" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%" }}>
+              {/* Logo */}
+              <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                <button onClick={onLogoClick} title="DataLens AI" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)" }}>✦</button>
+              </div>
+              {/* Nav icons */}
+              {[{
+                icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>,
+                label: "New Chat", onClick: () => { onNewChat(); setMainView("chat"); }, active: false
+              }, {
+                icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+                label: "Search Chat", onClick: () => { setShowChatSearch(!showChatSearch); setMainView("chat"); }, active: false
+              }, ...(messages.length > 0 ? [{
+                icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>,
+                label: "Current Chat", onClick: () => setMainView("chat"), active: false
+              }] : []), {
+                icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>,
+                label: "Data Explorer", onClick: () => {}, active: true
+              }].map((item, idx) => (
+                <button key={idx} title={item.label} onClick={item.onClick} style={{ width: 38, height: 38, margin: "2px 0", borderRadius: 9, border: item.active ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: item.active ? "rgba(245,158,11,0.12)" : "transparent", color: item.active ? "#f59e0b" : "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}
+                  onMouseEnter={e => { if (!item.active) { e.currentTarget.style.background="rgba(255,255,255,0.05)"; e.currentTarget.style.color="var(--text)"; }}}
+                  onMouseLeave={e => { if (!item.active) { e.currentTarget.style.background="transparent"; e.currentTarget.style.color="var(--text3)"; }}}
+                >{item.icon}</button>
+              ))}
+            </div>
+            {/* Bottom icons */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <button title="Chart Theme" onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)} style={{ width: 38, height: 38, borderRadius: 9, border: "1px solid transparent", background: "transparent", color: "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03345 19.1749 5.0999 19.4318 5.02905 19.6738C4.78205 20.5173 4.41705 21.3934 4.02057 22H5.00057C6.10514 22 7.00057 21.1046 7.00057 20C7.00057 19.4477 7.44829 19 8.00057 19H9.00057C10.6574 19 12 17.6569 12 16C12 15.4477 12.4483 15 13.0006 15H17.0006C19.2097 15 21.0006 13.2091 21.0006 11"/><circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/></svg>
+              </button>
+              <button title={user ? user.name : "Sign In"} onClick={user ? () => setIsProfileMenuOpen(!isProfileMenuOpen) : onAuthOpen} style={{ width: 38, height: 38, borderRadius: 9, border: "1px solid transparent", background: user ? "linear-gradient(135deg,var(--accent),var(--accent2))" : "transparent", color: user ? "#fff" : "var(--text3)", fontSize: user ? 12 : "inherit", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {user ? user.name.charAt(0).toUpperCase() : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
+              </button>
+            </div>
+          </div>
+          {/* Data panel */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            {/* File info header */}
+            <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--border)", flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 36, height: 36, background: "rgba(139,92,246,0.15)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, border: "1px solid rgba(139,92,246,0.2)", flexShrink: 0 }}>📄</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--text)" }}>{originalName}</div>
+                  <div style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--mono)", marginTop: 1 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8 }}>
+                {numCols.length > 0 && <span style={{ fontSize: 10, fontFamily: "var(--mono)", padding: "2px 7px", borderRadius: 100, background: "rgba(6,182,212,.12)", border: "1px solid rgba(6,182,212,.2)", color: "#06b6d4" }}>📊 {numCols.length} numeric</span>}
+                {catCols.length > 0 && <span style={{ fontSize: 10, fontFamily: "var(--mono)", padding: "2px 7px", borderRadius: 100, background: "rgba(124,58,237,.12)", border: "1px solid rgba(124,58,237,.2)", color: "#a78bfa" }}>🏷 {catCols.length} categorical</span>}
+              </div>
+            </div>
+            {/* Tabs */}
+            <div style={{ display: "flex", borderBottom: "1px solid var(--border)", flexShrink: 0 }}>
+              {["preview", "columns"].map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)} style={{ flex: 1, padding: "10px", fontSize: 11, fontWeight: 700, color: activeTab === tab ? "var(--accent)" : "var(--text3)", borderBottom: activeTab === tab ? "2px solid var(--accent)" : "2px solid transparent", background: activeTab === tab ? "rgba(245,158,11,0.05)" : "none", textTransform: "uppercase", letterSpacing: "0.05em", transition: "all 0.2s", cursor: "pointer" }}>{tab}</button>
+              ))}
+            </div>
+            {/* Table */}
+            <div style={{ flex: 1, overflowY: "auto", overflowX: "auto" }}>
+              {activeTab === "preview" && (
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, fontFamily: "var(--mono)" }}>
+                  <thead><tr>{headers.map(h => <th key={h} style={{ background: "#111128", color: columnTypes[h] === "numeric" ? "#06b6d4" : "#7c3aed", padding: "7px 10px", textAlign: "left", borderBottom: "1px solid #ffffff0f", whiteSpace: "nowrap", position: "sticky", top: 0 }}>{h}</th>)}</tr></thead>
+                  <tbody>{(preview||[]).map((row,i) => <tr key={i} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.025)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>{headers.map(h => <td key={h} style={{ padding: "6px 10px", color: "#5c5a7a", borderBottom: "1px solid #ffffff05", whiteSpace: "nowrap", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis" }}>{String(row[h]??"")} </td>)}</tr>)}</tbody>
+                </table>
+              )}
+              {activeTab === "columns" && (
+                <div>
+                  {headers.map(h => { const type = columnTypes[h]; const s = stats[h]; return (
+                    <div key={h} style={{ padding: "10px 12px", borderBottom: "1px solid #ffffff05" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 3 }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--text)" }}>{h}</span>
+                        <span style={{ fontSize: 10, fontFamily: "var(--mono)", padding: "2px 6px", borderRadius: 100, background: type==="numeric"?"rgba(6,182,212,.12)":"rgba(124,58,237,.12)", color: type==="numeric"?"#06b6d4":"#a78bfa", flexShrink: 0 }}>{type}</span>
+                      </div>
+                      {type==="numeric" && s && <div style={{ fontSize: 10, color: "#5c5a7a", fontFamily: "var(--mono)", display: "flex", gap: 8 }}><span>min <b style={{color:"#a09dbe"}}>{s.min?.toFixed(1)}</b></span><span>max <b style={{color:"#a09dbe"}}>{s.max?.toFixed(1)}</b></span><span>avg <b style={{color:"#a09dbe"}}>{s.mean?.toFixed(1)}</b></span></div>}
+                      {type!=="numeric" && s && <div style={{ fontSize: 10, color: "#5c5a7a", fontFamily: "var(--mono)" }}><b style={{color:"#a09dbe"}}>{s.unique}</b> unique · top: <b style={{color:"#a09dbe"}}>"{ s.topValues?.[0]?.val}"</b></div>}
+                    </div>
+                  );})}
+                </div>
+              )}
+            </div>
+            {/* Bottom zone */}
+            <div style={{ padding: "8px 10px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 6 }}>
+              {renderSidebarItem({ icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03345 19.1749 5.0999 19.4318 5.02905 19.6738C4.78205 20.5173 4.41705 21.3934 4.02057 22H5.00057C6.10514 22 7.00057 21.1046 7.00057 20C7.00057 19.4477 7.44829 19 8.00057 19H9.00057C10.6574 19 12 17.6569 12 16C12 15.4477 12.4483 15 13.0006 15H17.0006C19.2097 15 21.0006 13.2091 21.0006 11"/><circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/></svg>, label: "Chart Theme", onClick: () => setShowThemeOptionsSidebar(!showThemeOptionsSidebar), active: showThemeOptionsSidebar, tooltip: "Chart Theme", collapsed: false })}
+              {user ? renderSidebarItem({ icon: <span style={{ width: 22, height: 22, borderRadius: "50%", background: "linear-gradient(135deg,var(--accent),var(--accent2))", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, color: "#fff", fontSize: 11 }}>{user.name.charAt(0).toUpperCase()}</span>, label: user.name, onClick: () => setIsProfileMenuOpen(!isProfileMenuOpen), active: isProfileMenuOpen, tooltip: user.name, collapsed: false }) : renderSidebarItem({ icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: "Sign In", onClick: onAuthOpen, active: false, tooltip: "Sign In", collapsed: false })}
+            </div>
+          </div>
+        </>
+      )}
+      {mainView !== "dataview" && (
+        <>
+        {/* Top zone */}
+        <div style={{ display: "flex", flexDirection: "column", width: "100%", alignItems: isSidebarCollapsed ? "center" : "stretch" }}>
+          {/* Header logo zone (always height 56px to match workspace header) */}
+          <div style={{ 
+            height: 56, 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: isSidebarCollapsed ? "center" : "space-between", 
+            width: "100%",
+            padding: isSidebarCollapsed ? "0" : "0 16px 0 20px",
+            boxSizing: "border-box"
+          }}>
+            {isSidebarCollapsed ? (
+              /* Collapsed Logo button with hover toggle icon */
               <button 
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                onClick={() => setIsSidebarCollapsed(false)}
                 onMouseEnter={() => setIsLogoHovered(true)}
                 onMouseLeave={() => setIsLogoHovered(false)}
                 title="Expand sidebar"
@@ -972,98 +1126,353 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                   "✦"
                 )}
               </button>
-            </div>
-          ) : (
-            <div style={{ height: 56 }} />
-          )}
-
-          {/* Other Top Icons */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", alignItems: "center", marginTop: 14 }}>
-            {/* Theme Icon with Popover */}
-            {!isSidebarCollapsed && (
-              <div ref={themeMenuRef} style={{ position: "relative" }}>
-                <button 
-                onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)}
-                title="Chart Theme"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 10,
-                  border: "none",
-                  background: showThemeOptionsSidebar ? "rgba(139, 92, 246, 0.15)" : "transparent",
-                  color: showThemeOptionsSidebar ? "var(--accent)" : "var(--text3)",
-                  fontSize: 18,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "all 0.2s"
-                }}
-                onMouseEnter={e => { if (!showThemeOptionsSidebar) e.currentTarget.style.color = "var(--text2)"; }}
-                onMouseLeave={e => { if (!showThemeOptionsSidebar) e.currentTarget.style.color = "var(--text3)"; }}
-              >
-                🎨
-              </button>
-              {showThemeOptionsSidebar && (
-                <div style={{ position: "absolute", left: "60px", top: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
-                  <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
-                  {Object.keys(PALETTES).map(paletteName => (
-                    <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
-                      <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>
-                        {PALETTES[paletteName].slice(0, 4).map((c, i) => (
-                          <span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />
-                        ))}
-                      </span>
-                      <span>{paletteName}</span>
-                      {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
-                    </button>
-                  ))}
+            ) : (
+              <>
+                {/* Logo brand line */}
+                <div 
+                  onClick={onLogoClick}
+                  title="DataLens AI - Go Home"
+                  style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none" }}
+                >
+                  <div style={{ 
+                    width: 28, height: 28, 
+                    background: "linear-gradient(135deg, #f59e0b, #d97706)", 
+                    borderRadius: 8, 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center", 
+                    fontSize: 16,
+                    boxShadow: "0 0 10px rgba(245, 158, 11, 0.3)",
+                    color: "white"
+                  }}>✦</div>
+                  <span className="header-logo-text" style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
                 </div>
-              )}
+
+                {/* Collapse button */}
+                <button 
+                  onClick={() => setIsSidebarCollapsed(true)}
+                  title="Collapse sidebar"
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    border: "none",
+                    background: "transparent",
+                    color: "var(--text3)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.color = "var(--text)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "var(--text3)";
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M9 3v18" />
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Main Options / Sections */}
+          <div style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            padding: isSidebarCollapsed ? "8px 0" : "8px 16px", 
+            gap: 8,
+            width: "100%",
+            boxSizing: "border-box"
+          }}>
+            {/* 1. New Chat */}
+            {renderSidebarItem({
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  <line x1="12" y1="7" x2="12" y2="13" />
+                  <line x1="9" y1="10" x2="15" y2="10" />
+                </svg>
+              ),
+              label: "New Chat",
+              onClick: () => {
+                onNewChat();
+                setMainView("chat");
+              },
+              active: messages.length === 0 && mainView === "chat",
+              tooltip: "New Chat",
+              collapsed: isSidebarCollapsed
+            })}
+
+            {/* 2. Search Chat */}
+            {renderSidebarItem({
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              ),
+              label: "Search Chat",
+              onClick: () => {
+                setShowChatSearch(!showChatSearch);
+                if (isSidebarCollapsed) setIsSidebarCollapsed(false);
+              },
+              active: showChatSearch,
+              tooltip: "Search Chat",
+              collapsed: isSidebarCollapsed
+            })}
+
+            {/* 3. Current Chat (only shown if messages present) */}
+            {messages.length > 0 && renderSidebarItem({
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                </svg>
+              ),
+              label: (() => {
+                const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || "";
+                return firstUserMsg.length > 20 ? firstUserMsg.slice(0, 18) + "..." : firstUserMsg;
+              })(),
+              onClick: () => {
+                setMainView("chat");
+                if (isSidebarCollapsed) setIsSidebarCollapsed(false);
+              },
+              active: mainView === "chat",
+              tooltip: "Current Chat",
+              collapsed: isSidebarCollapsed
+            })}
+
+            {/* 4. Data Explorer */}
+            {fileInfo && renderSidebarItem({
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                  <path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9" />
+                  <path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4" />
+                </svg>
+              ),
+              label: "Data Explorer",
+              onClick: () => {
+                setMainView("dataview");
+                if (isSidebarCollapsed) setIsSidebarCollapsed(false);
+              },
+              active: mainView === "dataview",
+              tooltip: "Data Explorer",
+              collapsed: isSidebarCollapsed
+            })}
+
+            {/* 5. Chat History List */}
+            {chatHistory.map((session) => (
+              <div key={session.id} style={{ width: "100%" }}>
+                {renderSidebarItem({
+                  icon: (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                    </svg>
+                  ),
+                  label: session.title,
+                  onClick: () => onLoadChat(session),
+                  active: false,
+                  tooltip: session.title,
+                  collapsed: isSidebarCollapsed
+                })}
+              </div>
+            ))}
+
+            {/* 5. Save Analysis (only shown if logged in and file exists) */}
+            {user && fileInfo && renderSidebarItem({
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+              ),
+              label: saving ? "Saving..." : "Save Analysis",
+              onClick: handleSave,
+              active: false,
+              tooltip: "Save Analysis",
+              collapsed: isSidebarCollapsed
+            })}
+          </div>
+
+          {/* File Preview section (only shown when expanded) */}
+          {!isSidebarCollapsed && fileInfo && (
+            <div style={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              width: "100%", 
+              borderTop: "1px solid var(--border)", 
+              marginTop: 12,
+              overflow: "hidden"
+            }}>
+              {/* File summary */}
+              <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                  <div style={{ width:40, height:40, background:"rgba(139, 92, 246, 0.15)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, border:"1px solid rgba(139, 92, 246, 0.2)" }}>📄</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:14, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", color:"var(--text)" }}>{originalName}</div>
+                    <div style={{ fontSize:11, color:"var(--text3)", fontFamily:"var(--mono)", marginTop:2, fontWeight:500 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
+                  </div>
+                </div>
+                <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:12 }}>
+                  {numCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(6,182,212,.12)", border:"1px solid rgba(6,182,212,.2)", color:"#06b6d4" }}>📊 {numCols.length} numeric</span>}
+                  {catCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.2)", color:"#a78bfa" }}>🏷 {catCols.length} categorical</span>}
+                </div>
+              </div>
+
+              <div style={{ display:"flex", borderBottom:"1px solid var(--border)", flexShrink:0 }}>
+                {["preview","columns"].map(tab => (
+                  <button key={tab} onClick={()=>setActiveTab(tab)} style={{ flex:1, padding:"12px", fontSize:12, fontWeight:700, color: activeTab===tab?"var(--accent)":"var(--text3)", borderBottom: activeTab===tab?"2px solid var(--accent)":"2px solid transparent", transition:"all 0.2s", background: activeTab===tab?"rgba(139, 92, 246, 0.05)":"none", textTransform:"uppercase", letterSpacing:"0.05em" }}>
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ maxHeight: "calc(100vh - 420px)", overflowY: "auto" }}>
+                {activeTab==="preview" && (
+                  <div style={{ overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11, fontFamily:"'JetBrains Mono'" }}>
+                      <thead><tr>{headers.map(h=><th key={h} style={{ background:"#111128", color:"#7c3aed", padding:"7px 10px", textAlign:"left", borderBottom:"1px solid #ffffff0f", whiteSpace:"nowrap", position:"sticky", top:0 }}>{h}</th>)}</tr></thead>
+                      <tbody>{(preview||[]).map((row,i)=><tr key={i}>{headers.map(h=><td key={h} style={{ padding:"6px 10px", color:"#5c5a7a", borderBottom:"1px solid #ffffff05", whiteSpace:"nowrap", maxWidth:100, overflow:"hidden", textOverflow:"ellipsis" }}>{String(row[h]??"")} </td>)}</tr>)}</tbody>
+                    </table>
+                  </div>
+                )}
+                {activeTab==="columns" && (
+                  <div>
+                    {headers.map(h => {
+                      const type = columnTypes[h]; const s = stats[h];
+                      return (
+                        <div key={h} style={{ padding:"12px 16px", borderBottom:"1px solid #ffffff05" }}>
+                          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:8, marginBottom:4 }}>
+                            <span style={{ fontSize:13, fontWeight:500, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{h}</span>
+                            <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 7px", borderRadius:100, background: type==="numeric"?"rgba(6,182,212,.12)":"rgba(124,58,237,.12)", color: type==="numeric"?"#06b6d4":"#a78bfa", flexShrink:0 }}>{type}</span>
+                          </div>
+                          {type==="numeric" && s && <div style={{ fontSize:11, color:"#5c5a7a", fontFamily:"'JetBrains Mono'", display:"flex", gap:10, flexWrap:"wrap" }}>
+                            <span>min <b style={{color:"#a09dbe"}}>{s.min?.toFixed(1)}</b></span>
+                            <span>max <b style={{color:"#a09dbe"}}>{s.max?.toFixed(1)}</b></span>
+                            <span>avg <b style={{color:"#a09dbe"}}>{s.mean?.toFixed(1)}</b></span>
+                          </div>}
+                          {type!=="numeric" && s && <div style={{ fontSize:11, color:"#5c5a7a", fontFamily:"'JetBrains Mono'" }}>
+                            <span><b style={{color:"#a09dbe"}}>{s.unique}</b> unique · top: <b style={{color:"#a09dbe"}}>"{s.topValues?.[0]?.val}"</b></span>
+                          </div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           )}
-
-          {/* Save Icon */}
-          {!isSidebarCollapsed && user && (
-            <button 
-              onClick={handleSave}
-              disabled={saving}
-              title={saving ? "Saving..." : "Save Analysis"}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                border: "none",
-                background: "transparent",
-                color: "var(--text3)",
-                fontSize: 18,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s",
-                opacity: saving ? 0.5 : 1
-              }}
-              onMouseEnter={e => { e.currentTarget.style.color = "var(--text2)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "var(--text3)"; }}
-            >
-              💾
-            </button>
-          )}
-          </div>
         </div>
 
-        {/* Bottom Icons - Sign In / User Profile */}
-        {!isSidebarCollapsed && (
-          <div ref={profileMenuRef} style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%", alignItems: "center", position: "relative" }}>
+        {/* Bottom section (Theme + User Avatar) */}
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          padding: isSidebarCollapsed ? "8px 0" : "8px 16px", 
+          gap: 12,
+          width: "100%",
+          boxSizing: "border-box",
+          alignItems: isSidebarCollapsed ? "center" : "stretch"
+        }}>
+          {/* Theme Icon with Popover */}
+          <div ref={themeMenuRef} style={{ position: "relative", width: "100%" }}>
+            {renderSidebarItem({
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03345 19.1749 5.0999 19.4318 5.02905 19.6738C4.78205 20.5173 4.41705 21.3934 4.02057 22H5.00057C6.10514 22 7.00057 21.1046 7.00057 20C7.00057 19.4477 7.44829 19 8.00057 19H9.00057C10.6574 19 12 17.6569 12 16C12 15.4477 12.4483 15 13.0006 15H17.0006C19.2097 15 21.0006 13.2091 21.0006 11" />
+                  <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor" />
+                  <circle cx="11.5" cy="7.5" r="1.5" fill="currentColor" />
+                  <circle cx="16.5" cy="9.5" r="1.5" fill="currentColor" />
+                </svg>
+              ),
+              label: "Chart Theme",
+              onClick: () => setShowThemeOptionsSidebar(!showThemeOptionsSidebar),
+              active: showThemeOptionsSidebar,
+              tooltip: "Chart Theme",
+              collapsed: isSidebarCollapsed
+            })}
+
+            {showThemeOptionsSidebar && (
+              <div style={{ 
+                position: "absolute", 
+                left: "100%", 
+                bottom: 0, 
+                marginLeft: "12px", 
+                background: "var(--bg2)", 
+                border: "1px solid var(--border)", 
+                borderRadius: 14, 
+                overflow: "hidden", 
+                zIndex: 100, 
+                display: "flex", 
+                flexDirection: "column", 
+                minWidth: 210, 
+                boxShadow: "0 16px 48px rgba(0,0,0,0.6)", 
+                padding: "6px 0" 
+              }}>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
+                {Object.keys(PALETTES).map(paletteName => (
+                  <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
+                    <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                      {PALETTES[paletteName].slice(0, 4).map((c, i) => (
+                        <span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />
+                      ))}
+                    </span>
+                    <span>{paletteName}</span>
+                    {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* User Avatar / Sign In */}
+          <div ref={profileMenuRef} style={{ position: "relative", width: "100%" }}>
             {user ? (
               <>
-                <button 
+                <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  title={user.name}
+                  title={isSidebarCollapsed ? user.name : undefined}
                   style={{
-                    width: 36,
-                    height: 36,
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: isSidebarCollapsed ? "center" : "flex-start",
+                    gap: isSidebarCollapsed ? "0" : "12px",
+                    background: isProfileMenuOpen ? "rgba(255, 255, 255, 0.04)" : "transparent",
+                    border: "1px solid transparent",
+                    borderRadius: "10px",
+                    padding: isSidebarCollapsed ? "8px" : "8px 12px",
+                    color: "var(--text2)",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    boxSizing: "border-box"
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+                    e.currentTarget.style.color = "var(--text)";
+                  }}
+                  onMouseLeave={e => {
+                    if (!isProfileMenuOpen) {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.color = "var(--text2)";
+                    }
+                  }}
+                >
+                  <span style={{
+                    width: 28,
+                    height: 28,
                     borderRadius: "50%",
                     background: "linear-gradient(135deg, var(--accent), var(--accent2))",
                     display: "flex",
@@ -1071,24 +1480,33 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                     justifyContent: "center",
                     fontWeight: 700,
                     color: "#fff",
-                    fontSize: 14,
-                    cursor: "pointer",
-                    border: "2px solid transparent",
-                    transition: "all 0.2s",
-                    boxShadow: isProfileMenuOpen ? "0 0 0 2px var(--bg), 0 0 0 4px var(--accent)" : "none"
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
-                  onMouseLeave={e => e.currentTarget.style.transform = "none"}
-                >
-                  {user.name.charAt(0).toUpperCase()}
+                    fontSize: 12,
+                    flexShrink: 0
+                  }}>
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
+                  {!isSidebarCollapsed && (
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {user.name}
+                    </span>
+                  )}
                 </button>
+
                 {isProfileMenuOpen && (
                   <div style={{
-                    position: "absolute", bottom: "100%", left: "60px", marginBottom: "8px",
-                    background: "var(--bg2)", border: "1px solid var(--border)",
-                    borderRadius: 16, overflow: "hidden", minWidth: 180,
-                    boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000,
-                    display: "flex", flexDirection: "column"
+                    position: "absolute", 
+                    left: "100%", 
+                    bottom: 0, 
+                    marginLeft: "12px",
+                    background: "var(--bg2)", 
+                    border: "1px solid var(--border)",
+                    borderRadius: 16, 
+                    overflow: "hidden", 
+                    minWidth: 180,
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.5)", 
+                    zIndex: 1000,
+                    display: "flex", 
+                    flexDirection: "column"
                   }}>
                     <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
                       <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
@@ -1106,225 +1524,25 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 )}
               </>
             ) : (
-              <button 
-                onClick={onAuthOpen}
-                title="Sign In"
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid var(--border)",
-                  color: "var(--text2)",
-                  fontSize: 16,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "all 0.2s"
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "var(--text)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "var(--text2)"; }}
-              >
-                👤
-              </button>
+              renderSidebarItem({
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                ),
+                label: "Sign In",
+                onClick: onAuthOpen,
+                active: false,
+                tooltip: "Sign In",
+                collapsed: isSidebarCollapsed
+              })
             )}
           </div>
-        )}
-      </div>
-
-      {!isSidebarCollapsed && (
-        <div className="workspace-sidebar">
-          {/* Sidebar Top Header (Logo Brand Link + Collapse Button) */}
-          <div style={{ 
-            padding: "16px 20px 8px 20px", 
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: "space-between",
-            width: "100%",
-            boxSizing: "border-box"
-          }}>
-            {/* Logo brand line */}
-            <div 
-              onClick={onLogoClick}
-              title="DataLens AI - Go Home"
-              style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none" }}
-            >
-              <div style={{ 
-                width: 28, height: 28, 
-                background: "linear-gradient(135deg, #f59e0b, #d97706)", 
-                borderRadius: 8, 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center", 
-                fontSize: 16,
-                boxShadow: "0 0 10px rgba(245, 158, 11, 0.3)",
-                color: "white"
-              }}>✦</div>
-              <span className="header-logo-text" style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
-            </div>
-
-            {/* Gemini-style Collapse button */}
-            <button 
-              onClick={() => setIsSidebarCollapsed(true)}
-              title="Collapse sidebar"
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                border: "none",
-                background: "transparent",
-                color: "var(--text3)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-                e.currentTarget.style.color = "var(--text)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--text3)";
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <path d="M9 3v18" />
-              </svg>
-            </button>
-          </div>
-
-          {/* ChatGPT style buttons container */}
-          <div style={{ padding: "8px 20px 12px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
-            {/* New Chat Button */}
-            <button 
-              onClick={onNewChat}
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: "10px",
-                padding: "8px 12px",
-                color: "var(--text)",
-                fontSize: "13px",
-                fontWeight: "600",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-              }}
-            >
-              <span style={{ fontSize: "14px", display: "inline-flex" }}>📝</span>
-              New chat
-            </button>
-
-            {/* Search Chat Button */}
-            <button 
-              onClick={() => setShowChatSearch(!showChatSearch)}
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                background: showChatSearch ? "rgba(139, 92, 246, 0.15)" : "rgba(255, 255, 255, 0.04)",
-                border: showChatSearch ? "1px solid rgba(139, 92, 246, 0.3)" : "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: "10px",
-                padding: "8px 12px",
-                color: showChatSearch ? "var(--accent)" : "var(--text2)",
-                fontSize: "13px",
-                fontWeight: "600",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => {
-                if (!showChatSearch) {
-                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-                }
-              }}
-              onMouseLeave={e => {
-                if (!showChatSearch) {
-                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                }
-              }}
-            >
-              <span style={{ fontSize: "13px", display: "inline-flex" }}>🔍</span>
-              Search chats
-            </button>
-          </div>
-
-          <div style={{ padding:"12px 20px 20px 20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-              <div style={{ width:40, height:40, background:"rgba(139, 92, 246, 0.15)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, border:"1px solid rgba(139, 92, 246, 0.2)" }}>📄</div>
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:14, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", color:"var(--text)" }}>{originalName}</div>
-                <div style={{ fontSize:11, color:"var(--text3)", fontFamily:"var(--mono)", marginTop:2, fontWeight:500 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
-              </div>
-            </div>
-            <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:12 }}>
-              {numCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(6,182,212,.12)", border:"1px solid rgba(6,182,212,.2)", color:"#06b6d4" }}>📊 {numCols.length} numeric</span>}
-              {catCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.2)", color:"#a78bfa" }}>🏷 {catCols.length} categorical</span>}
-            </div>
-          </div>
-
-        <div style={{ display:"flex", borderBottom:"1px solid var(--border)", flexShrink:0 }}>
-          {["preview","columns"].map(tab => (
-            <button key={tab} onClick={()=>setActiveTab(tab)} style={{ flex:1, padding:"12px", fontSize:12, fontWeight:700, color: activeTab===tab?"var(--accent)":"var(--text3)", borderBottom: activeTab===tab?"2px solid var(--accent)":"2px solid transparent", transition:"all 0.2s", background: activeTab===tab?"rgba(139, 92, 246, 0.05)":"none", textTransform:"uppercase", letterSpacing:"0.05em" }}>
-              {tab}
-            </button>
-          ))}
         </div>
-
-        <div style={{ flex:1, overflow:"auto" }}>
-          {activeTab==="preview" && (
-            <div style={{ overflowX:"auto" }}>
-              <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11, fontFamily:"'JetBrains Mono'" }}>
-                <thead><tr>{headers.map(h=><th key={h} style={{ background:"#111128", color:"#7c3aed", padding:"7px 10px", textAlign:"left", borderBottom:"1px solid #ffffff0f", whiteSpace:"nowrap", position:"sticky", top:0 }}>{h}</th>)}</tr></thead>
-                <tbody>{(preview||[]).map((row,i)=><tr key={i}>{headers.map(h=><td key={h} style={{ padding:"6px 10px", color:"#5c5a7a", borderBottom:"1px solid #ffffff05", whiteSpace:"nowrap", maxWidth:100, overflow:"hidden", textOverflow:"ellipsis" }}>{String(row[h]??"")} </td>)}</tr>)}</tbody>
-              </table>
-            </div>
-          )}
-          {activeTab==="columns" && (
-            <div>
-              {headers.map(h => {
-                const type = columnTypes[h]; const s = stats[h];
-                return (
-                  <div key={h} style={{ padding:"12px 16px", borderBottom:"1px solid #ffffff05" }}>
-                    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:8, marginBottom:4 }}>
-                      <span style={{ fontSize:13, fontWeight:500, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{h}</span>
-                      <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 7px", borderRadius:100, background: type==="numeric"?"rgba(6,182,212,.12)":"rgba(124,58,237,.12)", color: type==="numeric"?"#06b6d4":"#a78bfa", flexShrink:0 }}>{type}</span>
-                    </div>
-                    {type==="numeric" && s && <div style={{ fontSize:11, color:"#5c5a7a", fontFamily:"'JetBrains Mono'", display:"flex", gap:10, flexWrap:"wrap" }}>
-                      <span>min <b style={{color:"#a09dbe"}}>{s.min?.toFixed(1)}</b></span>
-                      <span>max <b style={{color:"#a09dbe"}}>{s.max?.toFixed(1)}</b></span>
-                      <span>avg <b style={{color:"#a09dbe"}}>{s.mean?.toFixed(1)}</b></span>
-                    </div>}
-                    {type!=="numeric" && s && <div style={{ fontSize:11, color:"#5c5a7a", fontFamily:"'JetBrains Mono'" }}>
-                      <span><b style={{color:"#a09dbe"}}>{s.unique}</b> unique · top: <b style={{color:"#a09dbe"}}>"{s.topValues?.[0]?.val}"</b></span>
-                    </div>}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-      )}
+        </> {/* end fragment */}
+      )} {/* end mainView !== dataview */}
+      </div> {/* end workspace-sidebar-unified */}
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
@@ -1576,7 +1794,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               </div>
               <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 10, maxWidth: 800, width: "100%", marginTop: 8 }}>
                 {suggestions.map(s => (
-                  <button key={s} onClick={() => onQuery(s)} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", padding: "10px 18px", borderRadius: 12, color: "var(--text2)", fontSize: 13, fontWeight: 500, textAlign: "center", transition: "all 0.2s", lineHeight: 1.4, cursor: "pointer" }} onMouseEnter={e => { e.target.style.background="rgba(255,255,255,0.06)"; e.target.style.borderColor="var(--accent)"; }} onMouseLeave={e => { e.target.style.background="rgba(255,255,255,0.03)"; e.target.style.borderColor="var(--border)"; }}>
+                  <button key={s} onClick={() => onQuery(s)} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", padding: "8px 14px", borderRadius: 12, color: "var(--text2)", fontSize: 13, fontWeight: 500, textAlign: "center", transition: "all 0.2s", lineHeight: 1.4, cursor: "pointer" }} onMouseEnter={e => { e.target.style.background="rgba(255,255,255,0.06)"; e.target.style.borderColor="var(--accent)"; }} onMouseLeave={e => { e.target.style.background="rgba(255,255,255,0.03)"; e.target.style.borderColor="var(--border)"; }}>
                     {s}
                   </button>
                 ))}
@@ -1681,6 +1899,119 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     </div>
   );
 }
+          {/* Header */}
+          <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 28px", borderBottom: "1px solid var(--border)", flexShrink: 0, background: "rgba(8,8,24,0.85)", backdropFilter: "blur(10px)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 32, height: 32, background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                  <path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9" />
+                  <path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4" />
+                </svg>
+              </div>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text)" }}>Data Explorer</div>
+                <div style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--mono)" }}>{originalName} · {rowCount.toLocaleString()} rows · {headers.length} columns</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 11, fontFamily: "var(--mono)", padding: "3px 10px", borderRadius: 100, background: "rgba(6,182,212,.1)", border: "1px solid rgba(6,182,212,.2)", color: "#06b6d4" }}>📊 {numCols.length} numeric</span>
+              <span style={{ fontSize: 11, fontFamily: "var(--mono)", padding: "3px 10px", borderRadius: 100, background: "rgba(124,58,237,.1)", border: "1px solid rgba(124,58,237,.2)", color: "#a78bfa" }}>🏷 {catCols.length} categorical</span>
+            </div>
+          </div>
+
+          {/* Tab switcher */}
+          <div style={{ display: "flex", borderBottom: "1px solid var(--border)", flexShrink: 0, background: "rgba(8,8,24,0.5)" }}>
+            {["preview", "columns"].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} style={{
+                padding: "12px 24px", fontSize: 12, fontWeight: 700,
+                color: activeTab === tab ? "var(--accent)" : "var(--text3)",
+                borderBottom: activeTab === tab ? "2px solid var(--accent)" : "2px solid transparent",
+                background: activeTab === tab ? "rgba(245,158,11,0.05)" : "none",
+                textTransform: "uppercase", letterSpacing: "0.06em", transition: "all 0.2s", cursor: "pointer"
+              }}>{tab}</button>
+            ))}
+          </div>
+
+          {/* Table Area */}
+          <div style={{ flex: 1, overflow: "auto", padding: "0" }}>
+            {activeTab === "preview" && (
+              <div style={{ overflowX: "auto", minWidth: "100%" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ background: "rgba(139,92,246,0.08)", position: "sticky", top: 0, zIndex: 2 }}>
+                      <th style={{ padding: "10px 16px", textAlign: "left", color: "var(--text3)", fontFamily: "var(--mono)", fontWeight: 700, fontSize: 11, borderBottom: "1px solid var(--border)", whiteSpace: "nowrap", minWidth: 50 }}>#</th>
+                      {headers.map(h => (
+                        <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: columnTypes[h] === "numeric" ? "#06b6d4" : "#a78bfa", fontFamily: "var(--mono)", fontWeight: 700, fontSize: 11, borderBottom: "1px solid var(--border)", whiteSpace: "nowrap" }}>
+                          {h}
+                          <span style={{ marginLeft: 4, opacity: 0.5, fontSize: 9 }}>{columnTypes[h] === "numeric" ? "123" : "Abc"}</span>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {preview.map((row, i) => (
+                      <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.03)", transition: "background 0.15s" }}
+                        onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.025)"}
+                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                      >
+                        <td style={{ padding: "9px 16px", color: "var(--text4)", fontFamily: "var(--mono)", fontSize: 11 }}>{i + 1}</td>
+                        {headers.map(h => (
+                          <td key={h} style={{ padding: "9px 16px", color: columnTypes[h] === "numeric" ? "var(--text)" : "var(--text2)", fontFamily: "var(--mono)", fontSize: 12, whiteSpace: "nowrap", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {row[h] ?? "—"}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {rowCount > preview.length && (
+                  <div style={{ textAlign: "center", padding: "16px", color: "var(--text3)", fontSize: 12, fontFamily: "var(--mono)", borderTop: "1px solid var(--border)" }}>
+                    Showing {preview.length} of {rowCount.toLocaleString()} rows
+                  </div>
+                )}
+              </div>
+            )}
+            {activeTab === "columns" && (
+              <div style={{ padding: "20px 28px", display: "flex", flexDirection: "column", gap: 10 }}>
+                {headers.map(h => {
+                  const s = stats[h];
+                  const isNum = columnTypes[h] === "numeric";
+                  return (
+                    <div key={h} style={{ background: "var(--bg2)", borderRadius: 12, padding: "14px 18px", border: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 16, transition: "border-color 0.2s" }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = isNum ? "rgba(6,182,212,0.4)" : "rgba(139,92,246,0.4)"}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
+                    >
+                      <div style={{ width: 36, height: 36, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: isNum ? "rgba(6,182,212,0.1)" : "rgba(139,92,246,0.1)", border: `1px solid ${isNum ? "rgba(6,182,212,0.2)" : "rgba(139,92,246,0.2)"}`, flexShrink: 0, fontSize: 14, fontWeight: 700, fontFamily: "var(--mono)", color: isNum ? "#06b6d4" : "#a78bfa" }}>{isNum ? "#" : "A"}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--mono)" }}>{h}</div>
+                        <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>{isNum ? "Numeric" : "Categorical"}</div>
+                      </div>
+                      {isNum && s && (
+                        <div style={{ display: "flex", gap: 20, flexShrink: 0 }}>
+                          {[["Min", s.min?.toFixed(2)],["Max", s.max?.toFixed(2)],["Avg", s.mean?.toFixed(2)]].map(([label, val]) => (
+                            <div key={label} style={{ textAlign: "center" }}>
+                              <div style={{ fontSize: 10, color: "var(--text3)", fontFamily: "var(--mono)", textTransform: "uppercase" }}>{label}</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: "#06b6d4", fontFamily: "var(--mono)" }}>{val}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {!isNum && s && (
+                        <div style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--mono)", flexShrink: 0 }}>{s.unique} unique values</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function SettingsModal({ isOpen, onClose, onSave, currentKey }) {
   const [key, setKey] = useState(currentKey || "");
@@ -1760,6 +2091,10 @@ export function Dashboard() {
     const saved = sessionStorage.getItem("datalens_messages");
     return saved ? JSON.parse(saved) : [];
   });
+  const [chatHistory, setChatHistory] = useState(() => {
+    const saved = sessionStorage.getItem("datalens_chatHistory");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     if (fileId) sessionStorage.setItem("datalens_fileId", fileId);
@@ -1774,6 +2109,10 @@ export function Dashboard() {
   useEffect(() => {
     sessionStorage.setItem("datalens_messages", JSON.stringify(messages));
   }, [messages]);
+
+  useEffect(() => {
+    sessionStorage.setItem("datalens_chatHistory", JSON.stringify(chatHistory));
+  }, [chatHistory]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [analyzing, setAnalyzing] = useState(false);
@@ -1842,7 +2181,25 @@ export function Dashboard() {
 
   const handleReset = () => { setFileId(null); setFileInfo(null); setMessages([]); };
 
-  const handleNewChat = () => { setMessages([]); };
+  const handleNewChat = () => { 
+    if (messages.length > 0) {
+      const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || messages.find(m => m.role === "user")?.content || "";
+      const title = firstUserMsg ? (firstUserMsg.length > 20 ? firstUserMsg.slice(0, 18) + "..." : firstUserMsg) : "Analysis Chat";
+      setChatHistory(prev => [{ id: Date.now().toString(), title, messages: [...messages] }, ...prev]);
+    }
+    setMessages([]); 
+  };
+
+  const handleLoadChat = (session) => {
+    if (messages.length > 0) {
+      const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || messages.find(m => m.role === "user")?.content || "";
+      const title = firstUserMsg ? (firstUserMsg.length > 20 ? firstUserMsg.slice(0, 18) + "..." : firstUserMsg) : "Analysis Chat";
+      setChatHistory(prev => [{ id: Date.now().toString(), title, messages: [...messages] }, ...prev.filter(h => h.id !== session.id)]);
+    } else {
+      setChatHistory(prev => prev.filter(h => h.id !== session.id));
+    }
+    setMessages(session.messages);
+  };
 
   const uploadSectionRef = useRef(null);
   const scrollToUpload = () => uploadSectionRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -2016,6 +2373,8 @@ export function Dashboard() {
         onSignOut={handleSignOut}
         onLogoClick={handleReset}
         onNewChat={handleNewChat}
+        chatHistory={chatHistory}
+        onLoadChat={handleLoadChat}
       />
       <SettingsModal 
         isOpen={isSettingsOpen} 

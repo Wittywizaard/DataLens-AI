@@ -179,6 +179,19 @@ class ApiKeyPool {
   constructor() {
     this.keys = [];
     this.initialized = false;
+    this._scheduleMidnightReset();
+  }
+
+  _scheduleMidnightReset() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const msUntilMidnight = midnight - now;
+    setTimeout(() => {
+      console.log("[Key Pool] Midnight reset — reviving all keys.");
+      this.keys.forEach(k => { k.isDead = false; k.deadUntil = 0; });
+      this._scheduleMidnightReset(); // reschedule for next day
+    }, msUntilMidnight);
   }
 
   init() {
@@ -196,6 +209,11 @@ class ApiKeyPool {
       
     this.keys = allKeys.map(k => ({ value: k, isDead: false, deadUntil: 0 }));
     this.initialized = true;
+  }
+
+  reviveAll() {
+    this.keys.forEach(k => { k.isDead = false; k.deadUntil = 0; });
+    console.log("[Key Pool] All keys revived.");
   }
 
   getKey() {
@@ -226,12 +244,12 @@ class ApiKeyPool {
     return keyObj.value;
   }
 
-  markDead(keyValue) {
+  markDead(keyValue, minutes = 15) {
     const keyObj = this.keys.find(k => k.value === keyValue);
     if (keyObj) {
       keyObj.isDead = true;
-      keyObj.deadUntil = Date.now() + (1000 * 60 * 60 * 4); // Dead for 4 hours
-      console.warn(`[Key Pool] Key ${keyValue.substring(0, 5)}... marked dead for 4 hours due to rate limit.`);
+      keyObj.deadUntil = Date.now() + (1000 * 60 * minutes);
+      console.warn(`[Key Pool] Key ${keyValue.substring(0, 8)}... marked dead for ${minutes} min.`);
     }
   }
 }
@@ -409,10 +427,18 @@ router.post("/", async (req, res) => {
           }
         } catch (error) {
           lastError = error;
-          const shouldRotate = error.status === 429 || error.status === 401 || error.status === 400 || error.status === 404 || error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not valid") || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota") || error.message?.includes("model") || error.message?.includes("not found");
+          const isQuotaError = error.status === 429 || error.message?.includes("RESOURCE_EXHAUSTED") || error.message?.includes("quota") || error.message?.includes("rate limit");
+          const isAuthError = error.status === 401 || error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not valid");
+          const isModelError = error.status === 400 || error.status === 404 || error.message?.includes("model") || error.message?.includes("not found");
           
-          if (shouldRotate) {
-            keyPool.markDead(apiKeyToUse);
+          if (isQuotaError) {
+            keyPool.markDead(apiKeyToUse, 60); // quota exhausted: rest 60 min
+            attempt++;
+          } else if (isAuthError) {
+            keyPool.markDead(apiKeyToUse, 1440); // bad key: effectively disable for a day
+            attempt++;
+          } else if (isModelError) {
+            keyPool.markDead(apiKeyToUse, 15); // model error: retry after 15 min
             attempt++;
           } else {
             throw error;
@@ -477,3 +503,4 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
+module.exports.keyPool = keyPool;

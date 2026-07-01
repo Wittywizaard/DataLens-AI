@@ -69,6 +69,13 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/analyze", analyzeRoutes);
 app.use("/api/files", fileRoutes);
 
+// Admin: revive all dead API keys instantly (no restart needed)
+const { keyPool } = require("./routes/analyze");
+app.post("/api/reset-keys", (req, res) => {
+  keyPool.reviveAll();
+  res.json({ success: true, message: "All system API keys have been revived." });
+});
+
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({
