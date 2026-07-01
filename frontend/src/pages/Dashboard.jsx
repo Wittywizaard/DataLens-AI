@@ -2003,11 +2003,11 @@ export function Dashboard() {
       onMouseMove={handleMouseMove}
       className="moving-bg"
       style={{ 
-        minHeight:"100vh", 
+        height:"100vh", 
         "--x": `${mousePos.x}%`, 
         "--y": `${mousePos.y}%`,
         color:"var(--text)", 
-        overflowX:"hidden", 
+        overflow:"hidden", 
         position: "relative",
         transition: "background 0.1s ease-out"
       }}
