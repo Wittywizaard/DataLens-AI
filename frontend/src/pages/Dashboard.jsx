@@ -1113,8 +1113,67 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       {!isSidebarCollapsed && (
         <div className="workspace-sidebar">
+          {/* Sidebar Top Header (Logo + Collapse Button) */}
+          <div style={{ 
+            padding: "16px 20px 8px 20px", 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "space-between",
+            width: "100%",
+            boxSizing: "border-box"
+          }}>
+            {/* Logo brand line */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ 
+                width: 28, height: 28, 
+                background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
+                borderRadius: 8, 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                fontSize: 16,
+                boxShadow: "0 0 15px var(--glow)",
+                color: "white"
+              }}>✦</div>
+              <span className="header-logo-text" style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
+            </div>
+
+            {/* Collapse Sidebar Button */}
+            <button 
+              onClick={() => setIsSidebarCollapsed(true)}
+              title="Close sidebar"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                border: "none",
+                background: "transparent",
+                color: "var(--text3)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                e.currentTarget.style.color = "var(--text)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--text3)";
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M9 3v18" />
+                <path d="m16 15-3-3 3-3" />
+              </svg>
+            </button>
+          </div>
+
           {/* ChatGPT style buttons container */}
-          <div style={{ padding: "20px 20px 12px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ padding: "8px 20px 12px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
             {/* New Chat Button */}
             <button 
               onClick={onNewChat}
@@ -1246,32 +1305,70 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         {/* Workspace Header Bar */}
         <div className="chat-header" style={{ gap: "12px", borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px" }}>
           
-          {/* Brand Logo inside Header */}
-          <div 
-            onClick={onLogoClick}
-            title="DataLens AI - Go Home"
-            style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              gap: 8, 
-              marginRight: 12, 
-              cursor: "pointer",
-              userSelect: "none"
-            }}
-          >
-            <div style={{
-              width: 24, height: 24,
-              background: "linear-gradient(135deg, var(--accent), var(--accent2))",
-              borderRadius: 6,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 14,
-              boxShadow: "0 0 12px var(--glow)",
-              color: "white"
-            }}>✦</div>
-            <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
-          </div>
+          {/* Expand Sidebar Button (only visible when sidebar is collapsed) */}
+          {isSidebarCollapsed && (
+            <button 
+              onClick={() => setIsSidebarCollapsed(false)}
+              title="Open sidebar"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                border: "none",
+                background: "transparent",
+                color: "var(--text3)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s",
+                marginRight: 8
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                e.currentTarget.style.color = "var(--text)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--text3)";
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M9 3v18" />
+                <path d="m14 9 3 3-3 3" />
+              </svg>
+            </button>
+          )}
+
+          {/* Brand Logo inside Header (only visible when sidebar is collapsed) */}
+          {isSidebarCollapsed && (
+            <div 
+              onClick={onLogoClick}
+              title="DataLens AI - Go Home"
+              style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: 8, 
+                marginRight: 12, 
+                cursor: "pointer",
+                userSelect: "none"
+              }}
+            >
+              <div style={{
+                width: 24, height: 24,
+                background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+                borderRadius: 6,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 14,
+                boxShadow: "0 0 12px var(--glow)",
+                color: "white"
+              }}>✦</div>
+              <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
+            </div>
+          )}
 
           {/* Floating Switcher Pill */}
           <div style={{
