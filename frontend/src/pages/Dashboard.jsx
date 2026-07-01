@@ -968,7 +968,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   };
 
   return (
-    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : "320px 1fr", height: "100vh" }}>
+    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : (mainView === "dataview" ? "320px 1fr" : "260px 1fr"), height: "100vh", transition: "grid-template-columns 0.2s cubic-bezier(0.4, 0, 0.2, 1)" }}>
       {/* Unified Sidebar */}
       <div className="workspace-sidebar-unified" style={{
         width: isSidebarCollapsed ? 56 : (mainView === "dataview" ? 320 : 260),
