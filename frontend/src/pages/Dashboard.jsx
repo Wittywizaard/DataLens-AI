@@ -411,7 +411,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat }) {
   const { user, token } = useContext(AuthContext);
   const [saving, setSaving] = useState(false);
   const [input, setInput] = useState("");
@@ -422,6 +422,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const [showThemeOptionsSidebar, setShowThemeOptionsSidebar] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [showChatSearch, setShowChatSearch] = useState(false);
+  const [chatSearchQuery, setChatSearchQuery] = useState("");
   const endRef = useRef(null);
   const inputRef = useRef(null);
   const messagesRef = useRef(null);
@@ -956,6 +958,53 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             ✦
           </button>
 
+          {/* New Chat Icon */}
+          <button 
+            onClick={onNewChat}
+            title="New Chat"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              border: "none",
+              background: "transparent",
+              color: "var(--text3)",
+              fontSize: 20,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
+            onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
+          >
+            ＋
+          </button>
+
+          {/* Search Chat Icon */}
+          <button 
+            onClick={() => setShowChatSearch(!showChatSearch)}
+            title="Search Chat"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              border: "none",
+              background: showChatSearch ? "rgba(139, 92, 246, 0.15)" : "transparent",
+              color: showChatSearch ? "var(--accent)" : "var(--text3)",
+              fontSize: 18,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={e => { if (!showChatSearch) e.currentTarget.style.color = "var(--text2)"; }}
+            onMouseLeave={e => { if (!showChatSearch) e.currentTarget.style.color = "var(--text3)"; }}
+          >
+            🔍
+          </button>
 
           {/* Theme Icon with Popover */}
           <div style={{ position: "relative" }}>
@@ -1199,32 +1248,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
             zIndex: 100
           }}>
-            {/* Sidebar Toggle Button inside Switcher */}
-            <button 
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "var(--text3)",
-                width: "28px",
-                height: "28px",
-                borderRadius: "14px",
-                fontSize: "13px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
-              onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
-            >
-              {isSidebarCollapsed ? "▶" : "◀"}
-            </button>
 
-            {/* Divider line inside switcher pill */}
-            <div style={{ width: "1px", height: "16px", background: "rgba(255,255,255,0.15)", margin: "0 2px" }} />
 
             <button 
               onClick={() => setMainView("chat")}
@@ -1439,7 +1463,47 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             </div>
           ) : (
             <>
-              {messages.map((m,i) => <MessageBubble key={i} msg={m} colors={PALETTES[theme]} />)}
+              {showChatSearch && (
+                <div style={{
+                  background: "rgba(255, 255, 255, 0.02)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "12px",
+                  padding: "8px 12px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginBottom: "16px"
+                }}>
+                  <span style={{ fontSize: "14px", color: "var(--text3)" }}>🔍</span>
+                  <input 
+                    type="text" 
+                    placeholder="Search in chat..." 
+                    value={chatSearchQuery}
+                    onChange={e => setChatSearchQuery(e.target.value)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#fff",
+                      fontSize: "13px",
+                      outline: "none",
+                      flex: 1
+                    }}
+                  />
+                  {chatSearchQuery && (
+                    <button 
+                      onClick={() => setChatSearchQuery("")}
+                      style={{ background: "none", border: "none", color: "var(--text3)", cursor: "pointer", fontSize: "12px" }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              )}
+              {messages.filter(m => 
+                !chatSearchQuery || 
+                (m.content && m.content.toLowerCase().includes(chatSearchQuery.toLowerCase())) ||
+                (m.result?.summary && m.result.summary.toLowerCase().includes(chatSearchQuery.toLowerCase()))
+              ).map((m,i) => <MessageBubble key={i} msg={m} colors={PALETTES[theme]} />)}
               {analyzing && <AnalyzingState />}
             </>
           )}
@@ -1657,6 +1721,8 @@ export function Dashboard() {
 
   const handleReset = () => { setFileId(null); setFileInfo(null); setMessages([]); };
 
+  const handleNewChat = () => { setMessages([]); };
+
   const uploadSectionRef = useRef(null);
   const scrollToUpload = () => uploadSectionRef.current?.scrollIntoView({ behavior: "smooth" });
 
@@ -1828,6 +1894,7 @@ export function Dashboard() {
         onAuthOpen={() => setIsAuthOpen(true)}
         onSignOut={handleSignOut}
         onLogoClick={handleReset}
+        onNewChat={handleNewChat}
       />
       <SettingsModal 
         isOpen={isSettingsOpen} 
