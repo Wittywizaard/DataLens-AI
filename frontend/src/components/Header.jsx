@@ -30,7 +30,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
       alignItems: "center",
       padding: "0 40px"
     }}>
-      <Link to="/" onClick={onLogoClick} style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, textDecoration: "none" }}>
+      <Link to="/" onClick={onLogoClick} style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
         <div style={{ 
           width: 36, height: 36, 
           background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
@@ -44,6 +44,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
         }}>✦</div>
         <span className="header-logo-text" style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
       </Link>
+      <div style={{ flex: 1 }} />
       
       <nav className="header-nav" style={{ display: "flex", gap: 24, alignItems: "center" }}>
         {[
