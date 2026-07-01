@@ -30,7 +30,18 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
       alignItems: "center",
       padding: "0 40px"
     }}>
-      <Link to="/" onClick={onLogoClick} style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
+      <Link 
+        to="/" 
+        onClick={(e) => {
+          if (window.location.pathname === "/") {
+            e.preventDefault();
+          }
+          if (onLogoClick) {
+            onLogoClick();
+          }
+        }} 
+        style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}
+      >
         <div style={{ 
           width: 36, height: 36, 
           background: "linear-gradient(135deg, var(--accent), var(--accent2))", 

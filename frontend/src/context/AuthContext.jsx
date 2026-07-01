@@ -27,8 +27,11 @@ export function AuthProvider({ children }) {
       });
       setUser(res.data.user);
     } catch (err) {
-      localStorage.removeItem("authToken");
-      setToken(null);
+      // Only remove the token if the credentials are explicitly rejected by the server (401/403)
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+        localStorage.removeItem("authToken");
+        setToken(null);
+      }
     } finally {
       setLoading(false);
     }
