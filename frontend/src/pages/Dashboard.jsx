@@ -556,9 +556,12 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     });
 
     // 7. Restyle Chart Blocks & Convert Canvases to Resized Images (forcing light mode)
-    const originalCanvases = messagesRef.current.querySelectorAll('canvas');
-    const clonedCanvases = el.querySelectorAll('canvas');
-    originalCanvases.forEach((canvas, index) => {
+    el.querySelectorAll('[data-role="chart-block"]').forEach((block, idx) => {
+      const originalBlock = messagesRef.current.querySelectorAll('[data-role="chart-block"]')[idx];
+      if (!originalBlock) return;
+      const canvas = originalBlock.querySelector('canvas');
+      if (!canvas) return;
+
       const configStr = canvas.getAttribute("data-config");
       let imgSrc;
       if (configStr) {
@@ -573,35 +576,46 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         imgSrc = canvas.toDataURL("image/png", 1.0);
       }
 
-      const img = document.createElement('img');
-      img.src = imgSrc;
-      
-      // Constraint dimensions to fit standard A4 page perfectly
-      img.style.width = "100%";
-      img.style.maxWidth = "550px";
-      img.style.height = "auto";
-      img.style.display = 'block';
-      img.style.margin = '0 auto';
-      
-      clonedCanvases[index].parentNode.replaceChild(img, clonedCanvases[index]);
-    });
+      // Extract the title
+      const titleEl = block.querySelector('[data-role="chart-title"]');
+      const titleText = titleEl ? titleEl.innerText : "Chart";
 
-    el.querySelectorAll('[data-role="chart-block"]').forEach(block => {
+      // Clear the block's inner HTML completely!
+      block.innerHTML = "";
+
+      // Apply clean styles to the block
       block.style.background = "#ffffff";
       block.style.border = "1px solid #cbd5e1";
       block.style.borderRadius = "16px";
-      block.style.boxShadow = "none";
       block.style.padding = "20px";
       block.style.marginTop = "16px";
-      block.style.backdropFilter = "none";
-      block.style.pageBreakInside = "avoid"; // Prevent chart splitting across page boundaries!
+      block.style.pageBreakInside = "avoid";
+      block.style.display = "flex";
+      block.style.flexDirection = "column";
+      block.style.alignItems = "center";
+      block.style.gap = "12px";
 
-      const title = block.querySelector('[data-role="chart-title"]');
-      if (title) {
-        title.style.color = "#0f172a";
-        title.style.fontSize = "14px";
-        title.style.fontWeight = "700";
-      }
+      // Append clean Title element
+      const cleanTitle = document.createElement("div");
+      cleanTitle.innerText = titleText;
+      cleanTitle.style.color = "#0f172a";
+      cleanTitle.style.fontSize = "14px";
+      cleanTitle.style.fontWeight = "700";
+      cleanTitle.style.alignSelf = "flex-start";
+      cleanTitle.style.borderBottom = "1px solid #e2e8f0";
+      cleanTitle.style.paddingBottom = "6px";
+      cleanTitle.style.width = "100%";
+      block.appendChild(cleanTitle);
+
+      // Append clean Image element
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.style.width = "100%";
+      img.style.maxWidth = "500px";
+      img.style.height = "auto";
+      img.style.display = 'block';
+      img.style.margin = '0 auto';
+      block.appendChild(img);
     });
 
     // 8. Restyle Data Tables
@@ -720,10 +734,13 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       }
     });
 
-    // 8. Convert canvases to clean resized images (forcing light mode)
-    const originalCanvases = messagesRef.current.querySelectorAll('canvas');
-    const clonedCanvases = el.querySelectorAll('canvas');
-    originalCanvases.forEach((canvas, index) => {
+    // 8. Convert canvases to clean resized images (forcing light mode) and clean chart containers
+    el.querySelectorAll('[data-role="chart-block"]').forEach((block, idx) => {
+      const originalBlock = messagesRef.current.querySelectorAll('[data-role="chart-block"]')[idx];
+      if (!originalBlock) return;
+      const canvas = originalBlock.querySelector('canvas');
+      if (!canvas) return;
+
       const configStr = canvas.getAttribute("data-config");
       let imgSrc;
       if (configStr) {
@@ -738,31 +755,43 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         imgSrc = canvas.toDataURL("image/png", 1.0);
       }
 
-      const img = document.createElement('img');
-      img.src = imgSrc;
-      img.style.width = "100%";
-      img.style.maxWidth = "550px";
-      img.style.height = "auto";
-      img.style.display = 'block';
-      img.style.margin = '10px auto';
-      clonedCanvases[index].parentNode.replaceChild(img, clonedCanvases[index]);
-    });
+      // Extract title
+      const titleEl = block.querySelector('[data-role="chart-title"]');
+      const titleText = titleEl ? titleEl.innerText : "Chart";
 
-    el.querySelectorAll('[data-role="chart-block"]').forEach(block => {
+      // Clear the block's inner HTML completely!
+      block.innerHTML = "";
+
+      // Apply styles suitable for Word document export
       block.className = "chart-container";
       block.style.background = "#ffffff";
       block.style.border = "1px solid #cbd5e1";
       block.style.borderRadius = "8px";
       block.style.padding = "16px";
       block.style.marginTop = "12px";
-      
-      const title = block.querySelector('[data-role="chart-title"]');
-      if (title) {
-        title.className = "chart-title";
-        title.style.fontSize = "11pt";
-        title.style.fontWeight = "bold";
-        title.style.color = "#0f172a";
-      }
+      block.style.textAlign = "center";
+      block.style.pageBreakInside = "avoid";
+
+      // Title
+      const cleanTitle = document.createElement("div");
+      cleanTitle.className = "chart-title";
+      cleanTitle.innerText = titleText;
+      cleanTitle.style.fontSize = "11pt";
+      cleanTitle.style.fontWeight = "bold";
+      cleanTitle.style.color = "#0f172a";
+      cleanTitle.style.marginBottom = "8px";
+      cleanTitle.style.textAlign = "left";
+      block.appendChild(cleanTitle);
+
+      // Image
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.style.width = "100%";
+      img.style.maxWidth = "500px";
+      img.style.height = "auto";
+      img.style.display = 'block';
+      img.style.margin = '10px auto';
+      block.appendChild(img);
     });
 
     // 9. Restyle tables
