@@ -409,6 +409,8 @@ function UploadZone({ onUpload, uploading, progress }) {
 }
 
 function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange }) {
+  const { user, token } = useContext(AuthContext);
+  const [saving, setSaving] = useState(false);
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("preview");
   const [mainView, setMainView] = useState("chat");
@@ -438,6 +440,29 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   })();
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, analyzing]);
+
+  const handleSave = async () => {
+    if (!fileInfo?.fileId || saving) return;
+    setSaving(true);
+    try {
+      await axios.post(
+        `${API_URL}/api/auth/saved-analyses`,
+        {
+          fileId: fileInfo.fileId,
+          fileName: fileInfo.originalName,
+          messages,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert("✓ Analysis session saved successfully in your profile!");
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to save analysis session.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const submit = () => {
     const q = input.trim();
@@ -908,6 +933,11 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 </div>
               )}
             </div>
+            {user && (
+              <button onClick={handleSave} disabled={saving} style={{ background: "rgba(139, 92, 246, 0.15)", border: "1px solid rgba(139, 92, 246, 0.3)", color: "var(--accent)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(139, 92, 246, 0.25)"} onMouseLeave={e => e.target.style.background="rgba(139, 92, 246, 0.15)"}>
+                {saving ? "⏳ Saving..." : "💾 Save Analysis"}
+              </button>
+            )}
             <div style={{ position: "relative" }}>
               <button onClick={() => {setShowExportOptions(!showExportOptions); setShowThemeOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
                 📥 Export Report

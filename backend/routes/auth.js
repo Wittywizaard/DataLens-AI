@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const User = require("../models/User");
+const SavedAnalysis = require("../models/SavedAnalysis");
+const FileData = require("../models/FileData");
+const dataStore = require("../utils/dataStore");
+const zlib = require("zlib");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
@@ -153,5 +157,119 @@ router.get(
     res.redirect(`${process.env.FRONTEND_URL || "http://localhost:5173"}/auth/success?token=${token}`);
   }
 );
+
+// Save or Update Analysis Session
+router.post("/saved-analyses", verifyToken, async (req, res) => {
+  try {
+    const { fileId, fileName, messages } = req.body;
+    if (!fileId || !fileName) {
+      return res.status(400).json({ error: "fileId and fileName are required." });
+    }
+
+    // Find the file data in MongoDB
+    const fileDoc = await FileData.findOne({ fileId });
+    if (!fileDoc) {
+      return res.status(404).json({ error: "Spreadsheet session expired. Please re-upload the file." });
+    }
+
+    // Check if it's already saved by this user
+    let analysis = await SavedAnalysis.findOne({ userId: req.userId, fileId });
+
+    if (analysis) {
+      // Update existing saved analysis
+      analysis.fileName = fileName;
+      analysis.messages = messages;
+      analysis.createdAt = new Date();
+      await analysis.save();
+    } else {
+      // Create new saved analysis
+      analysis = new SavedAnalysis({
+        userId: req.userId,
+        fileId,
+        fileName,
+        headers: fileDoc.headers,
+        columnTypes: fileDoc.columnTypes,
+        stats: fileDoc.stats,
+        rowCount: fileDoc.rowCount,
+        compressedRows: fileDoc.compressedRows,
+        messages,
+      });
+      await analysis.save();
+    }
+
+    res.json({ success: true, message: "Analysis saved successfully!", analysisId: analysis._id });
+  } catch (err) {
+    console.error("Save analysis error:", err);
+    res.status(500).json({ error: "Failed to save analysis session." });
+  }
+});
+
+// Get all saved analyses for user (excluding compressedRows to keep it fast)
+router.get("/saved-analyses", verifyToken, async (req, res) => {
+  try {
+    const list = await SavedAnalysis.find({ userId: req.userId })
+      .select("-compressedRows")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, analyses: list });
+  } catch (err) {
+    console.error("Get saved analyses error:", err);
+    res.status(500).json({ error: "Failed to load saved analyses." });
+  }
+});
+
+// Load a saved analysis session
+router.post("/saved-analyses/:id/load", verifyToken, async (req, res) => {
+  try {
+    const analysis = await SavedAnalysis.findOne({ _id: req.params.id, userId: req.userId });
+    if (!analysis) {
+      return res.status(404).json({ error: "Saved analysis not found." });
+    }
+
+    // Decompress the rows
+    const rows = JSON.parse(zlib.gunzipSync(analysis.compressedRows).toString("utf8"));
+
+    // Cache the file in the server's dataStore
+    await dataStore.set(analysis.fileId, {
+      fileId: analysis.fileId,
+      originalName: analysis.fileName,
+      headers: analysis.headers,
+      rows,
+      columnTypes: analysis.columnTypes,
+      stats: analysis.stats,
+      rowCount: analysis.rowCount,
+      uploadedAt: analysis.createdAt,
+    });
+
+    res.json({
+      success: true,
+      fileId: analysis.fileId,
+      originalName: analysis.fileName,
+      headers: analysis.headers,
+      columnTypes: analysis.columnTypes,
+      stats: analysis.stats,
+      rowCount: analysis.rowCount,
+      preview: rows.slice(0, 10),
+      messages: analysis.messages,
+    });
+  } catch (err) {
+    console.error("Load saved analysis error:", err);
+    res.status(500).json({ error: "Failed to load the analysis session." });
+  }
+});
+
+// Delete a saved analysis session
+router.delete("/saved-analyses/:id", verifyToken, async (req, res) => {
+  try {
+    const deleted = await SavedAnalysis.findOneAndDelete({ _id: req.params.id, userId: req.userId });
+    if (deleted) {
+      res.json({ success: true, message: "Saved analysis deleted successfully." });
+    } else {
+      res.status(404).json({ error: "Saved analysis not found." });
+    }
+  } catch (err) {
+    console.error("Delete saved analysis error:", err);
+    res.status(500).json({ error: "Failed to delete saved analysis." });
+  }
+});
 
 module.exports = router;

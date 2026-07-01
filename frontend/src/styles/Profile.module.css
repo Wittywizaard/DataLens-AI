@@ -23,38 +23,57 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: 28px;
-  padding: 48px;
+  padding: 40px;
   width: 100%;
-  max-width: 520px;
+  max-width: 960px;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
   position: relative;
   z-index: 2;
   animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 40px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .card {
+    padding: 24px;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border2);
+  padding-bottom: 20px;
 }
 
 .avatar {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 800;
   color: white;
   box-shadow: 0 0 20px var(--glow);
 }
 
 .titleSection h1 {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.02em;
@@ -67,18 +86,28 @@
   margin: 4px 0 0 0;
 }
 
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .infoSection {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border2);
   border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 32px;
+  padding: 20px;
+  margin-bottom: 24px;
 }
 
 .infoRow {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid rgba(255, 215, 0, 0.05);
 }
 
@@ -93,15 +122,9 @@
 }
 
 .infoValue {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text);
   font-weight: 600;
-}
-
-.infoValueMono {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--accent2);
 }
 
 .actions {
@@ -112,13 +135,13 @@
 
 .backBtn {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border2);
   color: var(--text2);
   border-radius: 12px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
@@ -131,26 +154,153 @@
 
 .deleteBtn {
   width: 100%;
-  padding: 14px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.15);
   color: #f87171;
   border-radius: 12px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
 }
 
 .deleteBtn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Saved Analyses List styling */
+.historySection {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 420px;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 8px;
+  flex: 1;
+}
+
+/* Custom scrollbar */
+.historyList::-webkit-scrollbar {
+  width: 6px;
+}
+.historyList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+.historyList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+
+.historyItem {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.historyItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border3);
+}
+
+.itemMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.itemDetails {
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  gap: 12px;
+}
+
+.itemButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.loadBtn {
+  padding: 8px 14px;
+  background: var(--accent);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--glow);
+  transition: all 0.2s;
+}
+
+.loadBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.removeBtn {
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeBtn:hover {
   background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  border: 1px dashed var(--border2);
+  border-radius: 16px;
+  color: var(--text3);
+  font-size: 13px;
+  gap: 8px;
+}
+
+.emptyIcon {
+  font-size: 32px;
 }
 
 .error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
   color: #f87171;
   padding: 12px;
   border-radius: 12px;
