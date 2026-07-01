@@ -1,0 +1,192 @@
+{
+  "fileId": "d2fba190-64bb-4554-bb4d-f4ed10427690",
+  "originalName": "SampleData.xlsx",
+  "headers": [
+    "__EMPTY",
+    "__EMPTY_1",
+    "Source File"
+  ],
+  "rows": [
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Online Instruction Page",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Sample Data for Excel",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Related tutorials - for Practice Ideas",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Named Excel Tables",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "VLOOKUP Function Examples",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Excel Drop Down Lists",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Excel Pivot Tables Intro",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Excel Formulas and Functions",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Notes",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": "•",
+      "__EMPTY_1": "SalesOrders sheet has office supply sales data for a fictional company",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": "•",
+      "__EMPTY_1": "Each row represents an order. ",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": "•",
+      "__EMPTY_1": "The Total column could be changed to a formula, to multiply the Units and Cost columns.",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "More Sample Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Office Supply  Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Athletes Sample Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Food Nutrients Sample Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Food Sales Sample Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Hockey Player Sample Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Insurance Policies Sample Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Work Orders Sample Data",
+      "Source File": "SampleData.xlsx"
+    },
+    {
+      "__EMPTY": null,
+      "__EMPTY_1": "Workplace Safety Sample Data",
+      "Source File": "SampleData.xlsx"
+    }
+  ],
+  "columnTypes": {
+    "__EMPTY": "categorical",
+    "__EMPTY_1": "categorical",
+    "Source File": "categorical"
+  },
+  "stats": {
+    "__EMPTY": {
+      "unique": 2,
+      "topValues": [
+        {
+          "val": "",
+          "count": 18
+        },
+        {
+          "val": "•",
+          "count": 3
+        }
+      ]
+    },
+    "__EMPTY_1": {
+      "unique": 21,
+      "topValues": [
+        {
+          "val": "Online Instruction Page",
+          "count": 1
+        },
+        {
+          "val": "Sample Data for Excel",
+          "count": 1
+        },
+        {
+          "val": "Related tutorials - for Practice Ideas",
+          "count": 1
+        },
+        {
+          "val": "Named Excel Tables",
+          "count": 1
+        },
+        {
+          "val": "VLOOKUP Function Examples",
+          "count": 1
+        },
+        {
+          "val": "Excel Drop Down Lists",
+          "count": 1
+        },
+        {
+          "val": "Excel Pivot Tables Intro",
+          "count": 1
+        },
+        {
+          "val": "Excel Formulas and Functions",
+          "count": 1
+        },
+        {
+          "val": "Notes",
+          "count": 1
+        },
+        {
+          "val": "SalesOrders sheet has office supply sales data for a fictional company",
+          "count": 1
+        }
+      ]
+    },
+    "Source File": {
+      "unique": 1,
+      "topValues": [
+        {
+          "val": "SampleData.xlsx",
+          "count": 21
+        }
+      ]
+    }
+  },
+  "rowCount": 21,
+  "uploadedAt": "2026-07-01T11:19:58.916Z"
+}

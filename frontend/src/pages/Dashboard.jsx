@@ -931,52 +931,58 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "16px 0",
+        padding: "0 0 16px 0",
         flexShrink: 0,
         zIndex: 10
       }}>
         {/* Top Icons */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", alignItems: "center" }}>
-          {/* Logo brand button with hover collapse/expand toggle */}
-          {isSidebarCollapsed && (
-            <button 
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              onMouseEnter={() => setIsLogoHovered(true)}
-              onMouseLeave={() => setIsLogoHovered(false)}
-              title="Expand sidebar"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 10,
-                border: "none",
-                background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                color: "white",
-                fontSize: 18,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 0 15px rgba(245, 158, 11, 0.4)",
-                marginBottom: 4,
-                transition: "transform 0.2s"
-              }}
-            >
-              {isLogoHovered ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="18" height="18" x="3" y="3" rx="2" />
-                  <path d="M9 3v18" />
-                  <path d="m14 9 3 3-3 3" />
-                </svg>
-              ) : (
-                "✦"
-              )}
-            </button>
+        <div style={{ display: "flex", flexDirection: "column", width: "100%", alignItems: "center" }}>
+          
+          {/* Top Header Logo Zone (matching height 56px of chat-header) */}
+          {isSidebarCollapsed ? (
+            <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+              <button 
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                onMouseEnter={() => setIsLogoHovered(true)}
+                onMouseLeave={() => setIsLogoHovered(false)}
+                title="Expand sidebar"
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  border: "none",
+                  background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                  color: "white",
+                  fontSize: 18,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 0 15px rgba(245, 158, 11, 0.4)",
+                  transition: "transform 0.2s"
+                }}
+              >
+                {isLogoHovered ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M9 3v18" />
+                    <path d="m14 9 3 3-3 3" />
+                  </svg>
+                ) : (
+                  "✦"
+                )}
+              </button>
+            </div>
+          ) : (
+            <div style={{ height: 56 }} />
           )}
 
-          {/* Theme Icon with Popover */}
-          {!isSidebarCollapsed && (
-            <div ref={themeMenuRef} style={{ position: "relative" }}>
-              <button 
+          {/* Other Top Icons */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", alignItems: "center", marginTop: 14 }}>
+            {/* Theme Icon with Popover */}
+            {!isSidebarCollapsed && (
+              <div ref={themeMenuRef} style={{ position: "relative" }}>
+                <button 
                 onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)}
                 title="Chart Theme"
                 style={{
@@ -1044,6 +1050,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               💾
             </button>
           )}
+          </div>
         </div>
 
         {/* Bottom Icons - Sign In / User Profile */}
@@ -1321,7 +1328,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
-        <div className="chat-header" style={{ borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px", boxSizing: "border-box" }}>
+        <div className="chat-header" style={{ borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: isSidebarCollapsed ? "0 16px 0 12px" : "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px", boxSizing: "border-box" }}>
           
           {/* Left Portion - Brand logo text (if collapsed) + Switcher Pill (always next to it) */}
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -1337,8 +1344,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                   userSelect: "none"
                 }}
               >
-                <span style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)", lineHeight: "38px" }}>DataLens AI</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text3)", opacity: 0.8 }}>
+                <span style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)", display: "inline-flex", alignItems: "center" }}>DataLens AI</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text3)", opacity: 0.8, display: "inline-block" }}>
                   <path d="m6 9 6 6 6-6" />
                 </svg>
               </div>
