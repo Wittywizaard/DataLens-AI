@@ -968,14 +968,14 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   };
 
   return (
-    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : "320px 1fr", height: "100vh", marginTop: 0 }}>
+    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : "320px 1fr", height: "100vh" }}>
       {/* Unified Sidebar */}
       <div className="workspace-sidebar-unified" style={{
-        width: isSidebarCollapsed ? 56 : 320,
+        width: isSidebarCollapsed ? 56 : (mainView === "dataview" ? 320 : 260),
         background: "#080818",
         borderRight: "1px solid var(--border)",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: mainView === "dataview" ? "row" : "column",
         alignItems: "stretch",
         flexShrink: 0,
         zIndex: 10,
@@ -983,85 +983,88 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         height: "100vh",
         position: "relative",
         boxSizing: "border-box",
-        overflow: "visible"
+        overflow: "hidden"
       }}>
-        {/* LEFT ICON STRIP (56px) - Always visible */}
-        <div style={{ width: 56, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "0 0 16px 0", borderRight: "1px solid var(--border)", background: "#05050f", zIndex: 2 }}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%" }}>
-            {/* Logo */}
-            <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-              <button onClick={onLogoClick} title="DataLens AI" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)" }}>✦</button>
-            </div>
-            {/* Nav icons */}
-            {[{
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>,
-              label: "New Chat", onClick: () => { onNewChat(); setMainView("chat"); }, active: messages.length === 0 && mainView === "chat"
-            }, {
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-              label: "Search Chat", onClick: () => { setShowChatSearch(!showChatSearch); setMainView("chat"); }, active: showChatSearch
-            }, ...(messages.length > 0 ? [{
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>,
-              label: "Current Chat", onClick: () => setMainView("chat"), active: mainView === "chat" && !showChatSearch
-            }] : []), ...(fileInfo ? [{
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>,
-              label: "Data Explorer", onClick: () => setMainView("dataview"), active: mainView === "dataview"
-            }] : [])].map((item, idx) => (
-              <button key={idx} title={item.label} onClick={item.onClick} style={{ width: 38, height: 38, margin: "2px 0", borderRadius: 9, border: item.active ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: item.active ? "rgba(245,158,11,0.12)" : "transparent", color: item.active ? "#f59e0b" : "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}
-                onMouseEnter={e => { if (!item.active) { e.currentTarget.style.background="rgba(255,255,255,0.05)"; e.currentTarget.style.color="var(--text)"; }}}
-                onMouseLeave={e => { if (!item.active) { e.currentTarget.style.background="transparent"; e.currentTarget.style.color="var(--text3)"; }}}
-              >{item.icon}</button>
-            ))}
-          </div>
-          {/* Bottom icons */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, position: "relative" }}>
-            <div ref={themeMenuRef} style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}>
-              <button title="Chart Theme" onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)} style={{ width: 38, height: 38, borderRadius: 9, border: showThemeOptionsSidebar ? "1px solid rgba(255,255,255,0.2)" : "1px solid transparent", background: showThemeOptionsSidebar ? "rgba(255,255,255,0.05)" : "transparent", color: showThemeOptionsSidebar ? "var(--text)" : "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03345 19.1749 5.0999 19.4318 5.02905 19.6738C4.78205 20.5173 4.41705 21.3934 4.02057 22H5.00057C6.10514 22 7.00057 21.1046 7.00057 20C7.00057 19.4477 7.44829 19 8.00057 19H9.00057C10.6574 19 12 17.6569 12 16C12 15.4477 12.4483 15 13.0006 15H17.0006C19.2097 15 21.0006 13.2091 21.0006 11"/><circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/></svg>
-              </button>
-              {showThemeOptionsSidebar && (
-                <div style={{ position: "absolute", left: "100%", bottom: 0, marginLeft: "12px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 1000, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
-                  <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
-                  {Object.keys(PALETTES).map(paletteName => (
-                    <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
-                      <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>{PALETTES[paletteName].slice(0, 4).map((c, i) => (<span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />))}</span>
-                      <span>{paletteName}</span>
-                      {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
-                    </button>
-                  ))}
+        {mainView === "dataview" ? (
+          // DATAVIEW MODE: 2 Columns
+          <>
+            {/* LEFT ICON STRIP (56px) - Always visible */}
+            <div style={{ width: 56, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "0 0 16px 0", borderRight: "1px solid var(--border)", background: "#05050f", zIndex: 2 }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%" }}>
+                {/* Logo */}
+                <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                  <button onClick={onLogoClick} title="DataLens AI" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)" }}>✦</button>
                 </div>
-              )}
+                {/* Nav icons */}
+                {[{
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>,
+                  label: "New Chat", onClick: () => { onNewChat(); setMainView("chat"); }, active: messages.length === 0 && mainView === "chat"
+                }, {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+                  label: "Search Chat", onClick: () => { setShowChatSearch(!showChatSearch); setMainView("chat"); }, active: showChatSearch
+                }, ...(fileInfo ? [{
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>,
+                  label: "Data Explorer", onClick: () => setMainView("dataview"), active: mainView === "dataview"
+                }] : []), ...(messages.length > 0 ? [{
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>,
+                  label: "Save Analysis", onClick: () => setShowExportOptions(true), active: false
+                }, {
+                  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>,
+                  label: "Current Chat", onClick: () => setMainView("chat"), active: mainView === "chat" && !showChatSearch
+                }] : [])].map((item, idx) => (
+                  <button key={idx} title={item.label} onClick={item.onClick} style={{ width: 38, height: 38, margin: "2px 0", borderRadius: 9, border: item.active ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: item.active ? "rgba(245,158,11,0.12)" : "transparent", color: item.active ? "#f59e0b" : "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}
+                    onMouseEnter={e => { if (!item.active) { e.currentTarget.style.background="rgba(255,255,255,0.05)"; e.currentTarget.style.color="var(--text)"; }}}
+                    onMouseLeave={e => { if (!item.active) { e.currentTarget.style.background="transparent"; e.currentTarget.style.color="var(--text3)"; }}}
+                  >{item.icon}</button>
+                ))}
+              </div>
+              {/* Bottom icons */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, position: "relative" }}>
+                <div ref={themeMenuRef} style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}>
+                  <button title="Chart Theme" onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)} style={{ width: 38, height: 38, borderRadius: 9, border: showThemeOptionsSidebar ? "1px solid rgba(255,255,255,0.2)" : "1px solid transparent", background: showThemeOptionsSidebar ? "rgba(255,255,255,0.05)" : "transparent", color: showThemeOptionsSidebar ? "var(--text)" : "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03345 19.1749 5.0999 19.4318 5.02905 19.6738C4.78205 20.5173 4.41705 21.3934 4.02057 22H5.00057C6.10514 22 7.00057 21.1046 7.00057 20C7.00057 19.4477 7.44829 19 8.00057 19H9.00057C10.6574 19 12 17.6569 12 16C12 15.4477 12.4483 15 13.0006 15H17.0006C19.2097 15 21.0006 13.2091 21.0006 11"/><circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/></svg>
+                  </button>
+                  {showThemeOptionsSidebar && (
+                    <div style={{ position: "absolute", left: "100%", bottom: 0, marginLeft: "12px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 1000, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
+                      <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
+                      {Object.keys(PALETTES).map(paletteName => (
+                        <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
+                          <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>{PALETTES[paletteName].slice(0, 4).map((c, i) => (<span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />))}</span>
+                          <span>{paletteName}</span>
+                          {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div ref={profileMenuRef} style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}>
+                  <button title={user ? user.name : "Sign In"} onClick={user ? () => setIsProfileMenuOpen(!isProfileMenuOpen) : onAuthOpen} style={{ width: 38, height: 38, borderRadius: 9, border: isProfileMenuOpen ? "1px solid rgba(255,255,255,0.2)" : "1px solid transparent", background: user ? "linear-gradient(135deg,var(--accent),var(--accent2))" : "transparent", color: user ? "#fff" : "var(--text3)", fontSize: user ? 12 : "inherit", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {user ? user.name.charAt(0).toUpperCase() : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
+                  </button>
+                  {user && isProfileMenuOpen && (
+                    <div style={{ position: "absolute", left: "100%", bottom: 0, marginLeft: "12px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", minWidth: 180, boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", flexDirection: "column" }}>
+                      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
+                        <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
+                      </div>
+                      <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
+                        <button onClick={() => { setIsProfileMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
+                          <span style={{ fontSize: 16 }}>⚙️</span> Preferences
+                        </button>
+                        <button onClick={() => { setIsProfileMenuOpen(false); onSignOut(); }} style={{ background: "none", border: "none", color: "#fca5a5", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => e.target.style.background = "rgba(239,68,68,0.1)"} onMouseOut={e => e.target.style.background = "none"}>
+                          <span style={{ fontSize: 16 }}>👋</span> Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <div ref={profileMenuRef} style={{ position: "relative", width: "100%", display: "flex", justifyContent: "center" }}>
-              <button title={user ? user.name : "Sign In"} onClick={user ? () => setIsProfileMenuOpen(!isProfileMenuOpen) : onAuthOpen} style={{ width: 38, height: 38, borderRadius: 9, border: isProfileMenuOpen ? "1px solid rgba(255,255,255,0.2)" : "1px solid transparent", background: user ? "linear-gradient(135deg,var(--accent),var(--accent2))" : "transparent", color: user ? "#fff" : "var(--text3)", fontSize: user ? 12 : "inherit", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {user ? user.name.charAt(0).toUpperCase() : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
-              </button>
-              {user && isProfileMenuOpen && (
-                <div style={{ position: "absolute", left: "100%", bottom: 0, marginLeft: "12px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", minWidth: 180, boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", flexDirection: "column" }}>
-                  <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
-                    <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
-                  </div>
-                  <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
-                    <button onClick={() => { setIsProfileMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
-                      <span style={{ fontSize: 16 }}>⚙️</span> Preferences
-                    </button>
-                    <button onClick={() => { setIsProfileMenuOpen(false); onSignOut(); }} style={{ background: "none", border: "none", color: "#fca5a5", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => e.target.style.background = "rgba(239,68,68,0.1)"} onMouseOut={e => e.target.style.background = "none"}>
-                      <span style={{ fontSize: 16 }}>👋</span> Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT PANEL - Only when expanded (264px) */}
-        {!isSidebarCollapsed && (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 264, width: 264 }}>
-            {mainView === "dataview" ? (
-              // DATA EXPLORER PANEL
-              <>
+            {/* RIGHT PANEL - Only when expanded (264px) */}
+            {!isSidebarCollapsed && (
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 264, width: 264 }}>
                 <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--border)", flexShrink: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 36, height: 36, background: "rgba(139,92,246,0.15)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, border: "1px solid rgba(139,92,246,0.2)", flexShrink: 0 }}>📄</div>
@@ -1102,59 +1105,206 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                     </div>
                   )}
                 </div>
-              </>
-            ) : (
-              // CHAT SIDEBAR (Logo + Options + History)
-              <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                {/* Header logo zone */}
-                <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", flexShrink: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none" }} onClick={onLogoClick}>
-                    <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
-                  </div>
-                  <button onClick={() => setIsSidebarCollapsed(true)} title="Collapse sidebar" style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "transparent", color: "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"; e.currentTarget.style.color = "var(--text)"; }} onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect width="18" height="18" x="3" y="3" rx="2" />
-                      <path d="M9 3v18" />
-                    </svg>
-                  </button>
-                </div>
-                
-                {/* Options List */}
-                <div style={{ display: "flex", flexDirection: "column", padding: "8px 16px", gap: 8, flex: 1, overflowY: "auto" }}>
-                  {renderSidebarItem({
-                    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>,
-                    label: "New Chat", onClick: () => { onNewChat(); setMainView("chat"); }, active: messages.length === 0 && mainView === "chat", collapsed: false
-                  })}
-                  {renderSidebarItem({
-                    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-                    label: "Search Chat", onClick: () => { setShowChatSearch(!showChatSearch); setMainView("chat"); }, active: showChatSearch, collapsed: false
-                  })}
-                  {messages.length > 0 && renderSidebarItem({
-                    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>,
-                    label: (() => { const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || ""; return firstUserMsg.length > 20 ? firstUserMsg.slice(0, 18) + "..." : firstUserMsg; })(), onClick: () => setMainView("chat"), active: mainView === "chat" && !showChatSearch, collapsed: false
-                  })}
-                  
-                  {fileInfo && renderSidebarItem({
-                    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>,
-                    label: "Data Explorer", onClick: () => setMainView("dataview"), active: false, collapsed: false
-                  })}
-
-                  {chatHistory.map((session) => (
-                    <div key={session.id} style={{ width: "100%", marginTop: 4 }}>
-                      {renderSidebarItem({
-                        icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>,
-                        label: session.title, onClick: () => onLoadChat(session), active: false, collapsed: false
-                      })}
-                    </div>
-                  ))}
-
-                  {user && fileInfo && renderSidebarItem({
-                    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>,
-                    label: saving ? "Saving..." : "Save Analysis", onClick: handleSave, active: false, collapsed: false
-                  })}
-                </div>
               </div>
             )}
+          </>
+        ) : (
+          // CHAT MODE: 1 Column with full-width perfectly aligned items
+          <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "#05050f" }}>
+            {/* Header logo zone */}
+            <div style={{ height: 56, display: "flex", alignItems: "center", flexShrink: 0, paddingRight: isSidebarCollapsed ? 0 : 16 }}>
+              <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                <button onClick={onLogoClick} title="DataLens AI" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)" }}>✦</button>
+              </div>
+              {!isSidebarCollapsed && (
+                <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)", cursor: "pointer" }} onClick={onLogoClick}>DataLens AI</span>
+                  <button onClick={() => setIsSidebarCollapsed(true)} title="Collapse sidebar" style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "transparent", color: "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"; e.currentTarget.style.color = "var(--text)"; }} onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /></svg>
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Options List */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, overflowY: "auto", overflowX: "hidden" }}>
+              {/* 1. New Chat */}
+              <div 
+                onClick={() => { onNewChat(); setMainView("chat"); }}
+                style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: messages.length === 0 && mainView === "chat" ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                onMouseEnter={e => { if(!(messages.length === 0 && mainView === "chat")) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
+                onMouseLeave={e => { if(!(messages.length === 0 && mainView === "chat")) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
+              >
+                <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 9, border: messages.length === 0 && mainView === "chat" ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: messages.length === 0 && mainView === "chat" ? "rgba(245,158,11,0.12)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+                  </div>
+                </div>
+                {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>New Chat</div>}
+              </div>
+
+              {/* 2. Search Chat */}
+              <div 
+                onClick={() => { setShowChatSearch(!showChatSearch); setMainView("chat"); }}
+                style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: showChatSearch ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                onMouseEnter={e => { if(!showChatSearch) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
+                onMouseLeave={e => { if(!showChatSearch) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
+              >
+                <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 9, border: showChatSearch ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: showChatSearch ? "rgba(245,158,11,0.12)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  </div>
+                </div>
+                {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>Search Chat</div>}
+              </div>
+              
+              {/* Search Box if active */}
+              {showChatSearch && !isSidebarCollapsed && (
+                <div style={{ padding: "0 16px 0 56px", marginBottom: 8 }}>
+                  <input type="text" placeholder="Search chats..." style={{ width: "100%", background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 8, padding: "8px 12px", color: "var(--text)", fontSize: 12, outline: "none" }} />
+                </div>
+              )}
+
+              {/* 3. Data Explorer */}
+              {fileInfo && (
+                <div 
+                  onClick={() => setMainView("dataview")}
+                  style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: mainView === "dataview" ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                  onMouseEnter={e => { if(mainView !== "dataview") { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
+                  onMouseLeave={e => { if(mainView !== "dataview") { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
+                >
+                  <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 9, border: mainView === "dataview" ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: mainView === "dataview" ? "rgba(245,158,11,0.12)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>
+                    </div>
+                  </div>
+                  {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>Data Explorer</div>}
+                </div>
+              )}
+
+              {/* 4. Save Analysis */}
+              {messages.length > 0 && (
+                <div 
+                  onClick={() => setShowExportOptions(true)}
+                  style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
+                >
+                  <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 9, border: "1px solid transparent", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    </div>
+                  </div>
+                  {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>Save Analysis</div>}
+                </div>
+              )}
+
+              {/* 5. Current Chat */}
+              {messages.length > 0 && (
+                <div 
+                  onClick={() => setMainView("chat")}
+                  style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: mainView === "chat" && !showChatSearch ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                  onMouseEnter={e => { if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
+                  onMouseLeave={e => { if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
+                >
+                  <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 9, border: mainView === "chat" && !showChatSearch ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: mainView === "chat" && !showChatSearch ? "rgba(245,158,11,0.12)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    </div>
+                  </div>
+                  {!isSidebarCollapsed && (
+                    <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 16, fontWeight: 700, fontSize: 13 }}>
+                      {(() => { const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || "Current Chat"; return firstUserMsg.length > 20 ? firstUserMsg.slice(0, 20) + "..." : firstUserMsg; })()}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 6. Previous Chats */}
+              {chatHistory.map(session => (
+                <div 
+                  key={session.id}
+                  onClick={() => onLoadChat(session)}
+                  style={{ display: "flex", alignItems: "center", width: "100%", height: 36, cursor: "pointer", color: "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
+                >
+                  <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.2)" }} />
+                  </div>
+                  {!isSidebarCollapsed && (
+                    <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 16, fontSize: 12 }}>
+                      {session.title}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom Actions (Theme, Profile) */}
+            <div style={{ paddingBottom: 16, display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
+              {/* Theme Menu */}
+              <div style={{ position: "relative" }} ref={themeMenuRef}>
+                <div 
+                  onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)}
+                  style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: showThemeOptionsSidebar ? "var(--text)" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                  onMouseEnter={e => { if(!showThemeOptionsSidebar) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
+                  onMouseLeave={e => { if(!showThemeOptionsSidebar) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
+                >
+                  <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 9, border: showThemeOptionsSidebar ? "1px solid rgba(255,255,255,0.2)" : "1px solid transparent", background: showThemeOptionsSidebar ? "rgba(255,255,255,0.05)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03345 19.1749 5.0999 19.4318 5.02905 19.6738C4.78205 20.5173 4.41705 21.3934 4.02057 22H5.00057C6.10514 22 7.00057 21.1046 7.00057 20C7.00057 19.4477 7.44829 19 8.00057 19H9.00057C10.6574 19 12 17.6569 12 16C12 15.4477 12.4483 15 13.0006 15H17.0006C19.2097 15 21.0006 13.2091 21.0006 11"/><circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/></svg>
+                    </div>
+                  </div>
+                  {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>Chart Theme</div>}
+                </div>
+                {showThemeOptionsSidebar && (
+                  <div style={{ position: "absolute", left: isSidebarCollapsed ? "100%" : 56, bottom: 0, marginLeft: "12px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 1000, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
+                    <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
+                    {Object.keys(PALETTES).map(paletteName => (
+                      <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
+                        <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>{PALETTES[paletteName].slice(0, 4).map((c, i) => (<span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />))}</span>
+                        <span>{paletteName}</span>
+                        {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Profile Menu */}
+              <div style={{ position: "relative" }} ref={profileMenuRef}>
+                <div 
+                  onClick={user ? () => setIsProfileMenuOpen(!isProfileMenuOpen) : onAuthOpen}
+                  style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: user ? "#fff" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                  onMouseEnter={e => { if(!user) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
+                  onMouseLeave={e => { if(!user) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
+                >
+                  <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 9, border: isProfileMenuOpen ? "1px solid rgba(255,255,255,0.2)" : "1px solid transparent", background: user ? "linear-gradient(135deg,var(--accent),var(--accent2))" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: user ? 12 : "inherit", fontWeight: 700 }}>
+                      {user ? user.name.charAt(0).toUpperCase() : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
+                    </div>
+                  </div>
+                  {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{user ? user.name : "Sign In"}</div>}
+                </div>
+                {user && isProfileMenuOpen && (
+                  <div style={{ position: "absolute", left: isSidebarCollapsed ? "100%" : 56, bottom: 0, marginLeft: "12px", background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", minWidth: 180, boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", flexDirection: "column" }}>
+                    <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
+                      <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
+                    </div>
+                    <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
+                      <button onClick={() => { setIsProfileMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
+                        <span style={{ fontSize: 16 }}>⚙️</span> Preferences
+                      </button>
+                      <button onClick={() => { setIsProfileMenuOpen(false); onSignOut(); }} style={{ background: "none", border: "none", color: "#fca5a5", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => e.target.style.background = "rgba(239,68,68,0.1)"} onMouseOut={e => e.target.style.background = "none"}>
+                        <span style={{ fontSize: 16 }}>👋</span> Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
