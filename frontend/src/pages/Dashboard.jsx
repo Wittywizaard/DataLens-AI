@@ -1247,7 +1247,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
-        <div className="chat-header" style={{ gap: "12px", borderBottom: "1px solid rgba(255, 255, 255, 0.05)", background: "rgba(3, 3, 11, 0.3)" }}>
+        <div className="chat-header" style={{ gap: "12px", borderBottom: "none", background: "rgba(3, 3, 11, 0.3)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}></div>
           
           {/* Export Report */}
@@ -1271,12 +1271,10 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               onMouseEnter={e => {
                 e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
                 e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-                e.currentTarget.style.transform = "translateY(-1px)";
               }} 
               onMouseLeave={e => {
                 e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
                 e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.transform = "none";
               }}
             >
               <span style={{ fontSize: "14px", display: "inline-flex", alignItems: "center" }}>📥</span> Export Report
@@ -1324,12 +1322,10 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               onMouseEnter={e => {
                 e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
                 e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-                e.currentTarget.style.transform = "translateY(-1px)";
               }} 
               onMouseLeave={e => {
                 e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
                 e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.transform = "none";
               }}
             >
               <span style={{ fontSize: "14px", display: "inline-flex", alignItems: "center" }}>↺</span> New file
@@ -1357,13 +1353,11 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
               e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
               e.currentTarget.style.color = "#ffffff";
-              e.currentTarget.style.transform = "translateY(-1px)";
             }} 
             onMouseLeave={e => {
               e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
               e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
               e.currentTarget.style.color = "#cccccc";
-              e.currentTarget.style.transform = "none";
             }}
           >
             ⚙️
