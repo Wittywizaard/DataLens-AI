@@ -429,6 +429,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const messagesRef = useRef(null);
   const fileInputRef = useRef(null);
   const profileMenuRef = useRef(null);
+  const themeMenuRef = useRef(null);
   const headers = fileInfo?.headers ?? [];
   const columnTypes = fileInfo?.columnTypes ?? {};
   const stats = fileInfo?.stats ?? {};
@@ -454,6 +455,9 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     const handleClickOutside = (event) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
         setIsProfileMenuOpen(false);
+      }
+      if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
+        setShowThemeOptionsSidebar(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -958,56 +962,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             ✦
           </button>
 
-          {/* New Chat Icon */}
-          <button 
-            onClick={onNewChat}
-            title="New Chat"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              border: "none",
-              background: "transparent",
-              color: "var(--text3)",
-              fontSize: 20,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
-            onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
-          >
-            ＋
-          </button>
-
-          {/* Search Chat Icon */}
-          <button 
-            onClick={() => setShowChatSearch(!showChatSearch)}
-            title="Search Chat"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              border: "none",
-              background: showChatSearch ? "rgba(139, 92, 246, 0.15)" : "transparent",
-              color: showChatSearch ? "var(--accent)" : "var(--text3)",
-              fontSize: 18,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={e => { if (!showChatSearch) e.currentTarget.style.color = "var(--text2)"; }}
-            onMouseLeave={e => { if (!showChatSearch) e.currentTarget.style.color = "var(--text3)"; }}
-          >
-            🔍
-          </button>
-
           {/* Theme Icon with Popover */}
-          <div style={{ position: "relative" }}>
+          <div ref={themeMenuRef} style={{ position: "relative" }}>
             <button 
               onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)}
               title="Chart Theme"
@@ -1157,20 +1113,75 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       {!isSidebarCollapsed && (
         <div className="workspace-sidebar">
-          {/* Logo brand line */}
-          <div style={{ padding: "20px 20px 10px 20px", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ 
-              width: 28, height: 28, 
-              background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
-              borderRadius: 8, 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center", 
-              fontSize: 16,
-              boxShadow: "0 0 15px var(--glow)",
-              color: "white"
-            }}>✦</div>
-            <span className="header-logo-text" style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
+          {/* ChatGPT style buttons container */}
+          <div style={{ padding: "20px 20px 12px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
+            {/* New Chat Button */}
+            <button 
+              onClick={onNewChat}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                background: "rgba(255, 255, 255, 0.04)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: "10px",
+                padding: "8px 12px",
+                color: "var(--text)",
+                fontSize: "13px",
+                fontWeight: "600",
+                cursor: "pointer",
+                textAlign: "left",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+              }}
+            >
+              <span style={{ fontSize: "14px", display: "inline-flex" }}>📝</span>
+              New chat
+            </button>
+
+            {/* Search Chat Button */}
+            <button 
+              onClick={() => setShowChatSearch(!showChatSearch)}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                background: showChatSearch ? "rgba(139, 92, 246, 0.15)" : "rgba(255, 255, 255, 0.04)",
+                border: showChatSearch ? "1px solid rgba(139, 92, 246, 0.3)" : "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: "10px",
+                padding: "8px 12px",
+                color: showChatSearch ? "var(--accent)" : "var(--text2)",
+                fontSize: "13px",
+                fontWeight: "600",
+                cursor: "pointer",
+                textAlign: "left",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => {
+                if (!showChatSearch) {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                }
+              }}
+              onMouseLeave={e => {
+                if (!showChatSearch) {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                }
+              }}
+            >
+              <span style={{ fontSize: "13px", display: "inline-flex" }}>🔍</span>
+              Search chats
+            </button>
           </div>
 
           <div style={{ padding:"12px 20px 20px 20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
@@ -1235,6 +1246,33 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         {/* Workspace Header Bar */}
         <div className="chat-header" style={{ gap: "12px", borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px" }}>
           
+          {/* Brand Logo inside Header */}
+          <div 
+            onClick={onLogoClick}
+            title="DataLens AI - Go Home"
+            style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: 8, 
+              marginRight: 12, 
+              cursor: "pointer",
+              userSelect: "none"
+            }}
+          >
+            <div style={{
+              width: 24, height: 24,
+              background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+              borderRadius: 6,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 14,
+              boxShadow: "0 0 12px var(--glow)",
+              color: "white"
+            }}>✦</div>
+            <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
+          </div>
+
           {/* Floating Switcher Pill */}
           <div style={{
             display: "flex",
