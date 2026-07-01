@@ -421,6 +421,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const [showThemeOptions, setShowThemeOptions] = useState(false);
   const [showThemeOptionsSidebar, setShowThemeOptionsSidebar] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [showChatSearch, setShowChatSearch] = useState(false);
   const [chatSearchQuery, setChatSearchQuery] = useState("");
@@ -936,76 +937,94 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       }}>
         {/* Top Icons */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", alignItems: "center" }}>
-          {/* Logo brand button */}
+          {/* Logo brand button with hover collapse/expand toggle */}
           <button 
-            onClick={onLogoClick}
-            title="DataLens AI - Go Home"
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            onMouseEnter={() => setIsLogoHovered(true)}
+            onMouseLeave={() => setIsLogoHovered(false)}
+            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             style={{
               width: 38,
               height: 38,
               borderRadius: 10,
               border: "none",
-              background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+              background: "linear-gradient(135deg, #f59e0b, #d97706)",
               color: "white",
               fontSize: 18,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 0 15px var(--glow)",
+              boxShadow: "0 0 15px rgba(245, 158, 11, 0.4)",
               marginBottom: 4,
               transition: "transform 0.2s"
             }}
-            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
-            onMouseLeave={e => e.currentTarget.style.transform = "none"}
           >
-            ✦
+            {isLogoHovered ? (
+              isSidebarCollapsed ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="2" />
+                  <path d="M9 3v18" />
+                  <path d="m14 9 3 3-3 3" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="2" />
+                  <path d="M9 3v18" />
+                  <path d="m16 15-3-3 3-3" />
+                </svg>
+              )
+            ) : (
+              "✦"
+            )}
           </button>
 
           {/* Theme Icon with Popover */}
-          <div ref={themeMenuRef} style={{ position: "relative" }}>
-            <button 
-              onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)}
-              title="Chart Theme"
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                border: "none",
-                background: showThemeOptionsSidebar ? "rgba(139, 92, 246, 0.15)" : "transparent",
-                color: showThemeOptionsSidebar ? "var(--accent)" : "var(--text3)",
-                fontSize: 18,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => { if (!showThemeOptionsSidebar) e.currentTarget.style.color = "var(--text2)"; }}
-              onMouseLeave={e => { if (!showThemeOptionsSidebar) e.currentTarget.style.color = "var(--text3)"; }}
-            >
-              🎨
-            </button>
-            {showThemeOptionsSidebar && (
-              <div style={{ position: "absolute", left: "60px", top: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
-                <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
-                {Object.keys(PALETTES).map(paletteName => (
-                  <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
-                    <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>
-                      {PALETTES[paletteName].slice(0, 4).map((c, i) => (
-                        <span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />
-                      ))}
-                    </span>
-                    <span>{paletteName}</span>
-                    {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {!isSidebarCollapsed && (
+            <div ref={themeMenuRef} style={{ position: "relative" }}>
+              <button 
+                onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)}
+                title="Chart Theme"
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  border: "none",
+                  background: showThemeOptionsSidebar ? "rgba(139, 92, 246, 0.15)" : "transparent",
+                  color: showThemeOptionsSidebar ? "var(--accent)" : "var(--text3)",
+                  fontSize: 18,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={e => { if (!showThemeOptionsSidebar) e.currentTarget.style.color = "var(--text2)"; }}
+                onMouseLeave={e => { if (!showThemeOptionsSidebar) e.currentTarget.style.color = "var(--text3)"; }}
+              >
+                🎨
+              </button>
+              {showThemeOptionsSidebar && (
+                <div style={{ position: "absolute", left: "60px", top: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
+                  <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
+                  {Object.keys(PALETTES).map(paletteName => (
+                    <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
+                      <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                        {PALETTES[paletteName].slice(0, 4).map((c, i) => (
+                          <span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />
+                        ))}
+                      </span>
+                      <span>{paletteName}</span>
+                      {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Save Icon */}
-          {user && (
+          {!isSidebarCollapsed && user && (
             <button 
               onClick={handleSave}
               disabled={saving}
@@ -1034,96 +1053,101 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         </div>
 
         {/* Bottom Icons - Sign In / User Profile */}
-        <div ref={profileMenuRef} style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%", alignItems: "center", position: "relative" }}>
-          {user ? (
-            <>
+        {!isSidebarCollapsed && (
+          <div ref={profileMenuRef} style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%", alignItems: "center", position: "relative" }}>
+            {user ? (
+              <>
+                <button 
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  title={user.name}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 700,
+                    color: "#fff",
+                    fontSize: 14,
+                    cursor: "pointer",
+                    border: "2px solid transparent",
+                    transition: "all 0.2s",
+                    boxShadow: isProfileMenuOpen ? "0 0 0 2px var(--bg), 0 0 0 4px var(--accent)" : "none"
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
+                  onMouseLeave={e => e.currentTarget.style.transform = "none"}
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </button>
+                {isProfileMenuOpen && (
+                  <div style={{
+                    position: "absolute", bottom: "100%", left: "60px", marginBottom: "8px",
+                    background: "var(--bg2)", border: "1px solid var(--border)",
+                    borderRadius: 16, overflow: "hidden", minWidth: 180,
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000,
+                    display: "flex", flexDirection: "column"
+                  }}>
+                    <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
+                      <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
+                    </div>
+                    <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
+                      <button onClick={() => { setIsProfileMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
+                        <span style={{ fontSize: 16 }}>⚙️</span> Preferences
+                      </button>
+                      <button onClick={() => { setIsProfileMenuOpen(false); onSignOut(); }} style={{ background: "none", border: "none", color: "#fca5a5", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => e.target.style.background = "rgba(239,68,68,0.1)"} onMouseOut={e => e.target.style.background = "none"}>
+                        <span style={{ fontSize: 16 }}>👋</span> Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
               <button 
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                title={user.name}
+                onClick={onAuthOpen}
+                title="Sign In"
                 style={{
                   width: 36,
                   height: 36,
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text2)",
+                  fontSize: 16,
+                  cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontWeight: 700,
-                  color: "#fff",
-                  fontSize: 14,
-                  cursor: "pointer",
-                  border: "2px solid transparent",
-                  transition: "all 0.2s",
-                  boxShadow: isProfileMenuOpen ? "0 0 0 2px var(--bg), 0 0 0 4px var(--accent)" : "none"
+                  transition: "all 0.2s"
                 }}
-                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
-                onMouseLeave={e => e.currentTarget.style.transform = "none"}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "var(--text)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "var(--text2)"; }}
               >
-                {user.name.charAt(0).toUpperCase()}
+                👤
               </button>
-              {isProfileMenuOpen && (
-                <div style={{
-                  position: "absolute", bottom: "100%", left: "60px", marginBottom: "8px",
-                  background: "var(--bg2)", border: "1px solid var(--border)",
-                  borderRadius: 16, overflow: "hidden", minWidth: 180,
-                  boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000,
-                  display: "flex", flexDirection: "column"
-                }}>
-                  <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
-                    <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
-                  </div>
-                  <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
-                    <button onClick={() => { setIsProfileMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
-                      <span style={{ fontSize: 16 }}>⚙️</span> Preferences
-                    </button>
-                    <button onClick={() => { setIsProfileMenuOpen(false); onSignOut(); }} style={{ background: "none", border: "none", color: "#fca5a5", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => e.target.style.background = "rgba(239,68,68,0.1)"} onMouseOut={e => e.target.style.background = "none"}>
-                      <span style={{ fontSize: 16 }}>👋</span> Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <button 
-              onClick={onAuthOpen}
-              title="Sign In"
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid var(--border)",
-                color: "var(--text2)",
-                fontSize: 16,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "var(--text)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "var(--text2)"; }}
-            >
-              👤
-            </button>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {!isSidebarCollapsed && (
         <div className="workspace-sidebar">
-          {/* Sidebar Top Header (Logo + Collapse Button) */}
+          {/* Sidebar Top Header (Logo Brand Link) */}
           <div style={{ 
             padding: "16px 20px 8px 20px", 
             display: "flex", 
             alignItems: "center", 
-            justifyContent: "space-between",
             width: "100%",
             boxSizing: "border-box"
           }}>
             {/* Logo brand line */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div 
+              onClick={onLogoClick}
+              title="DataLens AI - Go Home"
+              style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none" }}
+            >
               <div style={{ 
                 width: 28, height: 28, 
                 background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
@@ -1137,39 +1161,6 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               }}>✦</div>
               <span className="header-logo-text" style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
             </div>
-
-            {/* Collapse Sidebar Button */}
-            <button 
-              onClick={() => setIsSidebarCollapsed(true)}
-              title="Close sidebar"
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                border: "none",
-                background: "transparent",
-                color: "var(--text3)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-                e.currentTarget.style.color = "var(--text)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--text3)";
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <path d="M9 3v18" />
-                <path d="m16 15-3-3 3-3" />
-              </svg>
-            </button>
           </div>
 
           {/* ChatGPT style buttons container */}
@@ -1305,70 +1296,6 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         {/* Workspace Header Bar */}
         <div className="chat-header" style={{ gap: "12px", borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px" }}>
           
-          {/* Expand Sidebar Button (only visible when sidebar is collapsed) */}
-          {isSidebarCollapsed && (
-            <button 
-              onClick={() => setIsSidebarCollapsed(false)}
-              title="Open sidebar"
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                border: "none",
-                background: "transparent",
-                color: "var(--text3)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s",
-                marginRight: 8
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-                e.currentTarget.style.color = "var(--text)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--text3)";
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <path d="M9 3v18" />
-                <path d="m14 9 3 3-3 3" />
-              </svg>
-            </button>
-          )}
-
-          {/* Brand Logo inside Header (only visible when sidebar is collapsed) */}
-          {isSidebarCollapsed && (
-            <div 
-              onClick={onLogoClick}
-              title="DataLens AI - Go Home"
-              style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                gap: 8, 
-                marginRight: 12, 
-                cursor: "pointer",
-                userSelect: "none"
-              }}
-            >
-              <div style={{
-                width: 24, height: 24,
-                background: "linear-gradient(135deg, var(--accent), var(--accent2))",
-                borderRadius: 6,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 14,
-                boxShadow: "0 0 12px var(--glow)",
-                color: "white"
-              }}>✦</div>
-              <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
-            </div>
-          )}
 
           {/* Floating Switcher Pill */}
           <div style={{
