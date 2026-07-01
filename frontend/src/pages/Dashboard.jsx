@@ -183,6 +183,9 @@ const renderLightModeChartImage = (config) => {
     options: options
   });
 
+  // Force synchronous rendering of the chart
+  chart.update();
+
   const imgUrl = tempCanvas.toDataURL("image/png");
   chart.destroy();
   document.body.removeChild(tempCanvas);
