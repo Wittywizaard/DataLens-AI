@@ -1317,15 +1317,20 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {isSidebarCollapsed && (
               <div 
-                onClick={onLogoClick}
-                title="DataLens AI - Go Home"
+                onClick={() => setIsSidebarCollapsed(false)}
+                title="Expand sidebar"
                 style={{ 
                   display: "flex", 
                   alignItems: "center", 
                   gap: 8, 
                   cursor: "pointer",
-                  userSelect: "none"
+                  userSelect: "none",
+                  padding: "4px 8px",
+                  borderRadius: "8px",
+                  transition: "background 0.2s"
                 }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
                 <span style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)", display: "inline-flex", alignItems: "center" }}>DataLens AI</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text3)", opacity: 0.8, display: "inline-block" }}>
