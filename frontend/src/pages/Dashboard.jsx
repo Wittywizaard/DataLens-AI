@@ -500,6 +500,13 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   useEffect(() => { endRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, analyzing]);
 
   useEffect(() => {
+    if (fileInfo && fileInfo.fileId) {
+      setMainView("dataview");
+      setIsSidebarCollapsed(false);
+    }
+  }, [fileInfo?.fileId]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
         setIsProfileMenuOpen(false);
@@ -1130,7 +1137,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, overflowY: "auto", overflowX: "hidden" }}>
               {/* 1. New Chat */}
               <div 
-                onClick={() => { onNewChat(); setMainView("chat"); }}
+                onClick={() => { onNewChat(); setMainView("chat"); setIsSidebarCollapsed(false); }}
                 style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: messages.length === 0 && mainView === "chat" ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                 onMouseEnter={e => { if(!(messages.length === 0 && mainView === "chat")) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
                 onMouseLeave={e => { if(!(messages.length === 0 && mainView === "chat")) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
@@ -1145,7 +1152,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
               {/* 2. Search Chat */}
               <div 
-                onClick={() => { setShowChatSearch(!showChatSearch); setMainView("chat"); }}
+                onClick={() => { setShowChatSearch(!showChatSearch); setMainView("chat"); setIsSidebarCollapsed(false); }}
                 style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: showChatSearch ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                 onMouseEnter={e => { if(!showChatSearch) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
                 onMouseLeave={e => { if(!showChatSearch) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
@@ -1168,7 +1175,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               {/* 3. Data Explorer */}
               {fileInfo && (
                 <div 
-                  onClick={() => setMainView("dataview")}
+                  onClick={() => { setMainView("dataview"); setIsSidebarCollapsed(false); }}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: mainView === "dataview" ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                   onMouseEnter={e => { if(mainView !== "dataview") { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
                   onMouseLeave={e => { if(mainView !== "dataview") { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
@@ -1185,7 +1192,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               {/* 4. Save Analysis */}
               {messages.length > 0 && (
                 <div 
-                  onClick={() => setShowExportOptions(true)}
+                  onClick={() => { setShowExportOptions(true); setIsSidebarCollapsed(false); }}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}
                   onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
@@ -1202,7 +1209,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               {/* 5. Current Chat */}
               {messages.length > 0 && (
                 <div 
-                  onClick={() => setMainView("chat")}
+                  onClick={() => { setMainView("chat"); setIsSidebarCollapsed(false); }}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: mainView === "chat" && !showChatSearch ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                   onMouseEnter={e => { if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
                   onMouseLeave={e => { if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
@@ -1224,7 +1231,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               {chatHistory.map(session => (
                 <div 
                   key={session.id}
-                  onClick={() => onLoadChat(session)}
+                  onClick={() => { onLoadChat(session); setIsSidebarCollapsed(false); }}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 36, cursor: "pointer", color: "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}
                   onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
@@ -1246,7 +1253,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               {/* Theme Menu */}
               <div style={{ position: "relative" }} ref={themeMenuRef}>
                 <div 
-                  onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)}
+                  onClick={() => { setShowThemeOptionsSidebar(!showThemeOptionsSidebar); setIsSidebarCollapsed(false); }}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: showThemeOptionsSidebar ? "var(--text)" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                   onMouseEnter={e => { if(!showThemeOptionsSidebar) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
                   onMouseLeave={e => { if(!showThemeOptionsSidebar) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
@@ -1275,7 +1282,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               {/* Profile Menu */}
               <div style={{ position: "relative" }} ref={profileMenuRef}>
                 <div 
-                  onClick={user ? () => setIsProfileMenuOpen(!isProfileMenuOpen) : onAuthOpen}
+                  onClick={user ? () => { setIsProfileMenuOpen(!isProfileMenuOpen); setIsSidebarCollapsed(false); } : onAuthOpen}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: user ? "#fff" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
                   onMouseEnter={e => { if(!user) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
                   onMouseLeave={e => { if(!user) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
