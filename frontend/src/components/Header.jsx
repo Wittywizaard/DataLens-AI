@@ -17,7 +17,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
 
   return (
     <header className="main-header" style={{ 
-      height: 56, 
+      height: 72, 
       borderBottom: "none", 
       background: "transparent", 
       backdropFilter: "none", 
@@ -28,7 +28,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
       zIndex: 1000,
       display: "flex",
       alignItems: "center",
-      padding: "0 24px"
+      padding: "0 32px"
     }}>
       <Link 
         to="/" 
@@ -40,32 +40,32 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
             onLogoClick();
           }
         }} 
-        style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}
+        style={{ display: "flex", alignItems: "center", gap: 14, textDecoration: "none" }}
       >
         <div style={{ 
-          width: 36, height: 36, 
-          background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
-          borderRadius: 10, 
+          width: 44, height: 44, 
+          background: "linear-gradient(135deg, #f59e0b, #d97706)", 
+          borderRadius: 12, 
           display: "flex", 
           alignItems: "center", 
           justifyContent: "center", 
-          fontSize: 20,
-          boxShadow: "0 0 20px var(--glow)",
+          fontSize: 24,
+          boxShadow: "0 0 20px rgba(245, 158, 11, 0.4)",
           color: "white"
         }}>✦</div>
-        <span className="header-logo-text" style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
+        <span className="header-logo-text" style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
       </Link>
       <div style={{ flex: 1 }} />
       
-      <nav className="header-nav" style={{ display: "flex", gap: 24, alignItems: "center" }}>
+      <nav className="header-nav" style={{ display: "flex", gap: 28, alignItems: "center" }}>
         <button 
           onClick={onSettingsOpen}
           style={{ 
-            background: "none", border: "none", color: "var(--text3)", 
-            fontSize: 18, cursor: "pointer", display: "flex", transition: "all 0.2s" 
+            background: "none", border: "none", color: "#a78bfa", 
+            fontSize: 22, cursor: "pointer", display: "flex", transition: "all 0.2s" 
           }}
           onMouseOver={e => e.target.style.color = "var(--accent)"}
-          onMouseOut={e => e.target.style.color = "var(--text3)"}
+          onMouseOut={e => e.target.style.color = "#a78bfa"}
         >
           ⚙️
         </button>
@@ -74,10 +74,10 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               style={{ 
-                width: 38, height: 38, borderRadius: "50%", 
+                width: 42, height: 42, borderRadius: "50%", 
                 background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
                 display: "flex", alignItems: "center", justifyContent: "center", 
-                fontWeight: 700, color: "#fff", fontSize: 15, cursor: "pointer",
+                fontWeight: 700, color: "#fff", fontSize: 16, cursor: "pointer",
                 border: "2px solid transparent", transition: "all 0.2s",
                 boxShadow: isMenuOpen ? "0 0 0 2px var(--bg), 0 0 0 4px var(--accent)" : "none"
               }}
@@ -117,9 +117,9 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
             background: "rgba(255,255,255,0.03)", 
             border: "1px solid var(--border2)", 
             color: "var(--text2)", 
-            padding: "8px 20px", 
-            borderRadius: 10, 
-            fontSize: 13, 
+            padding: "10px 24px", 
+            borderRadius: 12, 
+            fontSize: 14, 
             fontWeight: 600,
             cursor: "pointer",
             transition: "all 0.2s"
