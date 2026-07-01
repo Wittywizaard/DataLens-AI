@@ -1540,9 +1540,9 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             )}
           </div>
         </div>
-        </> {/* end fragment */}
-      )} {/* end mainView !== dataview */}
-      </div> {/* end workspace-sidebar-unified */}
+        </>
+      )}
+      </div>
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
@@ -1899,119 +1899,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     </div>
   );
 }
-          {/* Header */}
-          <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 28px", borderBottom: "1px solid var(--border)", flexShrink: 0, background: "rgba(8,8,24,0.85)", backdropFilter: "blur(10px)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 32, height: 32, background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <ellipse cx="12" cy="5" rx="9" ry="3" />
-                  <path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
-                  <path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9" />
-                  <path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4" />
-                </svg>
-              </div>
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text)" }}>Data Explorer</div>
-                <div style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--mono)" }}>{originalName} · {rowCount.toLocaleString()} rows · {headers.length} columns</div>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11, fontFamily: "var(--mono)", padding: "3px 10px", borderRadius: 100, background: "rgba(6,182,212,.1)", border: "1px solid rgba(6,182,212,.2)", color: "#06b6d4" }}>📊 {numCols.length} numeric</span>
-              <span style={{ fontSize: 11, fontFamily: "var(--mono)", padding: "3px 10px", borderRadius: 100, background: "rgba(124,58,237,.1)", border: "1px solid rgba(124,58,237,.2)", color: "#a78bfa" }}>🏷 {catCols.length} categorical</span>
-            </div>
-          </div>
 
-          {/* Tab switcher */}
-          <div style={{ display: "flex", borderBottom: "1px solid var(--border)", flexShrink: 0, background: "rgba(8,8,24,0.5)" }}>
-            {["preview", "columns"].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                padding: "12px 24px", fontSize: 12, fontWeight: 700,
-                color: activeTab === tab ? "var(--accent)" : "var(--text3)",
-                borderBottom: activeTab === tab ? "2px solid var(--accent)" : "2px solid transparent",
-                background: activeTab === tab ? "rgba(245,158,11,0.05)" : "none",
-                textTransform: "uppercase", letterSpacing: "0.06em", transition: "all 0.2s", cursor: "pointer"
-              }}>{tab}</button>
-            ))}
-          </div>
-
-          {/* Table Area */}
-          <div style={{ flex: 1, overflow: "auto", padding: "0" }}>
-            {activeTab === "preview" && (
-              <div style={{ overflowX: "auto", minWidth: "100%" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ background: "rgba(139,92,246,0.08)", position: "sticky", top: 0, zIndex: 2 }}>
-                      <th style={{ padding: "10px 16px", textAlign: "left", color: "var(--text3)", fontFamily: "var(--mono)", fontWeight: 700, fontSize: 11, borderBottom: "1px solid var(--border)", whiteSpace: "nowrap", minWidth: 50 }}>#</th>
-                      {headers.map(h => (
-                        <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: columnTypes[h] === "numeric" ? "#06b6d4" : "#a78bfa", fontFamily: "var(--mono)", fontWeight: 700, fontSize: 11, borderBottom: "1px solid var(--border)", whiteSpace: "nowrap" }}>
-                          {h}
-                          <span style={{ marginLeft: 4, opacity: 0.5, fontSize: 9 }}>{columnTypes[h] === "numeric" ? "123" : "Abc"}</span>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {preview.map((row, i) => (
-                      <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.03)", transition: "background 0.15s" }}
-                        onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.025)"}
-                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                      >
-                        <td style={{ padding: "9px 16px", color: "var(--text4)", fontFamily: "var(--mono)", fontSize: 11 }}>{i + 1}</td>
-                        {headers.map(h => (
-                          <td key={h} style={{ padding: "9px 16px", color: columnTypes[h] === "numeric" ? "var(--text)" : "var(--text2)", fontFamily: "var(--mono)", fontSize: 12, whiteSpace: "nowrap", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis" }}>
-                            {row[h] ?? "—"}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {rowCount > preview.length && (
-                  <div style={{ textAlign: "center", padding: "16px", color: "var(--text3)", fontSize: 12, fontFamily: "var(--mono)", borderTop: "1px solid var(--border)" }}>
-                    Showing {preview.length} of {rowCount.toLocaleString()} rows
-                  </div>
-                )}
-              </div>
-            )}
-            {activeTab === "columns" && (
-              <div style={{ padding: "20px 28px", display: "flex", flexDirection: "column", gap: 10 }}>
-                {headers.map(h => {
-                  const s = stats[h];
-                  const isNum = columnTypes[h] === "numeric";
-                  return (
-                    <div key={h} style={{ background: "var(--bg2)", borderRadius: 12, padding: "14px 18px", border: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 16, transition: "border-color 0.2s" }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = isNum ? "rgba(6,182,212,0.4)" : "rgba(139,92,246,0.4)"}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
-                    >
-                      <div style={{ width: 36, height: 36, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: isNum ? "rgba(6,182,212,0.1)" : "rgba(139,92,246,0.1)", border: `1px solid ${isNum ? "rgba(6,182,212,0.2)" : "rgba(139,92,246,0.2)"}`, flexShrink: 0, fontSize: 14, fontWeight: 700, fontFamily: "var(--mono)", color: isNum ? "#06b6d4" : "#a78bfa" }}>{isNum ? "#" : "A"}</div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", fontFamily: "var(--mono)" }}>{h}</div>
-                        <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>{isNum ? "Numeric" : "Categorical"}</div>
-                      </div>
-                      {isNum && s && (
-                        <div style={{ display: "flex", gap: 20, flexShrink: 0 }}>
-                          {[["Min", s.min?.toFixed(2)],["Max", s.max?.toFixed(2)],["Avg", s.mean?.toFixed(2)]].map(([label, val]) => (
-                            <div key={label} style={{ textAlign: "center" }}>
-                              <div style={{ fontSize: 10, color: "var(--text3)", fontFamily: "var(--mono)", textTransform: "uppercase" }}>{label}</div>
-                              <div style={{ fontSize: 13, fontWeight: 700, color: "#06b6d4", fontFamily: "var(--mono)" }}>{val}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {!isNum && s && (
-                        <div style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--mono)", flexShrink: 0 }}>{s.unique} unique values</div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 function SettingsModal({ isOpen, onClose, onSave, currentKey }) {
   const [key, setKey] = useState(currentKey || "");
