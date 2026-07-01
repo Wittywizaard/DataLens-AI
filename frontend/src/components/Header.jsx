@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
+export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -30,7 +30,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut }) {
       alignItems: "center",
       padding: "0 40px"
     }}>
-      <Link to="/" style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, textDecoration: "none" }}>
+      <Link to="/" onClick={onLogoClick} style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, textDecoration: "none" }}>
         <div style={{ 
           width: 36, height: 36, 
           background: "linear-gradient(135deg, var(--accent), var(--accent2))", 

@@ -1248,6 +1248,7 @@ export function Dashboard() {
           user={user} 
           onAuthOpen={() => setIsAuthOpen(true)} 
           onSignOut={handleSignOut} 
+          onLogoClick={handleReset}
         />
         
         <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
@@ -1375,6 +1376,7 @@ export function Dashboard() {
         user={user} 
         onAuthOpen={() => setIsAuthOpen(true)} 
         onSignOut={handleSignOut} 
+        onLogoClick={handleReset}
       />
       <Workspace
         fileInfo={safeFileInfo}
