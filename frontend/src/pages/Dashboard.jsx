@@ -1134,11 +1134,12 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       {!isSidebarCollapsed && (
         <div className="workspace-sidebar">
-          {/* Sidebar Top Header (Logo Brand Link) */}
+          {/* Sidebar Top Header (Logo Brand Link + Collapse Button) */}
           <div style={{ 
             padding: "16px 20px 8px 20px", 
             display: "flex", 
             alignItems: "center", 
+            justifyContent: "space-between",
             width: "100%",
             boxSizing: "border-box"
           }}>
@@ -1150,17 +1151,49 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             >
               <div style={{ 
                 width: 28, height: 28, 
-                background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
+                background: "linear-gradient(135deg, #f59e0b, #d97706)", 
                 borderRadius: 8, 
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "center", 
                 fontSize: 16,
-                boxShadow: "0 0 15px var(--glow)",
+                boxShadow: "0 0 10px rgba(245, 158, 11, 0.3)",
                 color: "white"
               }}>✦</div>
               <span className="header-logo-text" style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
             </div>
+
+            {/* Gemini-style Collapse button */}
+            <button 
+              onClick={() => setIsSidebarCollapsed(true)}
+              title="Collapse sidebar"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                border: "none",
+                background: "transparent",
+                color: "var(--text3)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                e.currentTarget.style.color = "var(--text)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--text3)";
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M9 3v18" />
+              </svg>
+            </button>
           </div>
 
           {/* ChatGPT style buttons container */}
@@ -1294,10 +1327,31 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
-        <div className="chat-header" style={{ gap: "12px", borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px" }}>
+        <div className="chat-header" style={{ borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px", boxSizing: "border-box" }}>
           
+          {/* Left Portion of Header (ChatGPT-style brand name outside sidebar when collapsed) */}
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+            {isSidebarCollapsed && (
+              <div 
+                onClick={onLogoClick}
+                title="DataLens AI - Go Home"
+                style={{ 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: 5, 
+                  cursor: "pointer",
+                  userSelect: "none"
+                }}
+              >
+                <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.01em", color: "var(--text)" }}>DataLens AI</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text3)", opacity: 0.8, marginTop: 1 }}>
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </div>
+            )}
+          </div>
 
-          {/* Floating Switcher Pill */}
+          {/* Center Portion - Floating Switcher Pill */}
           <div style={{
             display: "flex",
             alignItems: "center",
@@ -1310,8 +1364,6 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
             zIndex: 100
           }}>
-
-
             <button 
               onClick={() => setMainView("chat")}
               style={{
@@ -1356,45 +1408,45 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             </button>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}></div>
-          
-          {/* Export Report */}
-          <div style={{ position: "relative" }}>
-            <button 
-              onClick={() => { setShowExportOptions(!showExportOptions); setShowThemeOptions(false); }} 
-              style={{ 
-                background: "rgba(13, 13, 30, 0.6)", 
-                border: "1px solid rgba(255, 255, 255, 0.08)", 
-                color: "#ffffff", 
-                padding: "6px 14px", 
-                borderRadius: "9999px", 
-                fontSize: "12px", 
-                fontWeight: "600", 
-                display: "flex", 
-                alignItems: "center", 
-                gap: "6px", 
-                transition: "all 0.2s", 
-                cursor: "pointer"
-              }} 
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-              }} 
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-              }}
-            >
-              <span style={{ fontSize: "14px", display: "inline-flex", alignItems: "center" }}>📥</span> Export Report
-            </button>
-            {showExportOptions && (
-              <div style={{ position: "absolute", top: "115%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 140, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
-                <button onClick={() => { exportPDF(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>PDF Document</button>
-                <button onClick={() => { exportDOC(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Word (.doc)</button>
-                <button onClick={() => { exportTXT(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Plain Text</button>
-              </div>
-            )}
-          </div>
+          {/* Right Portion - Actions */}
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 12 }}>
+            {/* Export Report */}
+            <div style={{ position: "relative" }}>
+              <button 
+                onClick={() => { setShowExportOptions(!showExportOptions); setShowThemeOptions(false); }} 
+                style={{ 
+                  background: "rgba(13, 13, 30, 0.6)", 
+                  border: "1px solid rgba(255, 255, 255, 0.08)", 
+                  color: "#ffffff", 
+                  padding: "6px 14px", 
+                  borderRadius: "9999px", 
+                  fontSize: "12px", 
+                  fontWeight: "600", 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "6px", 
+                  transition: "all 0.2s", 
+                  cursor: "pointer"
+                }} 
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                }} 
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                }}
+              >
+                <span style={{ fontSize: "14px", display: "inline-flex", alignItems: "center" }}>📥</span> Export Report
+              </button>
+              {showExportOptions && (
+                <div style={{ position: "absolute", top: "115%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 140, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+                  <button onClick={() => { exportPDF(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>PDF Document</button>
+                  <button onClick={() => { exportDOC(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Word (.doc)</button>
+                  <button onClick={() => { exportTXT(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Plain Text</button>
+                </div>
+              )}
+            </div>
 
           {/* New file */}
           <div style={{ position: "relative" }}>
@@ -1470,6 +1522,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           >
             ⚙️
           </button>
+          </div>
         </div>
 
         <div ref={messagesRef} style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
