@@ -911,6 +911,28 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               <div style={{ fontSize:14, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", color:"var(--text)" }}>{originalName}</div>
               <div style={{ fontSize:11, color:"var(--text3)", fontFamily:"var(--mono)", marginTop:2, fontWeight:500 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
             </div>
+            <button 
+              onClick={() => setIsSidebarCollapsed(true)} 
+              title="Hide Sidebar"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid var(--border)",
+                color: "var(--text3)",
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                flexShrink: 0
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "var(--text)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "var(--text3)"; }}
+            >
+              ◀
+            </button>
           </div>
           <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:12 }}>
             {numCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(6,182,212,.12)", border:"1px solid rgba(6,182,212,.2)", color:"#06b6d4" }}>📊 {numCols.length} numeric</span>}
@@ -970,27 +992,30 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               <button onClick={() => setMainView("chat")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "chat" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "chat" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>💬 Chat</button>
               <button onClick={() => setMainView("dashboard")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>📊 Dashboard</button>
             </div>
-            <button 
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
-              style={{ 
-                background: "rgba(255,255,255,0.03)", 
-                border: "1px solid var(--border)", 
-                color: "var(--text2)", 
-                padding: "8px 14px", 
-                borderRadius: 12, 
-                fontSize: 12, 
-                fontWeight: 700, 
-                display: "flex", 
-                alignItems: "center", 
-                gap: 6, 
-                transition: "all 0.2s", 
-                cursor: "pointer" 
-              }}
-              onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"}
-              onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}
-            >
-              {isSidebarCollapsed ? "📁 Show Sidebar" : "📁 Hide Sidebar"}
-            </button>
+            {isSidebarCollapsed && (
+              <button 
+                onClick={() => setIsSidebarCollapsed(false)} 
+                title="Show Sidebar"
+                style={{ 
+                  background: "rgba(255,255,255,0.03)", 
+                  border: "1px solid var(--border)", 
+                  color: "var(--text2)", 
+                  padding: "8px 14px", 
+                  borderRadius: 12, 
+                  fontSize: 12, 
+                  fontWeight: 700, 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: 6, 
+                  transition: "all 0.2s", 
+                  cursor: "pointer" 
+                }}
+                onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"}
+                onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}
+              >
+                📁 Show Sidebar
+              </button>
+            )}
           </div>
             <div style={{ position: "relative" }}>
               <button onClick={() => {setShowThemeOptions(!showThemeOptions); setShowExportOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
