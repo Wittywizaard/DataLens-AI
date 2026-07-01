@@ -63,6 +63,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const deleteAccount = async () => {
+    if (!user || !token) return;
+    await axios.delete(`${API_BASE}/auth/users/${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    logout();
+  };
+
   const loginWithToken = async (newToken) => {
     localStorage.setItem("authToken", newToken);
     setToken(newToken);
@@ -78,7 +86,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, signup, login, logout, loginWithToken }}>
+    <AuthContext.Provider value={{ user, token, loading, signup, login, logout, loginWithToken, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

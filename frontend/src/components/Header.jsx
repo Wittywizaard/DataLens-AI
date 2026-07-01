@@ -96,6 +96,9 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
                   <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
                 </div>
                 <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
+                  <Link to="/profile" onClick={() => setIsMenuOpen(false)} style={{ textDecoration: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
+                    <span style={{ fontSize: 16 }}>👤</span> My Profile
+                  </Link>
                   <button onClick={() => { setIsMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
                     <span style={{ fontSize: 16 }}>⚙️</span> Preferences
                   </button>
