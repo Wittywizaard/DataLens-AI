@@ -419,6 +419,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const [mainView, setMainView] = useState("chat");
   const [showExportOptions, setShowExportOptions] = useState(false);
   const [showThemeOptions, setShowThemeOptions] = useState(false);
+  const [showThemeOptionsSidebar, setShowThemeOptionsSidebar] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const endRef = useRef(null);
   const inputRef = useRef(null);
@@ -938,6 +939,43 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             {numCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(6,182,212,.12)", border:"1px solid rgba(6,182,212,.2)", color:"#06b6d4" }}>📊 {numCols.length} numeric</span>}
             {catCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.2)", color:"#a78bfa" }}>🏷 {catCols.length} categorical</span>}
           </div>
+          <div style={{ borderTop: "1px solid var(--border)", marginTop: 16, paddingTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: 3, border: "1px solid var(--border)" }}>
+              <button onClick={() => setMainView("chat")} style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "chat" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "chat" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>💬 Chat</button>
+              <button onClick={() => setMainView("dashboard")} style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>📊 Dashboard</button>
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ position: "relative", flex: 1 }}>
+                <button 
+                  onClick={() => setShowThemeOptionsSidebar(!showThemeOptionsSidebar)} 
+                  style={{ width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 12px", borderRadius: 10, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }}
+                >
+                  🎨 Theme
+                </button>
+                {showThemeOptionsSidebar && (
+                  <div style={{ position: "absolute", bottom: "110%", left: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 210, boxShadow: "0 16px 48px rgba(0,0,0,0.6)", padding: "6px 0" }}>
+                    <div style={{ padding: "8px 14px 4px", fontSize: 10, fontWeight: 700, color: "var(--text3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Chart Palette</div>
+                    {Object.keys(PALETTES).map(paletteName => (
+                      <button key={paletteName} onClick={() => { onThemeChange(paletteName); setShowThemeOptionsSidebar(false); }} style={{ padding: "9px 14px", background: theme === paletteName ? "rgba(255,255,255,0.08)" : "none", border: "none", color: "var(--text)", fontSize: 12, fontWeight: theme === paletteName ? 700 : 500, textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 10, transition: "background 0.15s" }}>
+                        <span style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                          {PALETTES[paletteName].slice(0, 4).map((c, i) => (
+                            <span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: c, display: "inline-block" }} />
+                          ))}
+                        </span>
+                        <span>{paletteName}</span>
+                        {theme === paletteName && <span style={{ marginLeft: "auto", color: "var(--accent)", fontSize: 14 }}>✓</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {user && (
+                <button onClick={handleSave} disabled={saving} style={{ flex: 1.2, background: "rgba(139, 92, 246, 0.15)", border: "1px solid rgba(139, 92, 246, 0.3)", color: "var(--accent)", padding: "8px 12px", borderRadius: 10, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }}>
+                  {saving ? "⏳ Saving..." : "💾 Save"}
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div style={{ display:"flex", borderBottom:"1px solid var(--border)", flexShrink:0 }}>
@@ -988,35 +1026,38 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         {/* Workspace Header Bar */}
         <div className="chat-header">
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
-            <div style={{ display: "flex", background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 4, border: "1px solid var(--border)" }}>
-              <button onClick={() => setMainView("chat")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "chat" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "chat" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>💬 Chat</button>
-              <button onClick={() => setMainView("dashboard")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>📊 Dashboard</button>
-            </div>
-            {isSidebarCollapsed && (
-              <button 
-                onClick={() => setIsSidebarCollapsed(false)} 
-                title="Show Sidebar"
-                style={{ 
-                  background: "rgba(255,255,255,0.03)", 
-                  border: "1px solid var(--border)", 
-                  color: "var(--text2)", 
-                  padding: "8px 14px", 
-                  borderRadius: 12, 
-                  fontSize: 12, 
-                  fontWeight: 700, 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: 6, 
-                  transition: "all 0.2s", 
-                  cursor: "pointer" 
-                }}
-                onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"}
-                onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}
-              >
-                📁 Show Sidebar
-              </button>
-            )}
+            {isSidebarCollapsed ? (
+              <>
+                <button 
+                  onClick={() => setIsSidebarCollapsed(false)} 
+                  title="Show Sidebar"
+                  style={{ 
+                    background: "rgba(255,255,255,0.03)", 
+                    border: "1px solid var(--border)", 
+                    color: "var(--text2)", 
+                    padding: "8px 14px", 
+                    borderRadius: 12, 
+                    fontSize: 12, 
+                    fontWeight: 700, 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: 6, 
+                    transition: "all 0.2s", 
+                    cursor: "pointer" 
+                  }}
+                  onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"}
+                  onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}
+                >
+                  📁 Show Sidebar
+                </button>
+                <div style={{ display: "flex", background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 4, border: "1px solid var(--border)" }}>
+                  <button onClick={() => setMainView("chat")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "chat" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "chat" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>💬 Chat</button>
+                  <button onClick={() => setMainView("dashboard")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>📊 Dashboard</button>
+                </div>
+              </>
+            ) : null}
           </div>
+          {isSidebarCollapsed && (
             <div style={{ position: "relative" }}>
               <button onClick={() => {setShowThemeOptions(!showThemeOptions); setShowExportOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
                 🎨 Theme
@@ -1038,11 +1079,12 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 </div>
               )}
             </div>
-            {user && (
-              <button onClick={handleSave} disabled={saving} style={{ background: "rgba(139, 92, 246, 0.15)", border: "1px solid rgba(139, 92, 246, 0.3)", color: "var(--accent)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(139, 92, 246, 0.25)"} onMouseLeave={e => e.target.style.background="rgba(139, 92, 246, 0.15)"}>
-                {saving ? "⏳ Saving..." : "💾 Save Analysis"}
-              </button>
-            )}
+          )}
+          {isSidebarCollapsed && user && (
+            <button onClick={handleSave} disabled={saving} style={{ background: "rgba(139, 92, 246, 0.15)", border: "1px solid rgba(139, 92, 246, 0.3)", color: "var(--accent)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(139, 92, 246, 0.25)"} onMouseLeave={e => e.target.style.background="rgba(139, 92, 246, 0.15)"}>
+              {saving ? "⏳ Saving..." : "💾 Save Analysis"}
+            </button>
+          )}
             <div style={{ position: "relative" }}>
               <button onClick={() => {setShowExportOptions(!showExportOptions); setShowThemeOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
                 📥 Export Report
