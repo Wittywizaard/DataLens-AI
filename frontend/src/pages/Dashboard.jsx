@@ -1426,15 +1426,17 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           )}
 
           {mainView === "dashboard" ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 24 }}>
-              {messages.filter(m => m.role === "assistant" && (m.result?.chartConfig || (m.result?.chartConfigs && m.result.chartConfigs.length > 0))).length === 0 ? (
-                <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: 60, color: "var(--text3)" }}>
-                  <div style={{ fontSize: 48, filter: "drop-shadow(0 0 20px var(--glow))", marginBottom: 16 }}>📊</div>
-                  <h3 style={{ color: "#fff", fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Your Dashboard is empty</h3>
-                  <p style={{ fontSize: 16 }}>Ask a question in the Chat that generates a chart, and it will automatically appear here!</p>
-                </div>
-              ) : (
-                messages.filter(m => m.role === "assistant" && (m.result?.chartConfig || (m.result?.chartConfigs && m.result.chartConfigs.length > 0))).flatMap((m) => {
+            messages.filter(m => m.role === "assistant" && (m.result?.chartConfig || (m.result?.chartConfigs && m.result.chartConfigs.length > 0))).length === 0 ? (
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, textAlign: "center", minHeight: "50vh", color: "var(--text3)" }}>
+                <div style={{ fontSize: 48, filter: "drop-shadow(0 0 20px var(--glow))", marginBottom: 8 }}>📊</div>
+                <h3 style={{ color: "#fff", fontSize: 24, fontWeight: 800, marginBottom: 0 }}>Your Dashboard is empty</h3>
+                <p style={{ fontSize: 16, maxWidth: 480, margin: "0 auto", lineHeight: 1.5 }}>
+                  Ask a question in the Chat that generates a chart, and it will automatically appear here!
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 24 }}>
+                {messages.filter(m => m.role === "assistant" && (m.result?.chartConfig || (m.result?.chartConfigs && m.result.chartConfigs.length > 0))).flatMap((m) => {
                   if (m.result.chartConfigs && m.result.chartConfigs.length > 0) {
                     return m.result.chartConfigs;
                   }
@@ -1443,9 +1445,9 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                   <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", borderRadius: 24, padding: 24, display: "flex", flexDirection: "column" }}>
                     <ChartBlock config={cfg} colors={PALETTES[theme]} />
                   </div>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )
           ) : messages.length === 0 ? (
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24, textAlign: "center", paddingBottom: 40 }}>
               <div style={{ fontSize: 48, filter: "drop-shadow(0 0 20px var(--glow))" }}>✦</div>
