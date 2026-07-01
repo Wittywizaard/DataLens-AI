@@ -8,6 +8,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID || "mock-client-id",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "mock-client-secret",
       callbackURL: "/api/auth/google/callback",
+      proxy: true, // Crucial for reverse proxies like Render to use HTTPS callback
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

@@ -13,6 +13,7 @@ const fileRoutes = require("./routes/files");
 const authRoutes = require("./routes/auth");
 
 const app = express();
+app.set("trust proxy", 1); // Trust the Render reverse proxy headers to report HTTPS protocol
 const PORT = process.env.PORT || 3001;
 
 // MongoDB Connection
