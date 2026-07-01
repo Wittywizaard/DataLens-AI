@@ -17,7 +17,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
 
   return (
     <header className="main-header" style={{ 
-      height: 72, 
+      height: 56, 
       borderBottom: "1px solid var(--border)", 
       background: "rgba(3, 3, 11, 0.7)", 
       backdropFilter: "blur(12px)", 
@@ -28,7 +28,7 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
       zIndex: 1000,
       display: "flex",
       alignItems: "center",
-      padding: "0 40px"
+      padding: "0 24px"
     }}>
       <Link 
         to="/" 

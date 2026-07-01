@@ -126,9 +126,9 @@ a { text-decoration: none; color: inherit; }
 .workspace-container {
   display: grid;
   grid-template-columns: 320px 1fr;
-  height: calc(100vh - 72px);
+  height: calc(100vh - 56px);
   overflow: hidden;
-  margin-top: 72px;
+  margin-top: 56px;
 }
 
 .workspace-sidebar {

@@ -419,6 +419,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const [mainView, setMainView] = useState("chat");
   const [showExportOptions, setShowExportOptions] = useState(false);
   const [showThemeOptions, setShowThemeOptions] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const endRef = useRef(null);
   const inputRef = useRef(null);
   const messagesRef = useRef(null);
@@ -900,8 +901,9 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   };
 
   return (
-    <div className="workspace-container">
-      <div className="workspace-sidebar">
+    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "0px 1fr" : "320px 1fr" }}>
+      {!isSidebarCollapsed && (
+        <div className="workspace-sidebar">
         <div style={{ padding:"20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
             <div style={{ width:40, height:40, background:"rgba(139, 92, 246, 0.15)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, border:"1px solid rgba(139, 92, 246, 0.2)" }}>📄</div>
@@ -958,15 +960,37 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           )}
         </div>
       </div>
+      )}
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
         <div className="chat-header">
-          <div className="hide-on-mobile" style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
             <div style={{ display: "flex", background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: 4, border: "1px solid var(--border)" }}>
               <button onClick={() => setMainView("chat")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "chat" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "chat" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>💬 Chat</button>
               <button onClick={() => setMainView("dashboard")} style={{ padding: "6px 16px", borderRadius: 8, border: "none", fontSize: 12, fontWeight: 700, cursor: "pointer", background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.15)" : "transparent", color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)", transition: "all 0.2s" }}>📊 Dashboard</button>
             </div>
+            <button 
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+              style={{ 
+                background: "rgba(255,255,255,0.03)", 
+                border: "1px solid var(--border)", 
+                color: "var(--text2)", 
+                padding: "8px 14px", 
+                borderRadius: 12, 
+                fontSize: 12, 
+                fontWeight: 700, 
+                display: "flex", 
+                alignItems: "center", 
+                gap: 6, 
+                transition: "all 0.2s", 
+                cursor: "pointer" 
+              }}
+              onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"}
+              onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}
+            >
+              {isSidebarCollapsed ? "📁 Show Sidebar" : "📁 Hide Sidebar"}
+            </button>
           </div>
             <div style={{ position: "relative" }}>
               <button onClick={() => {setShowThemeOptions(!showThemeOptions); setShowExportOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
@@ -1337,7 +1361,7 @@ export function Dashboard() {
           onLogoClick={handleReset}
         />
         
-        <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 72px)", marginTop: 72 }}>
+        <main style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 40px", position:"relative", zIndex:2, minHeight: "calc(100vh - 56px)", marginTop: 56 }}>
           <div style={{ animation:"fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1)", width:"100%", maxWidth:1200, textAlign:"center", padding: "120px 0", position: "relative", zIndex: 3 }}>
             <h1 style={{ fontFamily: "var(--classy)", fontSize:"clamp(40px, 10vw, 110px)", fontWeight:700, marginBottom:32, letterSpacing:"-0.02em", lineHeight:1.1, color: "#fff", maxWidth: 1000, margin: "0 auto 32px" }}>
               Spreadsheets,<br/>
