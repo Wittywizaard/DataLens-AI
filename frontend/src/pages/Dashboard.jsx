@@ -902,7 +902,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   };
 
   return (
-    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "0px 1fr" : "320px 1fr" }}>
+    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "1fr" : "320px 1fr" }}>
       {!isSidebarCollapsed && (
         <div className="workspace-sidebar">
         <div style={{ padding:"20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
