@@ -956,104 +956,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             ✦
           </button>
 
-          {/* New File */}
-          <div style={{ position: "relative" }}>
-            <input 
-              type="file"
-              multiple 
-              ref={fileInputRef} 
-              style={{ display: "none" }} 
-              accept=".csv,.tsv,.xlsx,.xls" 
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  onUpload(Array.from(e.target.files));
-                }
-                e.target.value = null;
-              }}
-            />
-            <button 
-              onClick={() => fileInputRef.current?.click()}
-              title="New File"
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                border: "none",
-                background: "transparent",
-                color: "var(--text3)",
-                fontSize: 18,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
-              onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
-            >
-              ↺
-            </button>
-          </div>
 
-          {/* Export Report */}
-          <div style={{ position: "relative" }}>
-            <button 
-              onClick={() => setShowExportOptions(!showExportOptions)}
-              title="Export Report"
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                border: "none",
-                background: showExportOptions ? "rgba(139, 92, 246, 0.15)" : "transparent",
-                color: showExportOptions ? "var(--accent)" : "var(--text3)",
-                fontSize: 18,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => { if(!showExportOptions) e.currentTarget.style.color = "var(--text2)"; }}
-              onMouseLeave={e => { if(!showExportOptions) e.currentTarget.style.color = "var(--text3)"; }}
-            >
-              📥
-            </button>
-            {showExportOptions && (
-              <div style={{ position: "absolute", left: "60px", top: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 140, boxShadow: "0 10px 40px rgba(0,0,0,0.5)", padding: "6px 0" }}>
-                <button onClick={() => { exportPDF(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>PDF Document</button>
-                <button onClick={() => { exportDOC(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Word (.doc)</button>
-                <button onClick={() => { exportTXT(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Plain Text</button>
-              </div>
-            )}
-          </div>
-
-          {/* Settings Icon */}
-          <button 
-            onClick={onSettingsOpen}
-            title="API Settings"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              border: "none",
-              background: "transparent",
-              color: "var(--text3)",
-              fontSize: 18,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
-            onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
-          >
-            ⚙️
-          </button>
-
-          {/* Divider */}
-          <div style={{ width: 24, height: 1, background: "var(--border)", margin: "4px 0" }} />
 
           {/* Chat Icon */}
           <button 
@@ -1344,41 +1247,127 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
-        <div className="chat-header">
+        <div className="chat-header" style={{ gap: "12px", borderBottom: "1px solid rgba(255, 255, 255, 0.05)", background: "rgba(3, 3, 11, 0.3)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}></div>
-            <div style={{ position: "relative" }}>
-              <button onClick={() => {setShowExportOptions(!showExportOptions); setShowThemeOptions(false);}} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
-                📥 Export Report
-              </button>
-              {showExportOptions && (
-                <div style={{ position: "absolute", top: "110%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 120, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
-                  <button onClick={exportPDF} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>PDF Document</button>
-                  <button onClick={exportDOC} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Word (.doc)</button>
-                  <button onClick={exportTXT} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Plain Text</button>
-                </div>
-              )}
-            </div>
-            <button onClick={onSettingsOpen} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px", borderRadius: 12, fontSize: 18, transition: "all 0.2s", cursor: "pointer", display: "flex" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
-              ⚙️
+          
+          {/* Export Report */}
+          <div style={{ position: "relative" }}>
+            <button 
+              onClick={() => { setShowExportOptions(!showExportOptions); setShowThemeOptions(false); }} 
+              style={{ 
+                background: "rgba(13, 13, 30, 0.6)", 
+                border: "1px solid rgba(255, 255, 255, 0.08)", 
+                color: "#ffffff", 
+                padding: "6px 14px", 
+                borderRadius: "9999px", 
+                fontSize: "12px", 
+                fontWeight: "600", 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "6px", 
+                transition: "all 0.2s", 
+                cursor: "pointer"
+              }} 
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }} 
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                e.currentTarget.style.transform = "none";
+              }}
+            >
+              <span style={{ fontSize: "14px", display: "inline-flex", alignItems: "center" }}>📥</span> Export Report
             </button>
-            <div style={{ position: "relative" }}>
-              <input 
-                type="file"
-                multiple 
-                ref={fileInputRef} 
-                style={{ display: "none" }} 
-                accept=".csv,.tsv,.xlsx,.xls" 
-                onChange={(e) => {
-                  if (e.target.files && e.target.files.length > 0) {
-                    onUpload(Array.from(e.target.files));
-                  }
-                  e.target.value = null;
-                }}
-              />
-              <button onClick={() => fileInputRef.current?.click()} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--text2)", padding: "8px 16px", borderRadius: 12, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.06)"} onMouseLeave={e => e.target.style.background="rgba(255,255,255,0.03)"}>
-                ↺ New file
-              </button>
-            </div>
+            {showExportOptions && (
+              <div style={{ position: "absolute", top: "115%", right: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 140, boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+                <button onClick={() => { exportPDF(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>PDF Document</button>
+                <button onClick={() => { exportDOC(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Word (.doc)</button>
+                <button onClick={() => { exportTXT(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Plain Text</button>
+              </div>
+            )}
+          </div>
+
+          {/* New file */}
+          <div style={{ position: "relative" }}>
+            <input 
+              type="file"
+              multiple 
+              ref={fileInputRef} 
+              style={{ display: "none" }} 
+              accept=".csv,.tsv,.xlsx,.xls" 
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  onUpload(Array.from(e.target.files));
+                }
+                e.target.value = null;
+              }}
+            />
+            <button 
+              onClick={() => fileInputRef.current?.click()} 
+              style={{ 
+                background: "rgba(13, 13, 30, 0.6)", 
+                border: "1px solid rgba(255, 255, 255, 0.08)", 
+                color: "#ffffff", 
+                padding: "6px 14px", 
+                borderRadius: "9999px", 
+                fontSize: "12px", 
+                fontWeight: "600", 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "6px", 
+                transition: "all 0.2s", 
+                cursor: "pointer"
+              }} 
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }} 
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                e.currentTarget.style.transform = "none";
+              }}
+            >
+              <span style={{ fontSize: "14px", display: "inline-flex", alignItems: "center" }}>↺</span> New file
+            </button>
+          </div>
+
+          {/* Settings button */}
+          <button 
+            onClick={onSettingsOpen} 
+            style={{ 
+              background: "rgba(13, 13, 30, 0.6)", 
+              border: "1px solid rgba(255, 255, 255, 0.08)", 
+              color: "#cccccc", 
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px", 
+              fontSize: "14px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s", 
+              cursor: "pointer"
+            }} 
+            onMouseEnter={e => {
+              e.currentTarget.style.background = "rgba(13, 13, 30, 0.8)";
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+              e.currentTarget.style.color = "#ffffff";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }} 
+            onMouseLeave={e => {
+              e.currentTarget.style.background = "rgba(13, 13, 30, 0.6)";
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+              e.currentTarget.style.color = "#cccccc";
+              e.currentTarget.style.transform = "none";
+            }}
+          >
+            ⚙️
+          </button>
         </div>
 
         <div ref={messagesRef} style={{ flex:1, overflow:"auto", padding:"24px 28px", display:"flex", flexDirection:"column", gap:20, position: "relative" }}>
