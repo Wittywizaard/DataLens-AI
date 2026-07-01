@@ -938,46 +938,40 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         {/* Top Icons */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", alignItems: "center" }}>
           {/* Logo brand button with hover collapse/expand toggle */}
-          <button 
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            onMouseEnter={() => setIsLogoHovered(true)}
-            onMouseLeave={() => setIsLogoHovered(false)}
-            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 10,
-              border: "none",
-              background: "linear-gradient(135deg, #f59e0b, #d97706)",
-              color: "white",
-              fontSize: 18,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 0 15px rgba(245, 158, 11, 0.4)",
-              marginBottom: 4,
-              transition: "transform 0.2s"
-            }}
-          >
-            {isLogoHovered ? (
-              isSidebarCollapsed ? (
+          {isSidebarCollapsed && (
+            <button 
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              onMouseEnter={() => setIsLogoHovered(true)}
+              onMouseLeave={() => setIsLogoHovered(false)}
+              title="Expand sidebar"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 10,
+                border: "none",
+                background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                color: "white",
+                fontSize: 18,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 0 15px rgba(245, 158, 11, 0.4)",
+                marginBottom: 4,
+                transition: "transform 0.2s"
+              }}
+            >
+              {isLogoHovered ? (
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="18" height="18" x="3" y="3" rx="2" />
                   <path d="M9 3v18" />
                   <path d="m14 9 3 3-3 3" />
                 </svg>
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="18" height="18" x="3" y="3" rx="2" />
-                  <path d="M9 3v18" />
-                  <path d="m16 15-3-3 3-3" />
-                </svg>
-              )
-            ) : (
-              "✦"
-            )}
-          </button>
+                "✦"
+              )}
+            </button>
+          )}
 
           {/* Theme Icon with Popover */}
           {!isSidebarCollapsed && (
@@ -1329,8 +1323,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         {/* Workspace Header Bar */}
         <div className="chat-header" style={{ borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px", boxSizing: "border-box" }}>
           
-          {/* Left Portion of Header (ChatGPT-style brand name outside sidebar when collapsed) */}
-          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+          {/* Left Portion - Brand logo text (if collapsed) + Switcher Pill (always next to it) */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {isSidebarCollapsed && (
               <div 
                 onClick={onLogoClick}
@@ -1338,78 +1332,81 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 style={{ 
                   display: "flex", 
                   alignItems: "center", 
-                  gap: 5, 
+                  gap: 8, 
                   cursor: "pointer",
                   userSelect: "none"
                 }}
               >
-                <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.01em", color: "var(--text)" }}>DataLens AI</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text3)", opacity: 0.8, marginTop: 1 }}>
+                <span style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)", lineHeight: "38px" }}>DataLens AI</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text3)", opacity: 0.8 }}>
                   <path d="m6 9 6 6 6-6" />
                 </svg>
               </div>
             )}
+
+            {/* Switcher Pill */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              background: "rgba(13, 13, 30, 0.75)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: "20px",
+              padding: "3px",
+              gap: "2px",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+              zIndex: 100
+            }}>
+              <button 
+                onClick={() => setMainView("chat")}
+                style={{
+                  background: mainView === "chat" ? "rgba(139, 92, 246, 0.25)" : "transparent",
+                  border: "none",
+                  color: mainView === "chat" ? "var(--accent)" : "var(--text3)",
+                  padding: "5px 12px",
+                  borderRadius: "14px",
+                  fontSize: "11.5px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={e => { if(mainView !== "chat") e.currentTarget.style.color = "var(--text2)"; }}
+                onMouseLeave={e => { if(mainView !== "chat") e.currentTarget.style.color = "var(--text3)"; }}
+              >
+                💬 Chat
+              </button>
+              <button 
+                onClick={() => setMainView("dashboard")}
+                style={{
+                  background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.25)" : "transparent",
+                  border: "none",
+                  color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)",
+                  padding: "5px 12px",
+                  borderRadius: "14px",
+                  fontSize: "11.5px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={e => { if(mainView !== "dashboard") e.currentTarget.style.color = "var(--text2)"; }}
+                onMouseLeave={e => { if(mainView !== "dashboard") e.currentTarget.style.color = "var(--text3)"; }}
+              >
+                📊 Dashboard
+              </button>
+            </div>
           </div>
 
-          {/* Center Portion - Floating Switcher Pill */}
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            background: "rgba(13, 13, 30, 0.75)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "20px",
-            padding: "3px",
-            gap: "2px",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
-            zIndex: 100
-          }}>
-            <button 
-              onClick={() => setMainView("chat")}
-              style={{
-                background: mainView === "chat" ? "rgba(139, 92, 246, 0.25)" : "transparent",
-                border: "none",
-                color: mainView === "chat" ? "var(--accent)" : "var(--text3)",
-                padding: "5px 12px",
-                borderRadius: "14px",
-                fontSize: "11.5px",
-                fontWeight: "700",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => { if(mainView !== "chat") e.currentTarget.style.color = "var(--text2)"; }}
-              onMouseLeave={e => { if(mainView !== "chat") e.currentTarget.style.color = "var(--text3)"; }}
-            >
-              💬 Chat
-            </button>
-            <button 
-              onClick={() => setMainView("dashboard")}
-              style={{
-                background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.25)" : "transparent",
-                border: "none",
-                color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)",
-                padding: "5px 12px",
-                borderRadius: "14px",
-                fontSize: "11.5px",
-                fontWeight: "700",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => { if(mainView !== "dashboard") e.currentTarget.style.color = "var(--text2)"; }}
-              onMouseLeave={e => { if(mainView !== "dashboard") e.currentTarget.style.color = "var(--text3)"; }}
-            >
-              📊 Dashboard
-            </button>
-          </div>
+          {/* Spacer to push Actions to the right */}
+          <div style={{ flex: 1 }} />
 
           {/* Right Portion - Actions */}
-          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {/* Export Report */}
             <div style={{ position: "relative" }}>
               <button 
@@ -1570,9 +1567,9 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Ask anything about your data</h2>
                 <p style={{ fontSize: 16, color: "var(--text3)" }}>Try one of these or type your own question</p>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, maxWidth: 800, width: "100%", marginTop: 12 }}>
+              <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 12, maxWidth: 800, width: "100%", marginTop: 12 }}>
                 {suggestions.map(s => (
-                  <button key={s} onClick={() => onQuery(s)} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", padding: "20px", borderRadius: 16, color: "var(--text2)", fontSize: 13, fontWeight: 600, textAlign: "center", transition: "all 0.2s", lineHeight: 1.4 }} onMouseEnter={e => { e.target.style.background="rgba(255,255,255,0.04)"; e.target.style.borderColor="var(--accent)"; }} onMouseLeave={e => { e.target.style.background="rgba(255,255,255,0.02)"; e.target.style.borderColor="var(--border)"; }}>
+                  <button key={s} onClick={() => onQuery(s)} style={{ flex: "1 1 240px", maxWidth: 320, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", padding: "20px", borderRadius: 16, color: "var(--text2)", fontSize: 13, fontWeight: 600, textAlign: "center", transition: "all 0.2s", lineHeight: 1.4 }} onMouseEnter={e => { e.target.style.background="rgba(255,255,255,0.04)"; e.target.style.borderColor="var(--accent)"; }} onMouseLeave={e => { e.target.style.background="rgba(255,255,255,0.02)"; e.target.style.borderColor="var(--border)"; }}>
                     {s}
                   </button>
                 ))}
