@@ -411,7 +411,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick }) {
   const { user, token } = useContext(AuthContext);
   const [saving, setSaving] = useState(false);
   const [input, setInput] = useState("");
@@ -421,10 +421,12 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const [showThemeOptions, setShowThemeOptions] = useState(false);
   const [showThemeOptionsSidebar, setShowThemeOptionsSidebar] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const endRef = useRef(null);
   const inputRef = useRef(null);
   const messagesRef = useRef(null);
   const fileInputRef = useRef(null);
+  const profileMenuRef = useRef(null);
   const headers = fileInfo?.headers ?? [];
   const columnTypes = fileInfo?.columnTypes ?? {};
   const stats = fileInfo?.stats ?? {};
@@ -445,6 +447,16 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   })();
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, analyzing]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSave = async () => {
     if (!fileInfo?.fileId || saving) return;
@@ -902,7 +914,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   };
 
   return (
-    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : "56px 264px 1fr" }}>
+    <div className="workspace-container" style={{ gridTemplateColumns: isSidebarCollapsed ? "56px 1fr" : "56px 264px 1fr", height: "100vh", marginTop: 0 }}>
       {/* Activity Bar */}
       <div style={{
         width: 56,
@@ -917,7 +929,132 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
         zIndex: 10
       }}>
         {/* Top Icons */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%", alignItems: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", alignItems: "center" }}>
+          {/* Logo brand button */}
+          <button 
+            onClick={onLogoClick}
+            title="DataLens AI - Go Home"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 10,
+              border: "none",
+              background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+              color: "white",
+              fontSize: 18,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 0 15px var(--glow)",
+              marginBottom: 4,
+              transition: "transform 0.2s"
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "none"}
+          >
+            ✦
+          </button>
+
+          {/* New File */}
+          <div style={{ position: "relative" }}>
+            <input 
+              type="file"
+              multiple 
+              ref={fileInputRef} 
+              style={{ display: "none" }} 
+              accept=".csv,.tsv,.xlsx,.xls" 
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  onUpload(Array.from(e.target.files));
+                }
+                e.target.value = null;
+              }}
+            />
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              title="New File"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 10,
+                border: "none",
+                background: "transparent",
+                color: "var(--text3)",
+                fontSize: 18,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
+              onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
+            >
+              ↺
+            </button>
+          </div>
+
+          {/* Export Report */}
+          <div style={{ position: "relative" }}>
+            <button 
+              onClick={() => setShowExportOptions(!showExportOptions)}
+              title="Export Report"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 10,
+                border: "none",
+                background: showExportOptions ? "rgba(139, 92, 246, 0.15)" : "transparent",
+                color: showExportOptions ? "var(--accent)" : "var(--text3)",
+                fontSize: 18,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => { if(!showExportOptions) e.currentTarget.style.color = "var(--text2)"; }}
+              onMouseLeave={e => { if(!showExportOptions) e.currentTarget.style.color = "var(--text3)"; }}
+            >
+              📥
+            </button>
+            {showExportOptions && (
+              <div style={{ position: "absolute", left: "60px", top: 0, background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", zIndex: 100, display: "flex", flexDirection: "column", minWidth: 140, boxShadow: "0 10px 40px rgba(0,0,0,0.5)", padding: "6px 0" }}>
+                <button onClick={() => { exportPDF(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>PDF Document</button>
+                <button onClick={() => { exportDOC(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Word (.doc)</button>
+                <button onClick={() => { exportTXT(); setShowExportOptions(false); }} style={{ padding: "10px 16px", background: "none", border: "none", color: "var(--text)", fontSize: 12, textAlign: "left", cursor: "pointer" }} onMouseEnter={e => e.target.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e => e.target.style.background="none"}>Plain Text</button>
+              </div>
+            )}
+          </div>
+
+          {/* Settings Icon */}
+          <button 
+            onClick={onSettingsOpen}
+            title="API Settings"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              border: "none",
+              background: "transparent",
+              color: "var(--text3)",
+              fontSize: 18,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
+            onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
+          >
+            ⚙️
+          </button>
+
+          {/* Divider */}
+          <div style={{ width: 24, height: 1, background: "var(--border)", margin: "4px 0" }} />
+
           {/* Chat Icon */}
           <button 
             onClick={() => {
@@ -1051,49 +1188,115 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           )}
         </div>
 
-        {/* Bottom Icons */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%", alignItems: "center" }}>
-          {/* Toggle Sidebar Icon */}
-          <button 
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              border: "none",
-              background: "transparent",
-              color: "var(--text3)",
-              fontSize: 18,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text2)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--text3)"; }}
-          >
-            {isSidebarCollapsed ? "▶" : "◀"}
-          </button>
+        {/* Bottom Icons - Sign In / User Profile */}
+        <div ref={profileMenuRef} style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%", alignItems: "center", position: "relative" }}>
+          {user ? (
+            <>
+              <button 
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                title={user.name}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, var(--accent), var(--accent2))",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 700,
+                  color: "#fff",
+                  fontSize: 14,
+                  cursor: "pointer",
+                  border: "2px solid transparent",
+                  transition: "all 0.2s",
+                  boxShadow: isProfileMenuOpen ? "0 0 0 2px var(--bg), 0 0 0 4px var(--accent)" : "none"
+                }}
+                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseLeave={e => e.currentTarget.style.transform = "none"}
+              >
+                {user.name.charAt(0).toUpperCase()}
+              </button>
+              {isProfileMenuOpen && (
+                <div style={{
+                  position: "absolute", bottom: "100%", left: "60px", marginBottom: "8px",
+                  background: "var(--bg2)", border: "1px solid var(--border)",
+                  borderRadius: 16, overflow: "hidden", minWidth: 180,
+                  boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000,
+                  display: "flex", flexDirection: "column"
+                }}>
+                  <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)", display: "flex", flexDirection: "column" }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</span>
+                    <span style={{ fontSize: 11, color: "var(--text3)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
+                  </div>
+                  <div style={{ padding: 6, display: "flex", flexDirection: "column" }}>
+                    <button onClick={() => { setIsProfileMenuOpen(false); onSettingsOpen(); }} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => { e.target.style.background = "rgba(255,255,255,0.04)"; e.target.style.color = "var(--text)"; }} onMouseOut={e => { e.target.style.background = "none"; e.target.style.color = "var(--text2)"; }}>
+                      <span style={{ fontSize: 16 }}>⚙️</span> Preferences
+                    </button>
+                    <button onClick={() => { setIsProfileMenuOpen(false); onSignOut(); }} style={{ background: "none", border: "none", color: "#fca5a5", fontSize: 13, fontWeight: 500, padding: "10px 12px", textAlign: "left", borderRadius: 8, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} onMouseOver={e => e.target.style.background = "rgba(239,68,68,0.1)"} onMouseOut={e => e.target.style.background = "none"}>
+                      <span style={{ fontSize: 16 }}>👋</span> Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <button 
+              onClick={onAuthOpen}
+              title="Sign In"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid var(--border)",
+                color: "var(--text2)",
+                fontSize: 16,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "var(--text)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "var(--text2)"; }}
+            >
+              👤
+            </button>
+          )}
         </div>
       </div>
 
       {!isSidebarCollapsed && (
         <div className="workspace-sidebar">
-        <div style={{ padding:"20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-            <div style={{ width:40, height:40, background:"rgba(139, 92, 246, 0.15)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, border:"1px solid rgba(139, 92, 246, 0.2)" }}>📄</div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:14, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", color:"var(--text)" }}>{originalName}</div>
-              <div style={{ fontSize:11, color:"var(--text3)", fontFamily:"var(--mono)", marginTop:2, fontWeight:500 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
+          {/* Logo brand line */}
+          <div style={{ padding: "20px 20px 10px 20px", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ 
+              width: 28, height: 28, 
+              background: "linear-gradient(135deg, var(--accent), var(--accent2))", 
+              borderRadius: 8, 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              fontSize: 16,
+              boxShadow: "0 0 15px var(--glow)",
+              color: "white"
+            }}>✦</div>
+            <span className="header-logo-text" style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>DataLens AI</span>
+          </div>
+
+          <div style={{ padding:"12px 20px 20px 20px", borderBottom:"1px solid var(--border)", flexShrink:0, background:"rgba(255,255,255,0.01)" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+              <div style={{ width:40, height:40, background:"rgba(139, 92, 246, 0.15)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0, border:"1px solid rgba(139, 92, 246, 0.2)" }}>📄</div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:14, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", color:"var(--text)" }}>{originalName}</div>
+                <div style={{ fontSize:11, color:"var(--text3)", fontFamily:"var(--mono)", marginTop:2, fontWeight:500 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:12 }}>
+              {numCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(6,182,212,.12)", border:"1px solid rgba(6,182,212,.2)", color:"#06b6d4" }}>📊 {numCols.length} numeric</span>}
+              {catCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.2)", color:"#a78bfa" }}>🏷 {catCols.length} categorical</span>}
             </div>
           </div>
-          <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginTop:12 }}>
-            {numCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(6,182,212,.12)", border:"1px solid rgba(6,182,212,.2)", color:"#06b6d4" }}>📊 {numCols.length} numeric</span>}
-            {catCols.length > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", padding:"2px 8px", borderRadius:100, background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.2)", color:"#a78bfa" }}>🏷 {catCols.length} categorical</span>}
-          </div>
-        </div>
 
         <div style={{ display:"flex", borderBottom:"1px solid var(--border)", flexShrink:0 }}>
           {["preview","columns"].map(tab => (
@@ -1606,13 +1809,6 @@ export function Dashboard() {
         transition: "background 0.1s ease-out"
       }}
     >
-      <Header 
-        onSettingsOpen={() => setIsSettingsOpen(true)} 
-        user={user} 
-        onAuthOpen={() => setIsAuthOpen(true)} 
-        onSignOut={handleSignOut} 
-        onLogoClick={handleReset}
-      />
       <Workspace
         fileInfo={safeFileInfo}
         messages={messages}
@@ -1624,6 +1820,9 @@ export function Dashboard() {
         onSettingsOpen={() => setIsSettingsOpen(true)}
         theme={activeTheme}
         onThemeChange={setActiveTheme}
+        onAuthOpen={() => setIsAuthOpen(true)}
+        onSignOut={handleSignOut}
+        onLogoClick={handleReset}
       />
       <SettingsModal 
         isOpen={isSettingsOpen} 

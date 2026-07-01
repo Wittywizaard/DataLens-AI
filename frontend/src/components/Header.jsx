@@ -18,10 +18,10 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
   return (
     <header className="main-header" style={{ 
       height: 56, 
-      borderBottom: "1px solid var(--border)", 
-      background: "rgba(3, 3, 11, 0.7)", 
-      backdropFilter: "blur(12px)", 
-      WebkitBackdropFilter: "blur(12px)",
+      borderBottom: "none", 
+      background: "transparent", 
+      backdropFilter: "none", 
+      WebkitBackdropFilter: "none",
       position: "fixed", 
       width: "100%",
       top: 0, 
@@ -58,15 +58,6 @@ export function Header({ onSettingsOpen, user, onAuthOpen, onSignOut, onLogoClic
       <div style={{ flex: 1 }} />
       
       <nav className="header-nav" style={{ display: "flex", gap: 24, alignItems: "center" }}>
-        {[
-          { name: "Features", id: "features" }
-        ].map(link => (
-          <a key={link.name} className="header-nav-link" href={`#${link.id}`} style={{ fontSize: 14, color: "var(--text3)", fontWeight: 500, transition: "color 0.2s", textDecoration: "none" }} 
-             onMouseOver={e => e.target.style.color = "var(--accent)"} 
-             onMouseOut={e => e.target.style.color = "var(--text3)"}>
-            {link.name}
-          </a>
-        ))}
         <button 
           onClick={onSettingsOpen}
           style={{ 
