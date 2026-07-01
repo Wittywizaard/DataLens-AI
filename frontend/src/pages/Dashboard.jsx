@@ -708,29 +708,47 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       p.style.margin = "0 0 12pt 0";
     });
 
-    // 7. Restyle insights
-    el.querySelectorAll('[data-role="insight-card"]').forEach(card => {
-      card.className = "insight-card";
-      card.style.background = "#f8fafc";
-      card.style.border = "1px solid #cbd5e1";
-      card.style.borderLeft = "4px solid #4f46e5";
-      card.style.padding = "12px";
-      card.style.borderRadius = "8px";
-      card.style.marginBottom = "8px";
-      
-      const label = card.querySelector('[data-role="insight-label"]');
-      if (label) {
-        label.style.fontSize = "9pt";
-        label.style.color = "#475569";
-        label.style.fontWeight = "bold";
-      }
-      
-      const val = card.querySelector('[data-role="insight-value"]');
-      if (val) {
-        val.style.fontSize = "16pt";
-        val.style.fontWeight = "bold";
-        val.style.color = "#1e293b";
-        val.style.textShadow = "none";
+    // 7. Group and Restyle insights (using tables instead of flex boxes to ensure MS Word alignment)
+    el.querySelectorAll('[data-role="assistant-msg"]').forEach(assistantMsg => {
+      const cards = assistantMsg.querySelectorAll('[data-role="insight-card"]');
+      if (cards.length > 0) {
+        const table = document.createElement('table');
+        table.style.width = "100%";
+        table.style.borderCollapse = "separate";
+        table.style.borderSpacing = "8px";
+        table.style.marginBottom = "16px";
+        table.style.marginTop = "12px";
+
+        const tr = document.createElement('tr');
+
+        cards.forEach(card => {
+          const td = document.createElement('td');
+          td.style.width = `${100 / cards.length}%`;
+          td.style.padding = "14px";
+          td.style.verticalAlign = "top";
+          td.style.border = "1px solid #cbd5e1";
+          td.style.borderLeft = "4px solid #4f46e5";
+          td.style.background = "#f8fafc";
+          td.style.borderRadius = "8px";
+
+          const labelEl = card.querySelector('[data-role="insight-label"]');
+          const valEl = card.querySelector('[data-role="insight-value"]');
+
+          const labelText = labelEl ? labelEl.innerText : "";
+          const valText = valEl ? valEl.innerText : "";
+
+          td.innerHTML = `
+            <div style="font-family: Arial, sans-serif; font-size: 9pt; color: #475569; font-weight: bold; text-transform: uppercase;">${labelText}</div>
+            <div style="font-family: Arial, sans-serif; font-size: 16pt; color: #1e293b; font-weight: bold; margin-top: 4px;">${valText}</div>
+          `;
+          tr.appendChild(td);
+        });
+
+        table.appendChild(tr);
+
+        const firstCard = cards[0];
+        firstCard.parentNode.insertBefore(table, firstCard);
+        cards.forEach(c => c.remove());
       }
     });
 
@@ -816,16 +834,22 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       });
     });
 
-    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word</title><style>body { font-family: Arial, sans-serif; background: #ffffff; color: #333333; margin: 1in; } h2 { color: #1e1b4b; font-size: 16pt; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 24pt; } .page-break { page-break-before: always; clear: both; } .chart-container { text-align: center; margin: 16px 0; page-break-inside: avoid; } img { max-width: 550px; height: auto; } table { width: 100%; border-collapse: collapse; margin-top: 12px; page-break-inside: avoid; } th { background: #f1f5f9; color: #1e293b; font-weight: bold; border-bottom: 2px solid #cbd5e1; padding: 8px; text-align: left; } td { color: #334155; border-bottom: 1px solid #e2e8f0; padding: 6px; }</style></head><body>";
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word</title><style>body { font-family: Arial, sans-serif; background: #ffffff; color: #333333; margin: 1in; } h2 { color: #1e1b4b; font-size: 16pt; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 24pt; } .page-break { page-break-before: always; clear: both; } .chart-container { text-align: center; margin: 16px 0; page-break-inside: avoid; } img { max-width: 500px; height: auto; } table { width: 100%; border-collapse: collapse; margin-top: 12px; page-break-inside: avoid; } th { background: #f1f5f9; color: #1e293b; font-weight: bold; border-bottom: 2px solid #cbd5e1; padding: 8px; text-align: left; } td { color: #334155; border-bottom: 1px solid #e2e8f0; padding: 6px; }</style></head><body>";
     const footer = "</body></html>";
     const sourceHTML = header + el.innerHTML + footer;
-    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    
+    // Create a Blob from sourceHTML instead of raw Data URI to prevent size truncation
+    const blob = new Blob(['\ufeff' + sourceHTML], { type: 'application/msword;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
     const fileDownload = document.createElement("a");
     document.body.appendChild(fileDownload);
-    fileDownload.href = source;
+    fileDownload.href = url;
     fileDownload.download = `${filename.trim() || 'DataLens_Report'}.doc`;
     fileDownload.click();
     document.body.removeChild(fileDownload);
+    URL.revokeObjectURL(url);
+    
     setShowExportOptions(false);
   };
 
