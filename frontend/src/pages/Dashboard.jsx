@@ -957,69 +957,6 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           </button>
 
 
-
-          {/* Chat Icon */}
-          <button 
-            onClick={() => {
-              if (mainView === "chat" && !isSidebarCollapsed) {
-                setIsSidebarCollapsed(true);
-              } else {
-                setMainView("chat");
-                setIsSidebarCollapsed(false);
-              }
-            }}
-            title="Chat View"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              border: "none",
-              background: (mainView === "chat" && !isSidebarCollapsed) ? "rgba(139, 92, 246, 0.15)" : "transparent",
-              color: (mainView === "chat" && !isSidebarCollapsed) ? "var(--accent)" : "var(--text3)",
-              fontSize: 18,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={e => { if (mainView !== "chat" || isSidebarCollapsed) e.currentTarget.style.color = "var(--text2)"; }}
-            onMouseLeave={e => { if (mainView !== "chat" || isSidebarCollapsed) e.currentTarget.style.color = "var(--text3)"; }}
-          >
-            💬
-          </button>
-
-          {/* Dashboard Icon */}
-          <button 
-            onClick={() => {
-              if (mainView === "dashboard" && !isSidebarCollapsed) {
-                setIsSidebarCollapsed(true);
-              } else {
-                setMainView("dashboard");
-                setIsSidebarCollapsed(false);
-              }
-            }}
-            title="Dashboard View"
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              border: "none",
-              background: (mainView === "dashboard" && !isSidebarCollapsed) ? "rgba(139, 92, 246, 0.15)" : "transparent",
-              color: (mainView === "dashboard" && !isSidebarCollapsed) ? "var(--accent)" : "var(--text3)",
-              fontSize: 18,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s"
-            }}
-            onMouseEnter={e => { if (mainView !== "dashboard" || isSidebarCollapsed) e.currentTarget.style.color = "var(--text2)"; }}
-            onMouseLeave={e => { if (mainView !== "dashboard" || isSidebarCollapsed) e.currentTarget.style.color = "var(--text3)"; }}
-          >
-            📊
-          </button>
-
           {/* Theme Icon with Popover */}
           <div style={{ position: "relative" }}>
             <button 
@@ -1247,7 +1184,92 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
       <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", background: "#05050f", position: "relative" }}>
         {/* Workspace Header Bar */}
-        <div className="chat-header" style={{ gap: "12px", borderBottom: "none", background: "rgba(3, 3, 11, 0.3)" }}>
+        <div className="chat-header" style={{ gap: "12px", borderBottom: "none", background: "rgba(3, 3, 11, 0.3)", padding: "0 16px" }}>
+          
+          {/* Floating Switcher Pill */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            background: "rgba(13, 13, 30, 0.75)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "20px",
+            padding: "3px",
+            gap: "2px",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+            zIndex: 100
+          }}>
+            {/* Sidebar Toggle Button inside Switcher */}
+            <button 
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--text3)",
+                width: "28px",
+                height: "28px",
+                borderRadius: "14px",
+                fontSize: "13px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = "var(--text2)"}
+              onMouseLeave={e => e.currentTarget.style.color = "var(--text3)"}
+            >
+              {isSidebarCollapsed ? "▶" : "◀"}
+            </button>
+
+            {/* Divider line inside switcher pill */}
+            <div style={{ width: "1px", height: "16px", background: "rgba(255,255,255,0.15)", margin: "0 2px" }} />
+
+            <button 
+              onClick={() => setMainView("chat")}
+              style={{
+                background: mainView === "chat" ? "rgba(139, 92, 246, 0.25)" : "transparent",
+                border: "none",
+                color: mainView === "chat" ? "var(--accent)" : "var(--text3)",
+                padding: "5px 12px",
+                borderRadius: "14px",
+                fontSize: "11.5px",
+                fontWeight: "700",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => { if(mainView !== "chat") e.currentTarget.style.color = "var(--text2)"; }}
+              onMouseLeave={e => { if(mainView !== "chat") e.currentTarget.style.color = "var(--text3)"; }}
+            >
+              💬 Chat
+            </button>
+            <button 
+              onClick={() => setMainView("dashboard")}
+              style={{
+                background: mainView === "dashboard" ? "rgba(139, 92, 246, 0.25)" : "transparent",
+                border: "none",
+                color: mainView === "dashboard" ? "var(--accent)" : "var(--text3)",
+                padding: "5px 12px",
+                borderRadius: "14px",
+                fontSize: "11.5px",
+                fontWeight: "700",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={e => { if(mainView !== "dashboard") e.currentTarget.style.color = "var(--text2)"; }}
+              onMouseLeave={e => { if(mainView !== "dashboard") e.currentTarget.style.color = "var(--text3)"; }}
+            >
+              📊 Dashboard
+            </button>
+          </div>
+
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}></div>
           
           {/* Export Report */}
