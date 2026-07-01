@@ -32,42 +32,48 @@ const PALETTES = {
 
 const CHART_MAP = { bar: Bar, line: Line, pie: Pie, doughnut: Doughnut, scatter: Scatter, radar: Radar, polarArea: PolarArea, bubble: Bubble };
 
-const baseOpts = (isRadial, isLightMode = false) => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  devicePixelRatio: 4, // Forces ultra-high resolution rendering
-  animation: { duration: 600, easing: "easeInOutQuart" },
-  plugins: {
-    legend: {
-      labels: {
-        color: isLightMode ? "#0f172a" : "#cbd5e1", // Dark Slate in reports, high contrast Slate-300 on web dashboard
-        font: { family: "system-ui, -apple-system, sans-serif", size: 12, weight: "700" },
-        padding: 20,
-        boxWidth: 12
+const baseOpts = (isRadial, isLightMode = false, isExport = false) => {
+  const fLegend = isExport ? 24 : 12;
+  const fTickRadial = isExport ? 20 : 10;
+  const fLabelRadial = isExport ? 22 : 11;
+  const fTickLinear = isExport ? 22 : 11;
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    devicePixelRatio: 4, // Forces ultra-high resolution rendering
+    animation: { duration: 600, easing: "easeInOutQuart" },
+    plugins: {
+      legend: {
+        labels: {
+          color: isLightMode ? "#0f172a" : "#cbd5e1", // Dark Slate in reports, high contrast Slate-300 on web dashboard
+          font: { family: "system-ui, -apple-system, sans-serif", size: fLegend, weight: "700" },
+          padding: isExport ? 40 : 20,
+          boxWidth: isExport ? 24 : 12
+        }
+      },
+      tooltip: { backgroundColor: "#0f172a", titleColor: "#ffffff", bodyColor: "#cbd5e1", borderColor: "rgba(0,0,0,0.05)", borderWidth: 1, padding: 12, cornerRadius: 10 },
+    },
+    scales: isRadial ? {
+      r: {
+        ticks: { color: isLightMode ? "#475569" : "#94a3b8", backdropColor: "transparent", font: { size: fTickRadial, weight: "700" } },
+        grid: { color: isLightMode ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)" },
+        angleLines: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" },
+        pointLabels: { color: isLightMode ? "#0f172a" : "#cbd5e1", font: { size: fLabelRadial, weight: "700" } }
       }
+    } : {
+      x: {
+        ticks: { color: isLightMode ? "#475569" : "#94a3b8", font: { size: fTickLinear, weight: "700" }, maxRotation: 40 },
+        grid: { color: isLightMode ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)" },
+        border: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" }
+      },
+      y: {
+        ticks: { color: isLightMode ? "#475569" : "#94a3b8", font: { size: fTickLinear, weight: "700" } },
+        grid: { color: isLightMode ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)" },
+        border: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" }
+      },
     },
-    tooltip: { backgroundColor: "#0f172a", titleColor: "#ffffff", bodyColor: "#cbd5e1", borderColor: "rgba(0,0,0,0.05)", borderWidth: 1, padding: 12, cornerRadius: 10 },
-  },
-  scales: isRadial ? {
-    r: {
-      ticks: { color: isLightMode ? "#475569" : "#94a3b8", backdropColor: "transparent", font: { size: 10, weight: "700" } },
-      grid: { color: isLightMode ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)" },
-      angleLines: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" },
-      pointLabels: { color: isLightMode ? "#0f172a" : "#cbd5e1", font: { size: 11, weight: "700" } }
-    }
-  } : {
-    x: {
-      ticks: { color: isLightMode ? "#475569" : "#94a3b8", font: { size: 11, weight: "700" }, maxRotation: 40 },
-      grid: { color: isLightMode ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)" },
-      border: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" }
-    },
-    y: {
-      ticks: { color: isLightMode ? "#475569" : "#94a3b8", font: { size: 11, weight: "700" } },
-      grid: { color: isLightMode ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)" },
-      border: { color: isLightMode ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)" }
-    },
-  },
-});
+  };
+};
 
 function Spinner() {
   return <div style={{ width:18, height:18, border:"2px solid #ffffff20", borderTopColor:"#7c3aed", borderRadius:"50%", animation:"spin .7s linear infinite" }} />;
@@ -171,7 +177,7 @@ const renderLightModeChartImage = (config) => {
     })
   };
 
-  const options = baseOpts(isRadial, true);
+  const options = baseOpts(isRadial, true, true);
   options.animation = false;
   options.responsive = false;
   options.maintainAspectRatio = false;
@@ -765,7 +771,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       const inner = msg.querySelector('div');
       if (inner) {
         const heading = document.createElement('h2');
-        heading.innerText = `${idx + 1}. Analysis: "${inner.innerText}"`;
+        heading.innerText = `${idx + 1}. Analysis: ${inner.innerText}`;
         if (idx > 0) {
           heading.className = "page-break";
         }
@@ -792,8 +798,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       if (cards.length > 0) {
         const table = document.createElement('table');
         table.style.width = "100%";
-        table.style.borderCollapse = "separate";
-        table.style.borderSpacing = "8px";
+        table.style.borderCollapse = "collapse";
         table.style.marginBottom = "16px";
         table.style.marginTop = "12px";
 
@@ -805,9 +810,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           td.style.padding = "14px";
           td.style.verticalAlign = "top";
           td.style.border = "1px solid #cbd5e1";
-          td.style.borderLeft = "4px solid #4f46e5";
           td.style.background = "#f8fafc";
-          td.style.borderRadius = "8px";
 
           const labelEl = card.querySelector('[data-role="insight-label"]');
           const valEl = card.querySelector('[data-role="insight-value"]');
@@ -882,8 +885,9 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
       // Image
       const img = document.createElement('img');
       img.src = imgSrc;
-      img.style.width = "100%";
-      img.style.maxWidth = "500px";
+      img.setAttribute("width", "500");
+      img.setAttribute("height", "250");
+      img.style.width = "500px";
       img.style.height = "auto";
       img.style.display = 'block';
       img.style.margin = '10px auto';
