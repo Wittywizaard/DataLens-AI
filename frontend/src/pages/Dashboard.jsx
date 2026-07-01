@@ -1000,7 +1000,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%" }}>
                 {/* Logo */}
                 <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-                  <button onClick={onLogoClick} title="DataLens AI" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)" }}>✦</button>
+                  <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} title="Toggle sidebar" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)", transition: "transform 0.2s" }} onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>✦</button>
                 </div>
                 {/* Nav icons */}
                 {[{
@@ -1121,14 +1121,11 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
             {/* Header logo zone */}
             <div style={{ height: 56, display: "flex", alignItems: "center", flexShrink: 0, paddingRight: isSidebarCollapsed ? 0 : 16 }}>
               <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
-                <button onClick={onLogoClick} title="DataLens AI" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)" }}>✦</button>
+                <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} title="Toggle sidebar" style={{ width: 36, height: 36, borderRadius: 9, border: "none", background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "white", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 12px rgba(245,158,11,0.35)", transition: "transform 0.2s" }} onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>✦</button>
               </div>
               {!isSidebarCollapsed && (
                 <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)", cursor: "pointer" }} onClick={onLogoClick}>DataLens AI</span>
-                  <button onClick={() => setIsSidebarCollapsed(true)} title="Collapse sidebar" style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "transparent", color: "var(--text3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"; e.currentTarget.style.color = "var(--text)"; }} onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /><path d="m15 15-3-3 3-3" /></svg>
-                  </button>
                 </div>
               )}
             </div>
@@ -1324,27 +1321,17 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {isSidebarCollapsed && (
               <div 
-                onClick={() => setIsSidebarCollapsed(false)}
-                title="Expand sidebar"
+                onClick={onLogoClick}
+                title="DataLens AI - Go Home"
                 style={{ 
                   display: "flex", 
                   alignItems: "center", 
                   gap: 8, 
                   cursor: "pointer",
-                  userSelect: "none",
-                  padding: "4px 8px",
-                  borderRadius: "8px",
-                  transition: "background 0.2s"
+                  userSelect: "none"
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
                 <span style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)", display: "inline-flex", alignItems: "center" }}>DataLens AI</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text3)", opacity: 0.8, display: "inline-block" }}>
-                  <rect width="18" height="18" x="3" y="3" rx="2" />
-                  <path d="M9 3v18" />
-                  <path d="m14 9 3 3-3 3" />
-                </svg>
               </div>
             )}
 
