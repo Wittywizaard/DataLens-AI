@@ -282,7 +282,7 @@ router.post("/", async (req, res) => {
       return `  "${h}" [${type}]`;
     });
 
-    const sampleRows = rows.slice(0, 80);
+    const sampleRows = rows.slice(0, 5);
 
     const prompt = buildPrompt({
       originalName, rowCount, colSummaries, sampleRows,
