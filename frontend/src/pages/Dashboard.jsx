@@ -554,6 +554,16 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
     setInput(""); onQuery(q); inputRef.current?.focus();
   };
 
+  const deleteCurrentChat = (e) => {
+    e.stopPropagation();
+    setMessages([]);
+  };
+
+  const deleteSavedChat = (e, id) => {
+    e.stopPropagation();
+    setChatHistory(prev => prev.filter(session => session.id !== id));
+  };
+
   const exportPDF = () => {
     if (!messagesRef.current) return;
     
@@ -1030,9 +1040,20 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                     </div>
                   </div>
                   {!isSidebarCollapsed && (
-                    <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 16, fontWeight: 700, fontSize: 13 }}>
-                      {(() => { const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || "Current Chat"; return firstUserMsg.length > 20 ? firstUserMsg.slice(0, 20) + "..." : firstUserMsg; })()}
-                    </div>
+                    <>
+                      <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 8, fontWeight: 700, fontSize: 13 }}>
+                        {(() => { const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || "Current Chat"; return firstUserMsg.length > 20 ? firstUserMsg.slice(0, 20) + "..." : firstUserMsg; })()}
+                      </div>
+                      <div 
+                        onClick={deleteCurrentChat}
+                        title="Delete current chat"
+                        style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text4)", cursor: "pointer", marginRight: 16, borderRadius: 6 }}
+                        onMouseEnter={e => { e.currentTarget.style.color = "#ef4444"; e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = "var(--text4)"; e.currentTarget.style.background = "transparent"; }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                      </div>
+                    </>
                   )}
                 </div>
               )}
@@ -1050,9 +1071,20 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.2)" }} />
                   </div>
                   {!isSidebarCollapsed && (
-                    <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 16, fontSize: 12 }}>
-                      {session.title}
-                    </div>
+                    <>
+                      <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 8, fontSize: 12 }}>
+                        {session.title}
+                      </div>
+                      <div 
+                        onClick={(e) => deleteSavedChat(e, session.id)}
+                        title="Delete saved chat"
+                        style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text4)", cursor: "pointer", marginRight: 16, borderRadius: 6 }}
+                        onMouseEnter={e => { e.currentTarget.style.color = "#ef4444"; e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = "var(--text4)"; e.currentTarget.style.background = "transparent"; }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                      </div>
+                    </>
                   )}
                 </div>
               ))}
