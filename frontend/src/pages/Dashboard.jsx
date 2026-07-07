@@ -478,6 +478,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [showChatSearch, setShowChatSearch] = useState(false);
   const [chatSearchQuery, setChatSearchQuery] = useState("");
+  const [hoveredSidebarItem, setHoveredSidebarItem] = useState(null);
   const endRef = useRef(null);
   const inputRef = useRef(null);
   const messagesRef = useRef(null);
@@ -1031,8 +1032,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 <div 
                   onClick={() => { setMainView("chat"); setIsSidebarCollapsed(false); }}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: mainView === "chat" && !showChatSearch ? "#f59e0b" : "var(--text3)", background: "transparent", transition: "all 0.2s" }}
-                  onMouseEnter={e => { if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
-                  onMouseLeave={e => { if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
+                  onMouseEnter={e => { setHoveredSidebarItem("current"); if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}}
+                  onMouseLeave={e => { setHoveredSidebarItem(null); if(!(mainView === "chat" && !showChatSearch)) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}}
                 >
                   <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
                     <div style={{ width: 38, height: 38, borderRadius: 9, border: mainView === "chat" && !showChatSearch ? "1px solid rgba(245,158,11,0.35)" : "1px solid transparent", background: mainView === "chat" && !showChatSearch ? "rgba(245,158,11,0.12)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -1044,15 +1045,17 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                       <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 8, fontWeight: 700, fontSize: 13 }}>
                         {(() => { const firstUserMsg = messages.find(m => m.sender === "user" || m.role === "user")?.text || "Current Chat"; return firstUserMsg.length > 20 ? firstUserMsg.slice(0, 20) + "..." : firstUserMsg; })()}
                       </div>
-                      <div 
-                        onClick={deleteCurrentChat}
-                        title="Delete current chat"
-                        style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text4)", cursor: "pointer", marginRight: 16, borderRadius: 6 }}
-                        onMouseEnter={e => { e.currentTarget.style.color = "#ef4444"; e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = "var(--text4)"; e.currentTarget.style.background = "transparent"; }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                      </div>
+                      {hoveredSidebarItem === "current" && (
+                        <div 
+                          onClick={deleteCurrentChat}
+                          title="Delete current chat"
+                          style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text4)", cursor: "pointer", marginRight: 16, borderRadius: 6 }}
+                          onMouseEnter={e => { e.currentTarget.style.color = "#ef4444"; e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = "var(--text4)"; e.currentTarget.style.background = "transparent"; }}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -1064,8 +1067,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                   key={session.id}
                   onClick={() => { onLoadChat(session); setIsSidebarCollapsed(false); }}
                   style={{ display: "flex", alignItems: "center", width: "100%", height: 36, cursor: "pointer", color: "var(--text3)", background: "transparent", transition: "all 0.2s" }}
-                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
+                  onMouseEnter={e => { setHoveredSidebarItem(session.id); e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}
+                  onMouseLeave={e => { setHoveredSidebarItem(null); e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
                 >
                   <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.2)" }} />
@@ -1075,15 +1078,17 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                       <div style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: 8, fontSize: 12 }}>
                         {session.title}
                       </div>
-                      <div 
-                        onClick={(e) => deleteSavedChat(e, session.id)}
-                        title="Delete saved chat"
-                        style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text4)", cursor: "pointer", marginRight: 16, borderRadius: 6 }}
-                        onMouseEnter={e => { e.currentTarget.style.color = "#ef4444"; e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = "var(--text4)"; e.currentTarget.style.background = "transparent"; }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                      </div>
+                      {hoveredSidebarItem === session.id && (
+                        <div 
+                          onClick={(e) => deleteSavedChat(e, session.id)}
+                          title="Delete saved chat"
+                          style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text4)", cursor: "pointer", marginRight: 16, borderRadius: 6 }}
+                          onMouseEnter={e => { e.currentTarget.style.color = "#ef4444"; e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
+                          onMouseLeave={e => { e.currentTarget.style.color = "var(--text4)"; e.currentTarget.style.background = "transparent"; }}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
