@@ -17,7 +17,7 @@ The latest version features an elevated luxury aesthetic:
 
 ## ✨ Key Features
 
-- 🧠 **Agentic AI Intelligence**: Powered by **Groq (Llama 3 70B)** for blazing-fast, multi-turn reasoning and precise analysis.
+- 🧠 **Agentic AI Intelligence**: Powered by **Groq (Qwen 2.5 32B)** for blazing-fast, multi-turn reasoning and precise analysis.
 - 📂 **Multi-File Merging**: Upload up to 10 Excel/CSV files simultaneously! The backend engine instantly merges them, adding a "Source File" tracker so the AI can run comparative analytics across different datasets.
 - 💬 **Natural Language Queries**: Simply ask "Compare Q1 and Q2 sales" and watch the magic happen.
 - 📊 **Automatic Visualization**: The AI intelligently selects the best chart type (Bar, Line, Pie, etc.) for your specific query.
@@ -64,7 +64,7 @@ This ensures 100% uptime for the platform while costing the site owner nothing w
    Create a `.env` file in the `backend/` directory:
    ```env
    GROQ_API_KEY=your_key_here
-   GROQ_MODEL=llama-3.3-70b-versatile
+   GROQ_MODEL=qwen/qwen3.6-27b
    PORT=3001
    FRONTEND_URL=http://localhost:5173
    MONGODB_URI=mongodb://127.0.0.1:27017/datalens # Required for user accounts

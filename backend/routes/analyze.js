@@ -290,7 +290,7 @@ router.post("/", async (req, res) => {
       query,
     });
 
-    const modelName = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+    const modelName = process.env.GROQ_MODEL || "qwen/qwen3.6-27b";
     let result;
     let rawText = "";
 
