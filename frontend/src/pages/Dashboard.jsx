@@ -417,7 +417,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat, onCancel }) {
   const { user, token } = useContext(AuthContext);
   const renderSidebarItem = ({ icon, label, onClick, active, tooltip, collapsed }) => {
     return (
@@ -1497,18 +1497,32 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 color:"var(--text)", fontSize:14, outline:"none", transition:"all .15s"
               }}
             />
-            <button
-              onClick={submit}
-              disabled={analyzing || !input.trim()}
-              style={{
-                padding:"10px 24px", background:analyzing?"var(--bg5)":"linear-gradient(135deg, var(--accent), var(--accent2))", color:"white", border:"none",
-                borderRadius:10, fontWeight:700, fontSize:13, cursor: analyzing?"default":"pointer", transition:"all 0.3s", boxShadow: analyzing ? "none" : "0 4px 12px var(--glow)"
-              }}
-              onMouseEnter={e => !analyzing && (e.target.style.transform="scale(1.02)")}
-              onMouseLeave={e => !analyzing && (e.target.style.transform="scale(1)")}
-            >
-              {analyzing ? <Spinner /> : "Send"}
-            </button>
+            {analyzing ? (
+              <button
+                onClick={onCancel}
+                style={{
+                  padding:"10px 24px", background:"#ef4444", color:"white", border:"none",
+                  borderRadius:10, fontWeight:700, fontSize:13, cursor: "pointer", transition:"all 0.3s", boxShadow: "0 4px 12px rgba(239, 68, 68, 0.4)", display: "flex", alignItems: "center", gap: 8
+                }}
+                onMouseEnter={e => e.target.style.transform="scale(1.02)"}
+                onMouseLeave={e => e.target.style.transform="scale(1)"}
+              >
+                <Spinner /> Stop
+              </button>
+            ) : (
+              <button
+                onClick={submit}
+                disabled={!input.trim()}
+                style={{
+                  padding:"10px 24px", background:"linear-gradient(135deg, var(--accent), var(--accent2))", color:"white", border:"none",
+                  borderRadius:10, fontWeight:700, fontSize:13, cursor: !input.trim()?"default":"pointer", transition:"all 0.3s", boxShadow: !input.trim() ? "none" : "0 4px 12px var(--glow)"
+                }}
+                onMouseEnter={e => input.trim() && (e.target.style.transform="scale(1.02)")}
+                onMouseLeave={e => input.trim() && (e.target.style.transform="scale(1)")}
+              >
+                Send
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -1621,6 +1635,7 @@ export function Dashboard() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [analyzing, setAnalyzing] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const abortControllerRef = useRef(null);
   const [activeTheme, setActiveTheme] = useState("Midnight Gold");
   const [userApiKey, setUserApiKey] = useState(() => localStorage.getItem("datalens_api_key") || "");
   const { user, logout, loginWithToken } = useContext(AuthContext);
@@ -1666,6 +1681,8 @@ export function Dashboard() {
     const userMsg = { role: "user", content: query };
     setMessages(prev => [...prev, userMsg]);
     setAnalyzing(true);
+    
+    abortControllerRef.current = new AbortController();
 
     // Map conversation history to a lightweight format to reduce network payload and LLM context size
     const cleanHistory = messages.slice(-6).map(m => ({
@@ -1676,11 +1693,24 @@ export function Dashboard() {
     try {
       const res = await axios.post(`${API_URL}/api/analyze`, {
         fileId, query, conversationHistory: cleanHistory, userApiKey
-      });
+      }, { signal: abortControllerRef.current.signal });
       setMessages(prev => [...prev, { role: "assistant", result: res.data.result }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: "error", content: e.response?.data?.error || "Analysis failed" }]);
-    } finally { setAnalyzing(false); }
+      if (axios.isCancel(e) || e.name === 'CanceledError') {
+        setMessages(prev => [...prev, { role: "error", content: "Analysis cancelled by user." }]);
+      } else {
+        setMessages(prev => [...prev, { role: "error", content: e.response?.data?.error || "Analysis failed" }]);
+      }
+    } finally { 
+      setAnalyzing(false); 
+      abortControllerRef.current = null;
+    }
+  };
+
+  const handleCancelAnalysis = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
   };
 
   const handleReset = () => { setFileId(null); setFileInfo(null); setMessages([]); };
@@ -1879,6 +1909,7 @@ export function Dashboard() {
         onNewChat={handleNewChat}
         chatHistory={chatHistory}
         onLoadChat={handleLoadChat}
+        onCancel={handleCancelAnalysis}
       />
       <SettingsModal 
         isOpen={isSettingsOpen} 
