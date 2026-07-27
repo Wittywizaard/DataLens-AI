@@ -238,8 +238,10 @@ class ApiKeyPool {
     }
     
     const idx = this.keys.indexOf(keyObj);
-    this.keys.splice(idx, 1);
-    this.keys.push(keyObj);
+    if (idx !== -1) {
+      this.keys.splice(idx, 1);
+      this.keys.push(keyObj);
+    }
     
     return keyObj.value;
   }
@@ -432,13 +434,13 @@ router.post("/", async (req, res) => {
           const isModelError = error.status === 400 || error.status === 404 || error.message?.includes("model") || error.message?.includes("not found");
           
           if (isQuotaError) {
-            keyPool.markDead(apiKeyToUse, 60); // quota exhausted: rest 60 min
+            keyPool.markDead(apiKeyToUse, 1); // quota exhausted: rest 1 min instead of 60
             attempt++;
           } else if (isAuthError) {
-            keyPool.markDead(apiKeyToUse, 1440); // bad key: effectively disable for a day
+            keyPool.markDead(apiKeyToUse, 10); // bad key: disable for 10 min instead of a day
             attempt++;
           } else if (isModelError) {
-            keyPool.markDead(apiKeyToUse, 15); // model error: retry after 15 min
+            keyPool.markDead(apiKeyToUse, 5); // model error: retry after 5 min
             attempt++;
           } else {
             throw error;
