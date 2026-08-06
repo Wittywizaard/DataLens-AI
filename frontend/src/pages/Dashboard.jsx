@@ -929,8 +929,19 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                             <span style={{ fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--text)" }}>{h}</span>
                             <span style={{ fontSize: 10, fontFamily: "var(--mono)", padding: "2px 6px", borderRadius: 100, background: type==="numeric"?"rgba(6,182,212,.12)":"rgba(124,58,237,.12)", color: type==="numeric"?"#06b6d4":"#a78bfa", flexShrink: 0 }}>{type}</span>
                           </div>
-                          {type==="numeric" && s && <div style={{ fontSize: 10, color: "#5c5a7a", fontFamily: "var(--mono)", display: "flex", gap: 8 }}><span>min <b style={{color:"#a09dbe"}}>{s.min?.toFixed(1)}</b></span><span>max <b style={{color:"#a09dbe"}}>{s.max?.toFixed(1)}</b></span><span>avg <b style={{color:"#a09dbe"}}>{s.mean?.toFixed(1)}</b></span></div>}
-                          {type!=="numeric" && s && <div style={{ fontSize: 10, color: "#5c5a7a", fontFamily: "var(--mono)" }}><b style={{color:"#a09dbe"}}>{s.unique}</b> unique · top: <b style={{color:"#a09dbe"}}>"{ s.topValues?.[0]?.val}"</b></div>}
+                          {type==="numeric" && s && (
+                            <div style={{ fontSize: 11, color: "var(--text3)", display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
+                              <span style={{ background: "rgba(255,255,255,0.03)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.05)" }}>Min: <b style={{color:"#e2e8f0"}}>{s.min?.toLocaleString(undefined, {maximumFractionDigits: 1})}</b></span>
+                              <span style={{ background: "rgba(255,255,255,0.03)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.05)" }}>Max: <b style={{color:"#e2e8f0"}}>{s.max?.toLocaleString(undefined, {maximumFractionDigits: 1})}</b></span>
+                              <span style={{ background: "rgba(255,255,255,0.03)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.05)" }}>Avg: <b style={{color:"#e2e8f0"}}>{s.mean?.toLocaleString(undefined, {maximumFractionDigits: 1})}</b></span>
+                            </div>
+                          )}
+                          {type!=="numeric" && s && (
+                            <div style={{ fontSize: 11, color: "var(--text3)", display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
+                              <span style={{ background: "rgba(255,255,255,0.03)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.05)" }}>Unique Items: <b style={{color:"#e2e8f0"}}>{s.unique}</b></span>
+                              <span style={{ background: "rgba(255,255,255,0.03)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.05)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 150 }}>Most Common: <b style={{color:"#e2e8f0"}}>{s.topValues?.[0]?.val}</b></span>
+                            </div>
+                          )}
                         </div>
                       );})}
                     </div>
