@@ -107,5 +107,19 @@ app.listen(PORT, () => {
   );
 });
 
+// Self-ping mechanism to keep the Render free tier instance alive
+const BACKEND_URL = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+if (BACKEND_URL) {
+  const https = require("https");
+  // Ping every 14 minutes (840000 milliseconds)
+  setInterval(() => {
+    https.get(`${BACKEND_URL}/api/health`, (res) => {
+      console.log(`[Keep-Alive] Pinged self successfully. Status: ${res.statusCode}`);
+    }).on("error", (err) => {
+      console.error("[Keep-Alive] Error pinging self:", err.message);
+    });
+  }, 14 * 60 * 1000);
+}
+
 module.exports = app;
 // Triggering nodemon restart 2
