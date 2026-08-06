@@ -417,7 +417,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat, onCancel }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat, onDeleteChat, onCancel }) {
   const { user, token } = useContext(AuthContext);
   const renderSidebarItem = ({ icon, label, onClick, active, tooltip, collapsed }) => {
     return (
@@ -562,7 +562,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
 
   const deleteSavedChat = (e, id) => {
     e.stopPropagation();
-    setChatHistory(prev => prev.filter(session => session.id !== id));
+    if (onDeleteChat) onDeleteChat(id);
   };
 
   const exportPDF = () => {
@@ -1743,6 +1743,10 @@ export function Dashboard() {
     setMessages(session.messages);
   };
 
+  const handleDeleteChat = (id) => {
+    setChatHistory(prev => prev.filter(h => h.id !== id));
+  };
+
   const uploadSectionRef = useRef(null);
   const scrollToUpload = () => uploadSectionRef.current?.scrollIntoView({ behavior: "smooth" });
 
@@ -1917,6 +1921,7 @@ export function Dashboard() {
         onNewChat={handleNewChat}
         chatHistory={chatHistory}
         onLoadChat={handleLoadChat}
+        onDeleteChat={handleDeleteChat}
         onCancel={handleCancelAnalysis}
       />
       <SettingsModal 
