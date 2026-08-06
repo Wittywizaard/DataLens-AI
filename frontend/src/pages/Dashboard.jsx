@@ -905,8 +905,6 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8 }}>
-                    {numCols.length > 0 && <span style={{ fontSize: 10, fontFamily: "var(--mono)", padding: "2px 7px", borderRadius: 100, background: "rgba(6,182,212,.12)", border: "1px solid rgba(6,182,212,.2)", color: "#06b6d4" }}>📊 {numCols.length} numeric</span>}
-                    {catCols.length > 0 && <span style={{ fontSize: 10, fontFamily: "var(--mono)", padding: "2px 7px", borderRadius: 100, background: "rgba(124,58,237,.12)", border: "1px solid rgba(124,58,237,.2)", color: "#a78bfa" }}>🏷 {catCols.length} categorical</span>}
                   </div>
                 </div>
                 <div style={{ display: "flex", borderBottom: "1px solid var(--border)", flexShrink: 0 }}>
@@ -927,7 +925,6 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                         <div key={h} style={{ padding: "10px 12px", borderBottom: "1px solid #ffffff05" }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 3 }}>
                             <span style={{ fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--text)" }}>{h}</span>
-                            <span style={{ fontSize: 10, fontFamily: "var(--mono)", padding: "2px 6px", borderRadius: 100, background: type==="numeric"?"rgba(6,182,212,.12)":"rgba(124,58,237,.12)", color: type==="numeric"?"#06b6d4":"#a78bfa", flexShrink: 0 }}>{type}</span>
                           </div>
                           {type==="numeric" && s && (
                             <div style={{ fontSize: 11, color: "var(--text3)", display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
