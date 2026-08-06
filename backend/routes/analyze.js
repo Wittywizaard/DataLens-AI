@@ -318,7 +318,7 @@ router.post("/", async (req, res) => {
           max_tokens: 3000,
           response_format: { type: "json_object" },
         });
-        rawText = result.choices[0]?.message?.content?.trim();
+        rawText = result.choices?.[0]?.message?.content?.trim();
       } else if (userApiKey.startsWith("sk-")) {
         // ── OpenAI (user key) ─────────────────────────────────────────
         const OpenAI = require("openai");
@@ -332,7 +332,7 @@ router.post("/", async (req, res) => {
           temperature: 0.1,
           response_format: { type: "json_object" },
         });
-        rawText = result.choices[0]?.message?.content?.trim();
+        rawText = result.choices?.[0]?.message?.content?.trim();
       } else if (userApiKey.startsWith("AIza") || userApiKey.startsWith("AQ.")) {
         // ── Gemini (user key) ─────────────────────────────────────────
         const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -356,7 +356,7 @@ router.post("/", async (req, res) => {
           max_tokens: 3000,
           response_format: { type: "json_object" },
         });
-        rawText = result.choices[0]?.message?.content?.trim();
+        rawText = result.choices?.[0]?.message?.content?.trim();
       }
     } else {
       keyPool.init();
@@ -409,7 +409,7 @@ router.post("/", async (req, res) => {
               max_tokens: 3000,
               response_format: { type: "json_object" },
             });
-            rawText = orResult.choices[0]?.message?.content?.trim();
+            rawText = orResult.choices?.[0]?.message?.content?.trim();
             success = true;
           } else {
             // ── Groq path ────────────────────────────────────────────────
@@ -425,7 +425,7 @@ router.post("/", async (req, res) => {
               response_format: { type: "json_object" },
             });
             success = true;
-            rawText = result.choices[0]?.message?.content?.trim();
+            rawText = result.choices?.[0]?.message?.content?.trim();
           }
         } catch (error) {
           lastError = error;
