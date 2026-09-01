@@ -11,6 +11,7 @@ import html2pdf from "html2pdf.js";
 import { Header } from "../components/Header";
 import { AuthModal } from "../components/AuthModal";
 import { AuthContext } from "../context/AuthContext";
+import Joyride, { STATUS } from "react-joyride";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
@@ -364,7 +365,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   });
 
   return (
-    <div {...getRootProps()} style={{
+    <div className="tour-dropzone" {...getRootProps()} style={{
       border: `2px dashed ${isDragActive ? "var(--accent)" : "var(--border2)"}`,
       borderRadius: 40, padding: "80px 44px", textAlign: "center",
       cursor: uploading ? "default" : "pointer",
@@ -417,7 +418,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat, onDeleteChat, onCancel }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat, onDeleteChat, onCancel, onQuickTour }) {
   const { user, token } = useContext(AuthContext);
   const renderSidebarItem = ({ icon, label, onClick, active, tooltip, collapsed }) => {
     return (
@@ -949,7 +950,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
           </>
         ) : (
           // CHAT MODE: 1 Column with full-width perfectly aligned items
-          <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "#05050f" }}>
+          <div className="tour-sidebar" style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "#05050f" }}>
             {/* Header logo zone */}
             <div style={{ height: 56, display: "flex", alignItems: "center", flexShrink: 0, paddingRight: isSidebarCollapsed ? 0 : 16 }}>
               <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
@@ -1069,7 +1070,22 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 </div>
               )}
 
-              {/* 6. Previous Chats */}
+              {/* 6. Quick Tour */}
+              <div 
+                onClick={() => { onQuickTour(); setIsSidebarCollapsed(false); }}
+                style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: "var(--text3)", background: "transparent", transition: "all 0.2s" }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "var(--text)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
+              >
+                <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 9, border: "1px solid transparent", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                  </div>
+                </div>
+                {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>Quick Tour</div>}
+              </div>
+
+              {/* 7. Previous Chats */}
               {chatHistory.map(session => (
                 <div 
                   key={session.id}
@@ -1493,7 +1509,7 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               ))}
             </div>
           )}
-          <div style={{ display:"flex", gap:10, background:"var(--bg3)", padding:6, borderRadius:14, border:"1px solid var(--border2)" }}>
+          <div className="tour-prompt" style={{ display:"flex", gap:10, background:"var(--bg3)", padding:6, borderRadius:14, border:"1px solid var(--border2)" }}>
             <input
               ref={inputRef}
               value={input}
@@ -1639,6 +1655,21 @@ export function Dashboard() {
   useEffect(() => {
     sessionStorage.setItem("datalens_chatHistory", JSON.stringify(chatHistory));
   }, [chatHistory]);
+
+  const [runTour, setRunTour] = useState(() => !localStorage.getItem("tour_completed"));
+  const tourSteps = [
+    { target: '.tour-dropzone', content: 'Start by dropping your dataset here (.csv, .xlsx) to instantly unlock insights.', disableBeacon: true },
+    { target: '.tour-prompt', content: 'Or type a prompt to ask specific questions about your data.' },
+    { target: '.tour-sidebar', content: 'Access your previous chats and configurations here.' }
+  ];
+  const handleJoyrideCallback = (data) => {
+    const { status } = data;
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setRunTour(false);
+      localStorage.setItem("tour_completed", "true");
+    }
+  };
+
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [analyzing, setAnalyzing] = useState(false);
@@ -1772,6 +1803,7 @@ export function Dashboard() {
           transition: "background 0.1s ease-out"
         }}
       >
+        <Joyride steps={tourSteps} run={runTour} continuous showProgress showSkipButton callback={handleJoyrideCallback} styles={{ options: { zIndex: 10000, primaryColor: '#f59e0b' } }} />
         {/* Dynamic Background Elements */}
         <div className="orb orb-gold" style={{ top: "-10%", left: "-10%", opacity: 0.15 }}></div>
         <div className="orb orb-orange" style={{ bottom: "10%", right: "-5%", opacity: 0.1 }}></div>
@@ -1904,6 +1936,7 @@ export function Dashboard() {
         transition: "background 0.1s ease-out"
       }}
     >
+      <Joyride steps={tourSteps} run={runTour} continuous showProgress showSkipButton callback={handleJoyrideCallback} styles={{ options: { zIndex: 10000, primaryColor: '#f59e0b' } }} />
       <Workspace
         fileInfo={safeFileInfo}
         messages={messages}
@@ -1923,6 +1956,7 @@ export function Dashboard() {
         onLoadChat={handleLoadChat}
         onDeleteChat={handleDeleteChat}
         onCancel={handleCancelAnalysis}
+        onQuickTour={() => setRunTour(true)}
       />
       <SettingsModal 
         isOpen={isSettingsOpen} 
