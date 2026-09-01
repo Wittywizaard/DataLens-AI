@@ -11,7 +11,7 @@ import html2pdf from "html2pdf.js";
 import { Header } from "../components/Header";
 import { AuthModal } from "../components/AuthModal";
 import { AuthContext } from "../context/AuthContext";
-import Joyride, { STATUS } from "react-joyride";
+import { Joyride, STATUS } from "react-joyride";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
