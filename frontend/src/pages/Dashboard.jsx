@@ -11,7 +11,7 @@ import html2pdf from "html2pdf.js";
 import { Header } from "../components/Header";
 import { AuthModal } from "../components/AuthModal";
 import { AuthContext } from "../context/AuthContext";
-import { Joyride, STATUS } from "react-joyride";
+
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
@@ -418,7 +418,7 @@ function UploadZone({ onUpload, uploading, progress }) {
   );
 }
 
-function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat, onDeleteChat, onCancel, onQuickTour }) {
+function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery, onUpload, onSettingsOpen, theme, onThemeChange, onAuthOpen, onSignOut, onLogoClick, onNewChat, chatHistory = [], onLoadChat, onDeleteChat, onCancel }) {
   const { user, token } = useContext(AuthContext);
   const renderSidebarItem = ({ icon, label, onClick, active, tooltip, collapsed }) => {
     return (
@@ -1104,23 +1104,8 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
               ))}
             </div>
 
-            {/* Bottom Actions (Theme, Quick Tour, Profile) */}
+            {/* Bottom Actions (Theme, Profile) */}
             <div style={{ paddingBottom: 16, display: "flex", flexDirection: "column", gap: 4, flexShrink: 0 }}>
-              {/* Quick Tour Button */}
-              <div 
-                onClick={() => { onQuickTour(); setIsSidebarCollapsed(false); }}
-                title={isSidebarCollapsed ? "Quick Tour" : undefined}
-                style={{ display: "flex", alignItems: "center", width: "100%", height: 42, cursor: "pointer", color: "var(--text3)", background: "transparent", transition: "all 0.2s" }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(245,158,11,0.08)"; e.currentTarget.style.color = "#f59e0b"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text3)"; }}
-              >
-                <div style={{ width: 56, display: "flex", justifyContent: "center", flexShrink: 0 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: 9, border: "1px solid transparent", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                  </div>
-                </div>
-                {!isSidebarCollapsed && <div style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>Quick Tour</div>}
-              </div>
               {/* Theme Menu */}
               <div style={{ position: "relative" }} ref={themeMenuRef}>
                 <div 
@@ -1656,29 +1641,7 @@ export function Dashboard() {
     sessionStorage.setItem("datalens_chatHistory", JSON.stringify(chatHistory));
   }, [chatHistory]);
 
-  const [runTour, setRunTour] = useState(false);
-  const [showTourConsent, setShowTourConsent] = useState(() => !localStorage.getItem("tour_completed"));
-  const tourSteps = [
-    { target: '.tour-dropzone', content: 'Start by dropping your dataset here — upload any .csv or .xlsx file to instantly unlock AI-powered insights.', disableBeacon: true, disableOverlayClose: true },
-    { target: '.tour-prompt', content: 'Ask anything about your data in plain English — charts and insights are generated automatically.', disableBeacon: true },
-    { target: '.tour-sidebar', content: 'Navigate your chats, explore your data, save analyses and manage settings all from here.', disableBeacon: true }
-  ];
-  const handleJoyrideCallback = (data) => {
-    const { status } = data;
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      setRunTour(false);
-      localStorage.setItem("tour_completed", "true");
-    }
-  };
-  const handleStartTour = () => {
-    setShowTourConsent(false);
-    localStorage.setItem("tour_completed", "true");
-    setRunTour(true);
-  };
-  const handleSkipTour = () => {
-    setShowTourConsent(false);
-    localStorage.setItem("tour_completed", "true");
-  };
+
 
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -1813,85 +1776,7 @@ export function Dashboard() {
           transition: "background 0.1s ease-out"
         }}
       >
-        {showTourConsent && (
-          <div style={{ position: "fixed", inset: 0, zIndex: 20000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}>
-            <div style={{ background: "linear-gradient(135deg, #0d0d22, #12122a)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 24, padding: "40px 48px", maxWidth: 420, width: "90%", textAlign: "center", boxShadow: "0 24px 80px rgba(245,158,11,0.15), 0 0 0 1px rgba(255,255,255,0.04)", animation: "fadeUp .4s ease" }}>
-              <div style={{ width: 64, height: 64, borderRadius: 18, background: "linear-gradient(135deg, rgba(245,158,11,0.2), rgba(234,88,12,0.2))", border: "1px solid rgba(245,158,11,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", fontSize: 28 }}>✦</div>
-              <h2 style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 12, letterSpacing: "-0.02em" }}>Welcome to DataLens AI</h2>
-              <p style={{ fontSize: 14, color: "#a0a0c0", lineHeight: 1.7, marginBottom: 32 }}>Would you like a quick tour to see how everything works? It only takes 30 seconds.</p>
-              <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-                <button onClick={handleSkipTour} style={{ flex: 1, padding: "12px 20px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#a0a0c0", fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}>
-                  Skip for now
-                </button>
-                <button onClick={handleStartTour} style={{ flex: 1, padding: "12px 20px", background: "linear-gradient(135deg, #f59e0b, #ea580c)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.2s", boxShadow: "0 8px 24px rgba(245,158,11,0.3)" }} onMouseEnter={e => e.currentTarget.style.filter = "brightness(1.1)"} onMouseLeave={e => e.currentTarget.style.filter = "none"}>
-                  Show me around!
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        <Joyride
-          steps={tourSteps}
-          run={runTour}
-          continuous
-          showProgress
-          showSkipButton
-          disableScrolling
-          disableBeacon
-          spotlightPadding={6}
-          callback={handleJoyrideCallback}
-          locale={{ last: 'Finish', skip: 'Skip Tour' }}
-          styles={{
-            options: {
-              zIndex: 10000,
-              primaryColor: '#f59e0b',
-              backgroundColor: '#0d0d22',
-              textColor: '#c4c2df',
-              arrowColor: '#0d0d22',
-              overlayColor: 'rgba(0,0,0,0.55)',
-            },
-            tooltip: {
-              borderRadius: 16,
-              padding: '20px 24px',
-              border: '1px solid rgba(245,158,11,0.25)',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
-            },
-            tooltipTitle: {
-              color: '#ffffff',
-              fontSize: 15,
-              fontWeight: 700,
-            },
-            tooltipContent: {
-              color: '#a0a0c0',
-              fontSize: 14,
-              lineHeight: 1.7,
-              padding: '8px 0 0',
-            },
-            buttonNext: {
-              background: 'linear-gradient(135deg, #f59e0b, #ea580c)',
-              borderRadius: 10,
-              fontSize: 13,
-              fontWeight: 700,
-              padding: '8px 18px',
-              border: 'none',
-              boxShadow: '0 4px 16px rgba(245,158,11,0.3)',
-            },
-            buttonBack: {
-              color: '#a0a0c0',
-              fontSize: 13,
-              fontWeight: 600,
-              marginRight: 8,
-            },
-            buttonSkip: {
-              color: '#606080',
-              fontSize: 12,
-            },
-            spotlight: {
-              borderRadius: 12,
-              boxShadow: '0 0 0 2px rgba(245,158,11,0.5), 0 0 40px rgba(245,158,11,0.15)',
-            },
-          }}
-        />
+
         {/* Dynamic Background Elements */}
         <div className="orb orb-gold" style={{ top: "-10%", left: "-10%", opacity: 0.15 }}></div>
         <div className="orb orb-orange" style={{ bottom: "10%", right: "-5%", opacity: 0.1 }}></div>
@@ -2024,85 +1909,7 @@ export function Dashboard() {
         transition: "background 0.1s ease-out"
       }}
     >
-      {showTourConsent && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 20000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}>
-          <div style={{ background: "linear-gradient(135deg, #0d0d22, #12122a)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 24, padding: "40px 48px", maxWidth: 420, width: "90%", textAlign: "center", boxShadow: "0 24px 80px rgba(245,158,11,0.15), 0 0 0 1px rgba(255,255,255,0.04)", animation: "fadeUp .4s ease" }}>
-            <div style={{ width: 64, height: 64, borderRadius: 18, background: "linear-gradient(135deg, rgba(245,158,11,0.2), rgba(234,88,12,0.2))", border: "1px solid rgba(245,158,11,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", fontSize: 28 }}>✦</div>
-            <h2 style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 12, letterSpacing: "-0.02em" }}>Welcome to DataLens AI</h2>
-            <p style={{ fontSize: 14, color: "#a0a0c0", lineHeight: 1.7, marginBottom: 32 }}>Would you like a quick tour to see how everything works? It only takes 30 seconds.</p>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-              <button onClick={handleSkipTour} style={{ flex: 1, padding: "12px 20px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#a0a0c0", fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"} onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}>
-                Skip for now
-              </button>
-              <button onClick={handleStartTour} style={{ flex: 1, padding: "12px 20px", background: "linear-gradient(135deg, #f59e0b, #ea580c)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.2s", boxShadow: "0 8px 24px rgba(245,158,11,0.3)" }} onMouseEnter={e => e.currentTarget.style.filter = "brightness(1.1)"} onMouseLeave={e => e.currentTarget.style.filter = "none"}>
-                Show me around!
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      <Joyride
-        steps={tourSteps}
-        run={runTour}
-        continuous
-        showProgress
-        showSkipButton
-        disableScrolling
-        disableBeacon
-        spotlightPadding={6}
-        callback={handleJoyrideCallback}
-        locale={{ last: 'Finish', skip: 'Skip Tour' }}
-        styles={{
-          options: {
-            zIndex: 10000,
-            primaryColor: '#f59e0b',
-            backgroundColor: '#0d0d22',
-            textColor: '#c4c2df',
-            arrowColor: '#0d0d22',
-            overlayColor: 'rgba(0,0,0,0.55)',
-          },
-          tooltip: {
-            borderRadius: 16,
-            padding: '20px 24px',
-            border: '1px solid rgba(245,158,11,0.25)',
-            boxShadow: '0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
-          },
-          tooltipTitle: {
-            color: '#ffffff',
-            fontSize: 15,
-            fontWeight: 700,
-          },
-          tooltipContent: {
-            color: '#a0a0c0',
-            fontSize: 14,
-            lineHeight: 1.7,
-            padding: '8px 0 0',
-          },
-          buttonNext: {
-            background: 'linear-gradient(135deg, #f59e0b, #ea580c)',
-            borderRadius: 10,
-            fontSize: 13,
-            fontWeight: 700,
-            padding: '8px 18px',
-            border: 'none',
-            boxShadow: '0 4px 16px rgba(245,158,11,0.3)',
-          },
-          buttonBack: {
-            color: '#a0a0c0',
-            fontSize: 13,
-            fontWeight: 600,
-            marginRight: 8,
-          },
-          buttonSkip: {
-            color: '#606080',
-            fontSize: 12,
-          },
-          spotlight: {
-            borderRadius: 12,
-            boxShadow: '0 0 0 2px rgba(245,158,11,0.5), 0 0 40px rgba(245,158,11,0.15)',
-          },
-        }}
-      />
+
       <Workspace
         fileInfo={safeFileInfo}
         messages={messages}
@@ -2122,7 +1929,7 @@ export function Dashboard() {
         onLoadChat={handleLoadChat}
         onDeleteChat={handleDeleteChat}
         onCancel={handleCancelAnalysis}
-        onQuickTour={() => { setRunTour(false); setTimeout(() => setRunTour(true), 50); }}
+
       />
       <SettingsModal 
         isOpen={isSettingsOpen} 
