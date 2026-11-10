@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build/Deployment
+dist/
+build/
+.vercel/
+.render/
+*.log
+
+# Secrets and Keys
+*.pem
+*.key
+*.cert
+*.pfx
+secrets.*
+
+# OS files
+.DS_Store
+Thumbs.db
+.vscode/

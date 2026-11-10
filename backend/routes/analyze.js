@@ -5,6 +5,9 @@ const {
   buildPrecomputedAggregations,
   buildRepresentativeSample,
   formatAggregationsForPrompt,
+  executeDataQuery,
+  formatQueryResultForPrompt,
+  formatSheetsOverviewForPrompt,
 } = require("../utils/dataAnalysis");
 
 const router = express.Router();
@@ -73,7 +76,7 @@ function sanitizeSingleChartConfig(cfg) {
 }
 
 // Sanitize and guarantee the parsed result always has valid chart data
-function sanitizeResult(parsed, headers, columnTypes) {
+function sanitizeResult(parsed, headers, columnTypes, queryResult) {
   if (!parsed || typeof parsed !== "object") return null;
 
   // Fix single chartConfig
@@ -88,6 +91,42 @@ function sanitizeResult(parsed, headers, columnTypes) {
       .filter(cfg => cfg !== null);
   } else {
     parsed.chartConfigs = [];
+  }
+
+  // If chartConfig is missing or empty, but queryResult is a group_breakdown with >= 2 groups:
+  if (!parsed.chartConfig && parsed.chartConfigs.length === 0 && queryResult?.type === "group_breakdown" && queryResult.groups?.length >= 2) {
+    const topGroups = queryResult.groups.slice(0, 10);
+    parsed.chartConfig = sanitizeSingleChartConfig({
+      type: "bar",
+      title: `${queryResult.metric === "count" ? "Count" : queryResult.metric} by ${queryResult.groupBy}${queryResult.targetSheet ? ` (${queryResult.targetSheet} Tab)` : ""}`,
+      labels: topGroups.map(g => g.key),
+      datasets: [{
+        label: queryResult.metric === "count" ? "Count" : `${queryResult.metric} Total`,
+        data: topGroups.map(g => g.sum || g.count)
+      }]
+    });
+  }
+
+  // If tableData is missing, but queryResult has matching rows or groups:
+  if (!parsed.tableData && queryResult) {
+    if (queryResult.type === "group_breakdown" && queryResult.groups?.length) {
+      parsed.tableData = {
+        headers: [queryResult.groupBy, queryResult.metric === "count" ? "Count" : "Total", "Average", "Count"],
+        rows: queryResult.groups.slice(0, 15).map(g => [
+          g.key,
+          g.sum?.toLocaleString() ?? "",
+          g.avg?.toLocaleString() ?? "",
+          g.count?.toLocaleString() ?? ""
+        ])
+      };
+    } else if (queryResult.matchingRows && queryResult.matchingRows.length > 0) {
+      const sampleRow = queryResult.matchingRows[0];
+      const rowHeaders = Object.keys(sampleRow).filter(k => k !== "Source File");
+      parsed.tableData = {
+        headers: rowHeaders,
+        rows: queryResult.matchingRows.slice(0, 10).map(r => rowHeaders.map(h => String(r[h] ?? "")))
+      };
+    }
   }
 
   // Ensure insights is array
@@ -106,6 +145,8 @@ function buildPrompt({
   sampleRows,
   precomputedBlock,
   sheetInfo,
+  sheetsOverviewBlock,
+  queryResultBlock,
   conversationHistory,
   query,
 }) {
@@ -113,65 +154,55 @@ function buildPrompt({
     ? `\nPrior conversation:\n${conversationHistory.map(m => `${m.role==="user"?"User":"AI"}: ${m.content}`).join("\n")}\n`
     : "";
 
-  const sheetNote = sheetInfo?.length
-    ? `\nExcel sheets used: ${sheetInfo.map(s => `${s.file} → "${s.selectedSheet}" (available: ${s.availableSheets.join(", ")})`).join("; ")}`
-    : "";
+  return `You are DataLens AI, an expert enterprise spreadsheet and data analyst. Answer the user's question accurately using the verified data below.
 
-  return `You are DataLens AI. Answer the user's question using ONLY the verified aggregates below. Do not invent numbers.
+==CRITICAL RULES (MOST IMPORTANT)==
+1. ALL numbers, statistics, answers, insights, chart data, and tableData MUST come from the "EXACT VERIFIED QUERY COMPUTATION", "TABS & COLUMNS OVERVIEW", or "Column details" below. Do NOT invent numbers.
+2. The user's question may contain typos or misspellings (e.g., "totel" for "total", "salery" for "Salary", "budjet" for "Budget", "enginering" for "Engineering", "columbs" for "columns", "shets" for "sheets") or different casing (ALL CAPS, lowercase, mixedCase). NEVER get confused by wrong spelling or letter casing — understand the user's intent and refer to the mapped columns/tabs/categories.
+3. If this file contains multiple tabs/sheets, always clearly state which tab/sheet your answer comes from.
+4. When "EXACT VERIFIED QUERY COMPUTATION" is provided, treat it as the absolute source of truth. Use its exact numbers for your summary, chartConfig, tableData, and insights.
+5. If the user asks about tabs or sheets (e.g. how many tabs, sheet names, row counts), provide a clear list from the "TABS & COLUMNS OVERVIEW".
 
-==CRITICAL INSTRUCTION==
+==OUTPUT FORMAT INSTRUCTION==
 You MUST respond with ONLY a valid JSON object. No markdown code fences. No backticks. No explanation text before or after. Just raw JSON starting with { and ending with }.
 
-The JSON MUST follow this EXACT structure — do not add or remove fields:
+The JSON MUST follow this EXACT structure:
 
 {
-  "summary": "2-3 sentence plain English explanation of what you found",
+  "summary": "2-3 sentence plain English explanation answering the question with exact numbers and naming the relevant tab/sheet.",
   "chartConfig": {
     "type": "bar",
-    "title": "Descriptive title for the chart (set to null if returning multiple charts in chartConfigs)",
-    "labels": ["Category A", "Category B", "Category C"],
+    "title": "Descriptive title for the chart (or null if single lookup / not chartable)",
+    "labels": ["Label A", "Label B"],
     "datasets": [
       {
-        "label": "Value",
-        "data": [100, 200, 150]
+        "label": "Metric Name",
+        "data": [100, 200]
       }
     ]
   },
-  "chartConfigs": [
-    {
-      "type": "line",
-      "title": "Descriptive title for chart 1",
-      "labels": ["Jan", "Feb", "Mar"],
-      "datasets": [{ "label": "Sales", "data": [10, 20, 15] }]
-    }
-  ],
+  "chartConfigs": [],
   "insights": [
-    { "label": "Total Revenue", "value": "$1,234.50", "trend": "+12.4%" },
-    { "label": "Average Sale", "value": "$411.50" },
-    { "label": "Top Performance", "value": "Category B" }
+    { "label": "Key Metric", "value": "$1,234" },
+    { "label": "Top Category", "value": "Software Engineering" },
+    { "label": "Relevant Tab", "value": "Employees" }
   ],
-  "tableData": null
+  "tableData": {
+    "headers": ["Col1", "Col2"],
+    "rows": [["Val1", "Val2"]]
+  }
 }
 
-==ACCURACY RULES (MOST IMPORTANT)==
-- ALL chart data, insights, and tableData numbers MUST come from "Column details" or "PRECOMPUTED AGGREGATIONS" below.
-- Sample rows are for schema/context ONLY. NEVER compute totals, averages, rankings, or chart values from the sample.
-- Prefer the matching groupBy×metric aggregation when answering comparisons, breakdowns, trends, or top-N questions.
-- For overall totals / averages / min / max, use the Column details numeric stats (sum, avg, min, max, count).
-- If the question cannot be answered precisely from those aggregates, say so clearly in "summary", set chartConfig to null, leave chartConfigs empty, and keep insights honest (do not fabricate).
-- Do NOT copy example numbers from this prompt (like 100, 200, 150 or $1,234.50). Those are format examples only.
-- When using a precomputed group, chart labels MUST be the group keys and data MUST be the corresponding sum/avg/count values exactly as listed.
-- Sort time-series labels chronologically.
-
 ==CHART TYPE RULES==
-- Use "bar" for comparing categories (most common — default to this)
-- Use "line" for data over time / trends
+- Use "bar" for comparing categories / distributions (default to this)
+- Use "line" for trends over time
 - Use "pie" or "doughnut" for showing percentages/proportions (max 8 slices)
 - Use "scatter" for correlation between two numeric columns
 - Use "radar" for comparing multiple quantitative variables across a single category
 - Use "polarArea" similar to pie charts when radius should also encode magnitude
 - Use "bubble" when you have 3 numeric dimensions (x, y, and r for bubble size)
 - If the user asks for MULTIPLE charts or a dashboard: set chartConfig to null and put charts in chartConfigs. Otherwise leave chartConfigs as [].
+- If the query is a single row lookup or a direct question with 1 number, set chartConfig to null and provide tableData with the matching row(s).
 
 ==CRITICAL COLOR RULES==
 - For "bar", "line", "radar" and "bubble": backgroundColor MUST be a single color string like "#f59e0b"
@@ -179,19 +210,25 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
 - NEVER use a single string for pie/doughnut/polarArea backgroundColor.
 
 ==OTHER RULES==
-- labels: max 12 items. If more categories exist in precomputed data, use the provided "Other" bucket or the top groups already computed.
+- labels: max 12 items.
 - insights: 3-4 key stats taken from verified aggregates, formatted professionally.
 - Each insight MUST have a "label" and "value". Optional "trend" only if supported by the aggregates.
-- tableData: set to {"headers":["Col1","Col2"],"rows":[["val1","val2"]]} for top-N / breakdown tables using precomputed groups; else null
+- tableData: set to {"headers":["Col1","Col2"],"rows":[["val1","val2"]]} for top-N / breakdown tables or matching rows; else null
 - chartConfig: only set to null if the question genuinely cannot be charted from verified data
 
-==DATA==
+==DATA CONTEXT==
 File: "${originalName}"
-Total rows in file: ${rowCount}${sheetNote}
-Column details (computed from ALL rows):
+Total rows across all sheets: ${rowCount}
+
+TABS & COLUMNS OVERVIEW:
+${sheetsOverviewBlock}
+
+${queryResultBlock}
+
+Column details (overall dataset):
 ${colSummaries.join("\n")}
 
-PRECOMPUTED AGGREGATIONS (computed from ALL ${rowCount} rows — use these for charts/answers):
+PRECOMPUTED AGGREGATIONS (computed across rows):
 ${precomputedBlock}
 
 Sample rows (schema/context ONLY — do not aggregate from these):
@@ -214,11 +251,12 @@ class ApiKeyPool {
     const midnight = new Date(now);
     midnight.setHours(24, 0, 0, 0);
     const msUntilMidnight = midnight - now;
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       console.log("[Key Pool] Midnight reset — reviving all keys.");
       this.keys.forEach(k => { k.isDead = false; k.deadUntil = 0; });
       this._scheduleMidnightReset(); // reschedule for next day
     }, msUntilMidnight);
+    if (timer && timer.unref) timer.unref();
   }
 
   init() {
@@ -298,7 +336,20 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "Session expired — please re-upload your file." });
     }
 
-    const { headers, rows, columnTypes, stats, rowCount, originalName, sheetInfo } = fileData;
+    const { headers, rows, columnTypes, stats, rowCount, originalName, sheetInfo, sheetsData } = fileData;
+
+    // Run deterministic multi-tab query resolution with typo & casing tolerance
+    const queryResult = executeDataQuery({
+      query,
+      rows,
+      sheetsData,
+      headers,
+      columnTypes,
+      stats,
+      sheetInfo,
+    });
+    const queryResultBlock = formatQueryResultForPrompt(queryResult);
+    const sheetsOverviewBlock = formatSheetsOverviewForPrompt(sheetInfo);
 
     const colSummaries = headers.map(h => {
       const type = columnTypes[h];
@@ -323,6 +374,8 @@ router.post("/", async (req, res) => {
       sampleRows,
       precomputedBlock,
       sheetInfo,
+      sheetsOverviewBlock,
+      queryResultBlock,
       conversationHistory: conversationHistory.slice(-6),
       query,
     });
@@ -515,7 +568,7 @@ router.post("/", async (req, res) => {
     }
 
     // Sanitize and guarantee valid chart structure
-    const sanitized = sanitizeResult(parsed, headers, columnTypes);
+    const sanitized = sanitizeResult(parsed, headers, columnTypes, queryResult);
 
     res.json({ success: true, result: sanitized });
 

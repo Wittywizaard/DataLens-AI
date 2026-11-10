@@ -1,0 +1,3285 @@
+{
+  "fileId": "713832d1-29f8-4688-8efc-5bb4650ecb7b",
+  "originalName": "5 files combined",
+  "headers": [
+    "Customer_ID",
+    "Age",
+    "Gender",
+    "Region",
+    "Occupation",
+    "Category_Purchased",
+    "Purchase_Frequency",
+    "Avg_Spend",
+    "Satisfaction",
+    "Test ID",
+    "Area",
+    "Scenario",
+    "Expected Result",
+    "Status",
+    "Defect ID",
+    "Feature",
+    "Description",
+    "Severity",
+    "Test Case ID",
+    "Steps",
+    "Actual Result",
+    "Test Data",
+    "Notes",
+    "Source File"
+  ],
+  "rows": [
+    {
+      "Customer_ID": "C001",
+      "Age": 46,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2835,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C002",
+      "Age": 32,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 1690,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C003",
+      "Age": 25,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 1505,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C004",
+      "Age": 38,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8131,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C005",
+      "Age": 36,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 6839,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C006",
+      "Age": 40,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8860,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C007",
+      "Age": 28,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 6448,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C008",
+      "Age": 28,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4072,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C009",
+      "Age": 41,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 9472,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C010",
+      "Age": 53,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 2414,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C011",
+      "Age": 41,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8189,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C012",
+      "Age": 20,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 2972,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C013",
+      "Age": 39,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 6046,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C014",
+      "Age": 19,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 1207,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C015",
+      "Age": 41,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 3804,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C016",
+      "Age": 47,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6713,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C017",
+      "Age": 19,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 1455,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C018",
+      "Age": 38,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 2975,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C019",
+      "Age": 50,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6610,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C020",
+      "Age": 29,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 659,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C021",
+      "Age": 39,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5823,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C022",
+      "Age": 42,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2235,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C023",
+      "Age": 44,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 2085,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C024",
+      "Age": 45,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 3066,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C025",
+      "Age": 33,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 5061,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C026",
+      "Age": 32,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 2928,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C027",
+      "Age": 20,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 557,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C028",
+      "Age": 54,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 841,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C029",
+      "Age": 24,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 9249,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C030",
+      "Age": 38,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 5774,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C031",
+      "Age": 26,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4817,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C032",
+      "Age": 35,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 6661,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C033",
+      "Age": 21,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 1732,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C034",
+      "Age": 42,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 7874,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C035",
+      "Age": 31,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4401,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C036",
+      "Age": 26,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 1994,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C037",
+      "Age": 43,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 8917,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C038",
+      "Age": 19,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6211,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C039",
+      "Age": 37,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 3661,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C040",
+      "Age": 45,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 7883,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C041",
+      "Age": 24,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8561,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C042",
+      "Age": 25,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5619,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C043",
+      "Age": 52,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4868,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C044",
+      "Age": 31,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6334,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C045",
+      "Age": 34,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5374,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C046",
+      "Age": 53,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 1516,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C047",
+      "Age": 21,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 810,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C048",
+      "Age": 19,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 707,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C049",
+      "Age": 23,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 2993,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C050",
+      "Age": 21,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 1132,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C051",
+      "Age": 46,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4102,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C052",
+      "Age": 35,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 5959,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C053",
+      "Age": 43,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 5083,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C054",
+      "Age": 51,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8752,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C055",
+      "Age": 27,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 3931,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C056",
+      "Age": 53,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5719,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C057",
+      "Age": 31,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4562,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C058",
+      "Age": 48,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4679,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C059",
+      "Age": 32,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 736,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C060",
+      "Age": 25,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 847,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C061",
+      "Age": 31,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 1129,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C062",
+      "Age": 40,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2040,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C063",
+      "Age": 38,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2503,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C064",
+      "Age": 33,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 7943,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C065",
+      "Age": 35,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 2363,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C066",
+      "Age": 41,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 2868,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C067",
+      "Age": 43,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 785,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C068",
+      "Age": 42,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 648,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C069",
+      "Age": 46,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8203,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C070",
+      "Age": 32,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 7037,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C071",
+      "Age": 18,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8551,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C072",
+      "Age": 42,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 4766,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C073",
+      "Age": 24,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8895,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C074",
+      "Age": 26,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 9280,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C075",
+      "Age": 41,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 1512,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C076",
+      "Age": 18,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4831,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C077",
+      "Age": 25,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4507,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C078",
+      "Age": 41,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4523,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C079",
+      "Age": 28,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 5785,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C080",
+      "Age": 34,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4556,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C081",
+      "Age": 25,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5725,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C082",
+      "Age": 52,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8576,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C083",
+      "Age": 52,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 9782,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C084",
+      "Age": 50,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 3601,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C085",
+      "Age": 22,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 6408,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C086",
+      "Age": 45,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2340,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C087",
+      "Age": 24,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 4817,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C088",
+      "Age": 26,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4496,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C089",
+      "Age": 25,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 2366,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C090",
+      "Age": 29,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 6930,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C091",
+      "Age": 51,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8299,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C092",
+      "Age": 50,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4725,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C093",
+      "Age": 40,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5689,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C094",
+      "Age": 41,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 810,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C095",
+      "Age": 54,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 3261,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C096",
+      "Age": 52,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 3442,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C097",
+      "Age": 39,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2405,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C098",
+      "Age": 44,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5190,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C099",
+      "Age": 52,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8437,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C100",
+      "Age": 18,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 2243,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C101",
+      "Age": 52,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 989,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C102",
+      "Age": 54,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 511,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C103",
+      "Age": 31,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2560,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C104",
+      "Age": 20,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 7137,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C105",
+      "Age": 18,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 1093,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C106",
+      "Age": 22,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 3826,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C107",
+      "Age": 43,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 6229,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C108",
+      "Age": 31,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 6287,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C109",
+      "Age": 44,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 7073,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C110",
+      "Age": 26,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2133,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C111",
+      "Age": 32,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6138,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C112",
+      "Age": 32,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5919,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C113",
+      "Age": 43,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 1447,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C114",
+      "Age": 30,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2072,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C115",
+      "Age": 49,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 7494,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C116",
+      "Age": 49,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 9524,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C117",
+      "Age": 21,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 7225,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C118",
+      "Age": 47,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 6978,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C119",
+      "Age": 54,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6361,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C120",
+      "Age": 40,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 2060,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C121",
+      "Age": 32,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5985,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C122",
+      "Age": 46,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 3792,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C123",
+      "Age": 53,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8408,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C124",
+      "Age": 30,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 663,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C125",
+      "Age": 49,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 3094,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C126",
+      "Age": 24,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8901,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C127",
+      "Age": 39,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4133,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C128",
+      "Age": 45,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8917,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C129",
+      "Age": 19,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 737,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C130",
+      "Age": 23,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5946,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C131",
+      "Age": 45,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5530,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C132",
+      "Age": 45,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2460,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C133",
+      "Age": 37,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 4048,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C134",
+      "Age": 47,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4529,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C135",
+      "Age": 28,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5964,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C136",
+      "Age": 45,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 1463,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C137",
+      "Age": 42,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 3536,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C138",
+      "Age": 50,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 2103,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C139",
+      "Age": 18,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 8223,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C140",
+      "Age": 44,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 591,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C141",
+      "Age": 30,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5724,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C142",
+      "Age": 20,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4542,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C143",
+      "Age": 23,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 3845,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C144",
+      "Age": 25,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 7603,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C145",
+      "Age": 44,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 2181,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C146",
+      "Age": 26,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5036,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C147",
+      "Age": 54,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 8947,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C148",
+      "Age": 50,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 4494,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C149",
+      "Age": 41,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 889,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C150",
+      "Age": 32,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2384,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C151",
+      "Age": 49,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 542,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C152",
+      "Age": 49,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 6349,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C153",
+      "Age": 41,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 7201,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C154",
+      "Age": 29,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4710,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C155",
+      "Age": 19,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2834,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C156",
+      "Age": 20,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 9636,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C157",
+      "Age": 54,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4953,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C158",
+      "Age": 34,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 7737,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C159",
+      "Age": 19,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 2929,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C160",
+      "Age": 19,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5850,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C161",
+      "Age": 45,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 1189,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C162",
+      "Age": 40,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 3950,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C163",
+      "Age": 54,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 9175,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C164",
+      "Age": 49,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 1986,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C165",
+      "Age": 50,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 3456,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C166",
+      "Age": 18,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 1482,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C167",
+      "Age": 36,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5130,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C168",
+      "Age": 19,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6976,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C169",
+      "Age": 43,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 8218,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C170",
+      "Age": 49,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 6244,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C171",
+      "Age": 23,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 8448,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C172",
+      "Age": 49,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 3179,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C173",
+      "Age": 21,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 6285,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C174",
+      "Age": 28,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5565,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C175",
+      "Age": 34,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 2882,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C176",
+      "Age": 41,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 2399,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C177",
+      "Age": 22,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 3608,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C178",
+      "Age": 51,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 8891,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C179",
+      "Age": 23,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5638,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C180",
+      "Age": 39,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 4148,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C181",
+      "Age": 28,
+      "Gender": "F",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 1882,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C182",
+      "Age": 33,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 4403,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C183",
+      "Age": 50,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 3819,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C184",
+      "Age": 26,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 7292,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C185",
+      "Age": 23,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 3,
+      "Avg_Spend": 1319,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C186",
+      "Age": 33,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 919,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C187",
+      "Age": 46,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 7219,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C188",
+      "Age": 20,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "SMB Owner",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 7517,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C189",
+      "Age": 37,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 7302,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C190",
+      "Age": 53,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 2008,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C191",
+      "Age": 36,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 9693,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C192",
+      "Age": 43,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Student",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 1267,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C193",
+      "Age": 20,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 6044,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C194",
+      "Age": 36,
+      "Gender": "F",
+      "Region": "North",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 4,
+      "Avg_Spend": 2702,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C195",
+      "Age": 37,
+      "Gender": "M",
+      "Region": "West",
+      "Occupation": "Student",
+      "Category_Purchased": "Accessories",
+      "Purchase_Frequency": 5,
+      "Avg_Spend": 2639,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C196",
+      "Age": 49,
+      "Gender": "F",
+      "Region": "East",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Subscription",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5029,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C197",
+      "Age": 24,
+      "Gender": "M",
+      "Region": "East",
+      "Occupation": "Professional",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 1,
+      "Avg_Spend": 5549,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C198",
+      "Age": 50,
+      "Gender": "F",
+      "Region": "West",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 5764,
+      "Satisfaction": 4,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C199",
+      "Age": 35,
+      "Gender": "M",
+      "Region": "North",
+      "Occupation": "Remote Worker",
+      "Category_Purchased": "Software",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 4645,
+      "Satisfaction": 2,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Customer_ID": "C200",
+      "Age": 18,
+      "Gender": "M",
+      "Region": "South",
+      "Occupation": "Professional",
+      "Category_Purchased": "Hardware",
+      "Purchase_Frequency": 2,
+      "Avg_Spend": 7716,
+      "Satisfaction": 3,
+      "Source File": "Customer_Segmentation_Category_Analysis_HP.xlsx"
+    },
+    {
+      "Test ID": "RG-01",
+      "Area": "Login",
+      "Scenario": "Login with valid credentials",
+      "Expected Result": "User logs in successfully",
+      "Status": "Pass",
+      "Source File": "Regression_Checklist.xlsx"
+    },
+    {
+      "Test ID": "RG-02",
+      "Area": "Add Money",
+      "Scenario": "Add ₹500 to wallet",
+      "Expected Result": "Balance increases correctly",
+      "Status": "Pass",
+      "Source File": "Regression_Checklist.xlsx"
+    },
+    {
+      "Test ID": "RG-03",
+      "Area": "Pay Merchant",
+      "Scenario": "Pay ₹200 at ShopX",
+      "Expected Result": "Balance decreases, transaction shows in history",
+      "Status": "Pass",
+      "Source File": "Regression_Checklist.xlsx"
+    },
+    {
+      "Test ID": "RG-04",
+      "Area": "Refund",
+      "Scenario": "Request refund for ₹200",
+      "Expected Result": "Refund credited, history updated",
+      "Status": "Fail",
+      "Source File": "Regression_Checklist.xlsx"
+    },
+    {
+      "Test ID": "RG-05",
+      "Area": "History",
+      "Scenario": "Verify transactions reflect payments + refunds",
+      "Expected Result": "Correct records displayed",
+      "Status": "Pass",
+      "Source File": "Regression_Checklist.xlsx"
+    },
+    {
+      "Defect ID": "D-01",
+      "Feature": "Refund",
+      "Description": "Refund not credited within 2 mins",
+      "Severity": "High",
+      "Status": "Open",
+      "Source File": "DefectLog.xlsx"
+    },
+    {
+      "Defect ID": "D-02",
+      "Feature": "Notifications",
+      "Description": "Email not sent on add money",
+      "Severity": "Medium",
+      "Status": "In Progress",
+      "Source File": "DefectLog.xlsx"
+    },
+    {
+      "Defect ID": "D-03",
+      "Feature": "Transaction History",
+      "Description": "History not showing refunded transactions",
+      "Severity": "High",
+      "Status": "Open",
+      "Source File": "DefectLog.xlsx"
+    },
+    {
+      "Defect ID": "D-04",
+      "Feature": "User Registration",
+      "Description": "Invalid OTP still allows login",
+      "Severity": "Critical",
+      "Status": "Resolved",
+      "Source File": "DefectLog.xlsx"
+    },
+    {
+      "Test Case ID": "TC-01",
+      "Feature": "Add Money",
+      "Steps": "Add ₹500 → Check balance",
+      "Expected Result": "Balance increases by ₹500",
+      "Actual Result": "Balance increases by ₹500",
+      "Status": "Pass",
+      "Source File": "TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-02",
+      "Feature": "Pay Merchant",
+      "Steps": "Pay ₹200 at ShopX",
+      "Expected Result": "Balance decreases & transaction appears in history",
+      "Actual Result": "Works as expected",
+      "Status": "Pass",
+      "Source File": "TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-03",
+      "Feature": "Refund",
+      "Steps": "Request refund",
+      "Expected Result": "Balance credited & shown in history",
+      "Actual Result": "Refund credited but no history update",
+      "Status": "Fail",
+      "Source File": "TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-04",
+      "Feature": "User Registration",
+      "Steps": "Sign up with valid phone + OTP",
+      "Expected Result": "User account created successfully",
+      "Actual Result": "Account created",
+      "Status": "Pass",
+      "Source File": "TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-05",
+      "Feature": "Notifications",
+      "Steps": "Add ₹1000 to wallet",
+      "Expected Result": "Email + SMS confirmation received",
+      "Actual Result": "SMS received, email missing",
+      "Status": "Fail",
+      "Source File": "TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-01",
+      "Feature": "Loan Application – Positive",
+      "Steps": "Fill form with valid details → Submit",
+      "Test Data": "Name: Asha; Amount: ₹20,00,000; Tenure: 20 yrs; Income: ₹1,00,000; PAN: ABCDE1234F",
+      "Expected Result": "Submission successful, shows 'Credit Check in progress'",
+      "Actual Result": "As expected",
+      "Status": "Pass",
+      "Notes": null,
+      "Source File": "Mortgage_TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-02",
+      "Feature": "Loan Application – Blank Field",
+      "Steps": "Leave PAN empty → Submit",
+      "Test Data": "PAN: (blank)",
+      "Expected Result": "Show error 'Please enter PAN' and block submit",
+      "Actual Result": "Error displayed",
+      "Status": "Pass",
+      "Notes": "Negative test",
+      "Source File": "Mortgage_TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-03",
+      "Feature": "Credit Check – High Score",
+      "Steps": "Submit app with good profile → Credit Check",
+      "Test Data": "Score mocked 720",
+      "Expected Result": "System shows score 720 and 'Eligible for auto-approval'",
+      "Actual Result": "System showed eligibility",
+      "Status": "Pass",
+      "Notes": null,
+      "Source File": "Mortgage_TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-04",
+      "Feature": "Auto Approval – Fail Condition",
+      "Steps": "Profile with score 600 & DTI 60% → Submit",
+      "Test Data": "Score 600, DTI 60%",
+      "Expected Result": "Status = 'Manual Review'",
+      "Actual Result": "Status shown as 'Manual Review'",
+      "Status": "Pass",
+      "Notes": "Negative test",
+      "Source File": "Mortgage_TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-05",
+      "Feature": "Disbursement – Trigger",
+      "Steps": "With status Approved, click Disburse",
+      "Test Data": "Approved loan id 123",
+      "Expected Result": "Status becomes 'Disbursed' and transaction id logged",
+      "Actual Result": "Disbursed with txn id",
+      "Status": "Pass",
+      "Notes": null,
+      "Source File": "Mortgage_TestCases.xlsx"
+    },
+    {
+      "Test Case ID": "TC-06",
+      "Feature": "Notification Email",
+      "Steps": "On submit and on approve → check email",
+      "Test Data": "Email: test@example.com",
+      "Expected Result": "Email received: Application received; then Approval email",
+      "Actual Result": "Got both emails",
+      "Status": "Pass",
+      "Notes": "Manual check",
+      "Source File": "Mortgage_TestCases.xlsx"
+    }
+  ],
+  "columnTypes": {
+    "Customer_ID": "categorical",
+    "Age": "numeric",
+    "Gender": "categorical",
+    "Region": "categorical",
+    "Occupation": "categorical",
+    "Category_Purchased": "categorical",
+    "Purchase_Frequency": "numeric",
+    "Avg_Spend": "numeric",
+    "Satisfaction": "numeric",
+    "Test ID": "date",
+    "Area": "categorical",
+    "Scenario": "categorical",
+    "Expected Result": "categorical",
+    "Status": "categorical",
+    "Defect ID": "date",
+    "Feature": "categorical",
+    "Description": "categorical",
+    "Severity": "categorical",
+    "Test Case ID": "date",
+    "Steps": "categorical",
+    "Actual Result": "categorical",
+    "Test Data": "categorical",
+    "Notes": "categorical",
+    "Source File": "categorical"
+  },
+  "stats": {
+    "Customer_ID": {
+      "unique": 201,
+      "topValues": [
+        {
+          "val": "",
+          "count": 20
+        },
+        {
+          "val": "C001",
+          "count": 1
+        },
+        {
+          "val": "C002",
+          "count": 1
+        },
+        {
+          "val": "C003",
+          "count": 1
+        },
+        {
+          "val": "C004",
+          "count": 1
+        },
+        {
+          "val": "C005",
+          "count": 1
+        },
+        {
+          "val": "C006",
+          "count": 1
+        },
+        {
+          "val": "C007",
+          "count": 1
+        },
+        {
+          "val": "C008",
+          "count": 1
+        },
+        {
+          "val": "C009",
+          "count": 1
+        }
+      ]
+    },
+    "Age": {
+      "min": 18,
+      "max": 54,
+      "mean": 35.885,
+      "count": 200,
+      "sum": 7177
+    },
+    "Gender": {
+      "unique": 3,
+      "topValues": [
+        {
+          "val": "M",
+          "count": 102
+        },
+        {
+          "val": "F",
+          "count": 98
+        },
+        {
+          "val": "",
+          "count": 20
+        }
+      ]
+    },
+    "Region": {
+      "unique": 5,
+      "topValues": [
+        {
+          "val": "North",
+          "count": 66
+        },
+        {
+          "val": "West",
+          "count": 48
+        },
+        {
+          "val": "East",
+          "count": 47
+        },
+        {
+          "val": "South",
+          "count": 39
+        },
+        {
+          "val": "",
+          "count": 20
+        }
+      ]
+    },
+    "Occupation": {
+      "unique": 5,
+      "topValues": [
+        {
+          "val": "Student",
+          "count": 59
+        },
+        {
+          "val": "SMB Owner",
+          "count": 55
+        },
+        {
+          "val": "Remote Worker",
+          "count": 50
+        },
+        {
+          "val": "Professional",
+          "count": 36
+        },
+        {
+          "val": "",
+          "count": 20
+        }
+      ]
+    },
+    "Category_Purchased": {
+      "unique": 5,
+      "topValues": [
+        {
+          "val": "Software",
+          "count": 64
+        },
+        {
+          "val": "Subscription",
+          "count": 54
+        },
+        {
+          "val": "Hardware",
+          "count": 54
+        },
+        {
+          "val": "Accessories",
+          "count": 28
+        },
+        {
+          "val": "",
+          "count": 20
+        }
+      ]
+    },
+    "Purchase_Frequency": {
+      "min": 1,
+      "max": 5,
+      "mean": 2.34,
+      "count": 200,
+      "sum": 468
+    },
+    "Avg_Spend": {
+      "min": 511,
+      "max": 9782,
+      "mean": 4666.295,
+      "count": 200,
+      "sum": 933259
+    },
+    "Satisfaction": {
+      "min": 2,
+      "max": 4,
+      "mean": 3.02,
+      "count": 200,
+      "sum": 604
+    },
+    "Test ID": {
+      "unique": 6,
+      "topValues": [
+        {
+          "val": "",
+          "count": 215
+        },
+        {
+          "val": "RG-01",
+          "count": 1
+        },
+        {
+          "val": "RG-02",
+          "count": 1
+        },
+        {
+          "val": "RG-03",
+          "count": 1
+        },
+        {
+          "val": "RG-04",
+          "count": 1
+        },
+        {
+          "val": "RG-05",
+          "count": 1
+        }
+      ]
+    },
+    "Area": {
+      "unique": 6,
+      "topValues": [
+        {
+          "val": "",
+          "count": 215
+        },
+        {
+          "val": "Login",
+          "count": 1
+        },
+        {
+          "val": "Add Money",
+          "count": 1
+        },
+        {
+          "val": "Pay Merchant",
+          "count": 1
+        },
+        {
+          "val": "Refund",
+          "count": 1
+        },
+        {
+          "val": "History",
+          "count": 1
+        }
+      ]
+    },
+    "Scenario": {
+      "unique": 6,
+      "topValues": [
+        {
+          "val": "",
+          "count": 215
+        },
+        {
+          "val": "Login with valid credentials",
+          "count": 1
+        },
+        {
+          "val": "Add ₹500 to wallet",
+          "count": 1
+        },
+        {
+          "val": "Pay ₹200 at ShopX",
+          "count": 1
+        },
+        {
+          "val": "Request refund for ₹200",
+          "count": 1
+        },
+        {
+          "val": "Verify transactions reflect payments + refunds",
+          "count": 1
+        }
+      ]
+    },
+    "Expected Result": {
+      "unique": 17,
+      "topValues": [
+        {
+          "val": "",
+          "count": 204
+        },
+        {
+          "val": "User logs in successfully",
+          "count": 1
+        },
+        {
+          "val": "Balance increases correctly",
+          "count": 1
+        },
+        {
+          "val": "Balance decreases, transaction shows in history",
+          "count": 1
+        },
+        {
+          "val": "Refund credited, history updated",
+          "count": 1
+        },
+        {
+          "val": "Correct records displayed",
+          "count": 1
+        },
+        {
+          "val": "Balance increases by ₹500",
+          "count": 1
+        },
+        {
+          "val": "Balance decreases & transaction appears in history",
+          "count": 1
+        },
+        {
+          "val": "Balance credited & shown in history",
+          "count": 1
+        },
+        {
+          "val": "User account created successfully",
+          "count": 1
+        }
+      ]
+    },
+    "Status": {
+      "unique": 6,
+      "topValues": [
+        {
+          "val": "",
+          "count": 200
+        },
+        {
+          "val": "Pass",
+          "count": 13
+        },
+        {
+          "val": "Fail",
+          "count": 3
+        },
+        {
+          "val": "Open",
+          "count": 2
+        },
+        {
+          "val": "In Progress",
+          "count": 1
+        },
+        {
+          "val": "Resolved",
+          "count": 1
+        }
+      ]
+    },
+    "Defect ID": {
+      "unique": 5,
+      "topValues": [
+        {
+          "val": "",
+          "count": 216
+        },
+        {
+          "val": "D-01",
+          "count": 1
+        },
+        {
+          "val": "D-02",
+          "count": 1
+        },
+        {
+          "val": "D-03",
+          "count": 1
+        },
+        {
+          "val": "D-04",
+          "count": 1
+        }
+      ]
+    },
+    "Feature": {
+      "unique": 13,
+      "topValues": [
+        {
+          "val": "",
+          "count": 205
+        },
+        {
+          "val": "Refund",
+          "count": 2
+        },
+        {
+          "val": "Notifications",
+          "count": 2
+        },
+        {
+          "val": "User Registration",
+          "count": 2
+        },
+        {
+          "val": "Transaction History",
+          "count": 1
+        },
+        {
+          "val": "Add Money",
+          "count": 1
+        },
+        {
+          "val": "Pay Merchant",
+          "count": 1
+        },
+        {
+          "val": "Loan Application – Positive",
+          "count": 1
+        },
+        {
+          "val": "Loan Application – Blank Field",
+          "count": 1
+        },
+        {
+          "val": "Credit Check – High Score",
+          "count": 1
+        }
+      ]
+    },
+    "Description": {
+      "unique": 5,
+      "topValues": [
+        {
+          "val": "",
+          "count": 216
+        },
+        {
+          "val": "Refund not credited within 2 mins",
+          "count": 1
+        },
+        {
+          "val": "Email not sent on add money",
+          "count": 1
+        },
+        {
+          "val": "History not showing refunded transactions",
+          "count": 1
+        },
+        {
+          "val": "Invalid OTP still allows login",
+          "count": 1
+        }
+      ]
+    },
+    "Severity": {
+      "unique": 4,
+      "topValues": [
+        {
+          "val": "",
+          "count": 216
+        },
+        {
+          "val": "High",
+          "count": 2
+        },
+        {
+          "val": "Medium",
+          "count": 1
+        },
+        {
+          "val": "Critical",
+          "count": 1
+        }
+      ]
+    },
+    "Test Case ID": {
+      "unique": 7,
+      "topValues": [
+        {
+          "val": "",
+          "count": 209
+        },
+        {
+          "val": "TC-01",
+          "count": 2
+        },
+        {
+          "val": "TC-02",
+          "count": 2
+        },
+        {
+          "val": "TC-03",
+          "count": 2
+        },
+        {
+          "val": "TC-04",
+          "count": 2
+        },
+        {
+          "val": "TC-05",
+          "count": 2
+        },
+        {
+          "val": "TC-06",
+          "count": 1
+        }
+      ]
+    },
+    "Steps": {
+      "unique": 12,
+      "topValues": [
+        {
+          "val": "",
+          "count": 209
+        },
+        {
+          "val": "Add ₹500 → Check balance",
+          "count": 1
+        },
+        {
+          "val": "Pay ₹200 at ShopX",
+          "count": 1
+        },
+        {
+          "val": "Request refund",
+          "count": 1
+        },
+        {
+          "val": "Sign up with valid phone + OTP",
+          "count": 1
+        },
+        {
+          "val": "Add ₹1000 to wallet",
+          "count": 1
+        },
+        {
+          "val": "Fill form with valid details → Submit",
+          "count": 1
+        },
+        {
+          "val": "Leave PAN empty → Submit",
+          "count": 1
+        },
+        {
+          "val": "Submit app with good profile → Credit Check",
+          "count": 1
+        },
+        {
+          "val": "Profile with score 600 & DTI 60% → Submit",
+          "count": 1
+        }
+      ]
+    },
+    "Actual Result": {
+      "unique": 12,
+      "topValues": [
+        {
+          "val": "",
+          "count": 209
+        },
+        {
+          "val": "Balance increases by ₹500",
+          "count": 1
+        },
+        {
+          "val": "Works as expected",
+          "count": 1
+        },
+        {
+          "val": "Refund credited but no history update",
+          "count": 1
+        },
+        {
+          "val": "Account created",
+          "count": 1
+        },
+        {
+          "val": "SMS received, email missing",
+          "count": 1
+        },
+        {
+          "val": "As expected",
+          "count": 1
+        },
+        {
+          "val": "Error displayed",
+          "count": 1
+        },
+        {
+          "val": "System showed eligibility",
+          "count": 1
+        },
+        {
+          "val": "Status shown as 'Manual Review'",
+          "count": 1
+        }
+      ]
+    },
+    "Test Data": {
+      "unique": 7,
+      "topValues": [
+        {
+          "val": "",
+          "count": 214
+        },
+        {
+          "val": "Name: Asha; Amount: ₹20,00,000; Tenure: 20 yrs; Income: ₹1,00,000; PAN: ABCDE1234F",
+          "count": 1
+        },
+        {
+          "val": "PAN: (blank)",
+          "count": 1
+        },
+        {
+          "val": "Score mocked 720",
+          "count": 1
+        },
+        {
+          "val": "Score 600, DTI 60%",
+          "count": 1
+        },
+        {
+          "val": "Approved loan id 123",
+          "count": 1
+        },
+        {
+          "val": "Email: test@example.com",
+          "count": 1
+        }
+      ]
+    },
+    "Notes": {
+      "unique": 3,
+      "topValues": [
+        {
+          "val": "",
+          "count": 217
+        },
+        {
+          "val": "Negative test",
+          "count": 2
+        },
+        {
+          "val": "Manual check",
+          "count": 1
+        }
+      ]
+    },
+    "Source File": {
+      "unique": 5,
+      "topValues": [
+        {
+          "val": "Customer_Segmentation_Category_Analysis_HP.xlsx",
+          "count": 200
+        },
+        {
+          "val": "Mortgage_TestCases.xlsx",
+          "count": 6
+        },
+        {
+          "val": "Regression_Checklist.xlsx",
+          "count": 5
+        },
+        {
+          "val": "TestCases.xlsx",
+          "count": 5
+        },
+        {
+          "val": "DefectLog.xlsx",
+          "count": 4
+        }
+      ]
+    }
+  },
+  "rowCount": 220,
+  "uploadedAt": "2026-07-01T11:34:15.257Z"
+}

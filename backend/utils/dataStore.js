@@ -36,6 +36,9 @@ module.exports = {
     try {
       if (mongoose.connection.readyState === 1 && FileData) {
         const compressedRows = zlib.gzipSync(JSON.stringify(value.rows));
+        const compressedSheetsData = value.sheetsData
+          ? zlib.gzipSync(JSON.stringify(value.sheetsData))
+          : null;
         
         await FileData.findOneAndUpdate(
           { fileId: key },
@@ -47,6 +50,8 @@ module.exports = {
             columnTypes: value.columnTypes,
             stats: value.stats,
             rowCount: value.rowCount,
+            sheetInfo: value.sheetInfo,
+            compressedSheetsData,
             uploadedAt: new Date()
           },
           { upsert: true, new: true }
@@ -70,6 +75,12 @@ module.exports = {
         const doc = await FileData.findOne({ fileId: key });
         if (doc) {
           const rows = JSON.parse(zlib.gunzipSync(doc.compressedRows).toString("utf8"));
+          let sheetsData = {};
+          if (doc.compressedSheetsData) {
+            try {
+              sheetsData = JSON.parse(zlib.gunzipSync(doc.compressedSheetsData).toString("utf8"));
+            } catch (_) {}
+          }
           const reconstructed = {
             fileId: doc.fileId,
             originalName: doc.originalName,
@@ -78,6 +89,8 @@ module.exports = {
             columnTypes: doc.columnTypes,
             stats: doc.stats,
             rowCount: doc.rowCount,
+            sheetInfo: doc.sheetInfo || [],
+            sheetsData,
             uploadedAt: doc.uploadedAt
           };
           store.set(key, reconstructed); // cache in memory

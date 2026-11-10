@@ -486,12 +486,23 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
   const fileInputRef = useRef(null);
   const profileMenuRef = useRef(null);
   const themeMenuRef = useRef(null);
+  const [selectedSheetTab, setSelectedSheetTab] = useState("all");
   const headers = fileInfo?.headers ?? [];
   const columnTypes = fileInfo?.columnTypes ?? {};
   const stats = fileInfo?.stats ?? {};
   const preview = fileInfo?.preview ?? [];
   const rowCount = fileInfo?.rowCount ?? 0;
   const originalName = fileInfo?.originalName ?? "Uploaded file";
+
+  const selectedSheetMeta = fileInfo?.sheetInfo?.find(s => (s.key || s.sheetName) === selectedSheetTab || s.sheetName === selectedSheetTab);
+  const displayHeaders = selectedSheetMeta ? (selectedSheetMeta.headers || headers) : headers;
+  const displayColTypes = selectedSheetMeta ? (selectedSheetMeta.columnTypes || columnTypes) : columnTypes;
+  const displayStats = selectedSheetMeta ? (selectedSheetMeta.stats || stats) : stats;
+  const displayPreview = selectedSheetMeta
+    ? preview.filter(r => (r["File Sheet"] || r.Sheet) === selectedSheetTab || r.Sheet === selectedSheetTab).length > 0
+      ? preview.filter(r => (r["File Sheet"] || r.Sheet) === selectedSheetTab || r.Sheet === selectedSheetTab)
+      : preview
+    : preview;
 
   const numCols = headers.filter(h => columnTypes[h] === "numeric");
   const catCols = headers.filter(h => columnTypes[h] !== "numeric");
@@ -905,8 +916,53 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                       <div style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--mono)", marginTop: 1 }}>{rowCount.toLocaleString()} entries · {headers.length} properties</div>
                     </div>
                   </div>
-                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8 }}>
-                  </div>
+                  {fileInfo?.sheetInfo?.length > 1 ? (
+                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginTop: 8 }}>
+                      <span
+                        onClick={() => setSelectedSheetTab("all")}
+                        style={{
+                          background: selectedSheetTab === "all" ? "rgba(245,158,11,0.25)" : "rgba(255,255,255,0.05)",
+                          color: selectedSheetTab === "all" ? "#f59e0b" : "var(--text3)",
+                          border: selectedSheetTab === "all" ? "1px solid rgba(245,158,11,0.5)" : "1px solid var(--border)",
+                          padding: "2px 7px",
+                          borderRadius: 6,
+                          fontSize: 10,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          transition: "all 0.15s"
+                        }}
+                      >
+                        All ({rowCount})
+                      </span>
+                      {fileInfo.sheetInfo.map((s, idx) => {
+                        const tabKey = s.key || s.sheetName;
+                        const isSelected = selectedSheetTab === tabKey;
+                        const label = s.displayLabel || s.sheetName;
+                        return (
+                          <span
+                            key={idx}
+                            onClick={() => setSelectedSheetTab(tabKey)}
+                            style={{
+                              background: isSelected ? "rgba(245,158,11,0.25)" : "rgba(255,255,255,0.05)",
+                              color: isSelected ? "#f59e0b" : "var(--text3)",
+                              border: isSelected ? "1px solid rgba(245,158,11,0.5)" : "1px solid var(--border)",
+                              padding: "2px 7px",
+                              borderRadius: 6,
+                              fontSize: 10,
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 3,
+                              transition: "all 0.15s"
+                            }}
+                          >
+                            <span>📑</span> {label} ({s.rowCount})
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : null}
                 </div>
                 <div style={{ display: "flex", borderBottom: "1px solid var(--border)", flexShrink: 0 }}>
                   {["preview", "columns"].map(tab => (
@@ -916,13 +972,13 @@ function Workspace({ fileInfo, messages, analyzing, uploading, progress, onQuery
                 <div style={{ flex: 1, overflowY: "auto", overflowX: "auto" }}>
                   {activeTab === "preview" && (
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, fontFamily: "var(--mono)" }}>
-                      <thead><tr>{headers.map(h => <th key={h} style={{ background: "#111128", color: columnTypes[h] === "numeric" ? "#06b6d4" : "#7c3aed", padding: "7px 10px", textAlign: "left", borderBottom: "1px solid #ffffff0f", whiteSpace: "nowrap", position: "sticky", top: 0 }}>{h}</th>)}</tr></thead>
-                      <tbody>{(preview||[]).map((row,i) => <tr key={i} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.025)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>{headers.map(h => <td key={h} style={{ padding: "6px 10px", color: "#5c5a7a", borderBottom: "1px solid #ffffff05", whiteSpace: "nowrap", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis" }}>{String(row[h]??"")} </td>)}</tr>)}</tbody>
+                      <thead><tr>{displayHeaders.map(h => <th key={h} style={{ background: "#111128", color: displayColTypes[h] === "numeric" ? "#06b6d4" : "#7c3aed", padding: "7px 10px", textAlign: "left", borderBottom: "1px solid #ffffff0f", whiteSpace: "nowrap", position: "sticky", top: 0 }}>{h}</th>)}</tr></thead>
+                      <tbody>{(displayPreview||[]).map((row,i) => <tr key={i} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.025)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>{displayHeaders.map(h => <td key={h} style={{ padding: "6px 10px", color: "#5c5a7a", borderBottom: "1px solid #ffffff05", whiteSpace: "nowrap", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis" }}>{String(row[h]??"")} </td>)}</tr>)}</tbody>
                     </table>
                   )}
                   {activeTab === "columns" && (
                     <div>
-                      {headers.map(h => { const type = columnTypes[h]; const s = stats[h]; return (
+                      {displayHeaders.map(h => { const type = displayColTypes[h]; const s = displayStats[h]; return (
                         <div key={h} style={{ padding: "10px 12px", borderBottom: "1px solid #ffffff05" }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 3 }}>
                             <span style={{ fontSize: 12, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--text)" }}>{h}</span>

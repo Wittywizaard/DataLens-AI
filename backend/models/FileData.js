@@ -8,6 +8,8 @@ const fileDataSchema = new mongoose.Schema({
   columnTypes: { type: mongoose.Schema.Types.Mixed, required: true },
   stats: { type: mongoose.Schema.Types.Mixed, required: true },
   rowCount: { type: Number, required: true },
+  sheetInfo: { type: mongoose.Schema.Types.Mixed },
+  compressedSheetsData: { type: Buffer },
   uploadedAt: { type: Date, default: Date.now }
 });
 

@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const Papa = require("papaparse");
 const XLSX = require("xlsx");
 const {
+  ensureFullSheetRef,
   pickBestSheetName,
   sheetToCleanJson,
   detectColumnTypes,
@@ -16,7 +17,7 @@ const {
 
 const router = express.Router();
 
-// In-memory store for parsed data (use Redis in production)
+// In-memory / MongoDB / disk store for parsed data
 const dataStore = require("../utils/dataStore");
 
 // Configure multer for file uploads
@@ -68,7 +69,6 @@ function cleanParsedRows(fileHeaders, fileRows) {
 router.post("/", upload.array("file", 10), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
-      // Also check req.file for backwards compatibility just in case
       if (req.file) req.files = [req.file];
       else return res.status(400).json({ error: "No files uploaded." });
     }
@@ -77,16 +77,12 @@ router.post("/", upload.array("file", 10), async (req, res) => {
     let rows = [];
     let originalNames = [];
     let sheetInfo = [];
+    let sheetsData = {};
 
     for (const file of req.files) {
       const ext = path.extname(file.originalname).toLowerCase();
       originalNames.push(file.originalname);
 
-      let fileHeaders = [];
-      let fileRows = [];
-      let selectedSheet = null;
-
-      // Parse the file
       if (ext === ".csv" || ext === ".tsv") {
         const content = file.buffer.toString("utf8");
         const delimiter = ext === ".tsv" ? "\t" : ",";
@@ -97,10 +93,10 @@ router.post("/", upload.array("file", 10), async (req, res) => {
           delimiter,
           transformHeader: (h) => (h || "").trim(),
         });
-        fileHeaders = (result.meta.fields || []).filter(Boolean);
-        fileRows = result.data.map((r) => {
+
+        let fileHeaders = (result.meta.fields || []).filter(Boolean);
+        let fileRows = result.data.map((r) => {
           const out = { ...r };
-          // Coerce currency-like strings to numbers when Papa left them as text
           for (const h of fileHeaders) {
             if (typeof out[h] === "string") {
               const n = parseLooseNumber(out[h]);
@@ -111,46 +107,161 @@ router.post("/", upload.array("file", 10), async (req, res) => {
           }
           return out;
         });
+
+        const cleaned = cleanParsedRows(fileHeaders, fileRows);
+        const cleanHeaders = cleaned.headers;
+        const cleanRows = cleaned.rows;
+
+        const sheetName = path.basename(file.originalname, ext);
+        const sColTypes = detectColumnTypes(cleanHeaders, cleanRows);
+        const sStats = computeStats(cleanHeaders, cleanRows, sColTypes);
+
+        const sheetKey = req.files.length > 1 ? `${file.originalname} - ${sheetName}` : sheetName;
+        const displayLabel = req.files.length > 1 ? `${file.originalname} > ${sheetName}` : sheetName;
+
+        sheetInfo.push({
+          key: sheetKey,
+          file: file.originalname,
+          sheetName,
+          displayLabel,
+          rowCount: cleanRows.length,
+          columnCount: cleanHeaders.length,
+          headers: cleanHeaders,
+          columnTypes: sColTypes,
+          stats: sStats,
+        });
+
+        sheetsData[sheetKey] = {
+          key: sheetKey,
+          file: file.originalname,
+          sheetName,
+          displayLabel,
+          headers: cleanHeaders,
+          rows: cleanRows,
+          rowCount: cleanRows.length,
+          columnTypes: sColTypes,
+          stats: sStats,
+        };
+        if (sheetKey !== sheetName && !sheetsData[sheetName]) {
+          sheetsData[sheetName] = sheetsData[sheetKey];
+        }
+
+        const taggedRows = cleanRows.map((r) => ({
+          ...r,
+          Sheet: sheetName,
+          "Source File": file.originalname,
+          "File Sheet": sheetKey,
+        }));
+
+        cleanHeaders.forEach((h) => headersSet.add(h));
+        headersSet.add("Sheet");
+        headersSet.add("Source File");
+        if (req.files.length > 1) headersSet.add("File Sheet");
+        rows = rows.concat(taggedRows);
       } else if (ext === ".xlsx" || ext === ".xls") {
         const workbook = XLSX.read(file.buffer, {
           type: "buffer",
           cellDates: true,
           cellNF: false,
         });
-        selectedSheet = pickBestSheetName(workbook);
-        const sheet = workbook.Sheets[selectedSheet];
-        const parsed = sheetToCleanJson(sheet);
-        fileHeaders = parsed.headers;
-        fileRows = parsed.rows;
-        sheetInfo.push({
-          file: file.originalname,
-          selectedSheet,
-          availableSheets: workbook.SheetNames,
-        });
+
+        const sheetNames = workbook.SheetNames || [];
+        for (const sheetName of sheetNames) {
+          const sheet = workbook.Sheets[sheetName];
+          if (!sheet) continue;
+
+          ensureFullSheetRef(sheet);
+          const parsed = sheetToCleanJson(sheet, sheetName);
+          const sHeaders = parsed.headers || [];
+          const sRows = parsed.rows || [];
+
+          const sheetKey = req.files.length > 1 ? `${file.originalname} - ${sheetName}` : sheetName;
+          const displayLabel = req.files.length > 1 ? `${file.originalname} > ${sheetName}` : sheetName;
+
+          if (!sHeaders.length && !sRows.length) {
+            sheetInfo.push({
+              key: sheetKey,
+              file: file.originalname,
+              sheetName,
+              displayLabel,
+              rowCount: 0,
+              columnCount: 0,
+              headers: [],
+              columnTypes: {},
+              stats: {},
+            });
+            continue;
+          }
+
+          const sCleaned = cleanParsedRows(sHeaders, sRows);
+          const cleanHeaders = sCleaned.headers;
+          const cleanRows = sCleaned.rows;
+
+          const sColTypes = detectColumnTypes(cleanHeaders, cleanRows);
+          const sStats = computeStats(cleanHeaders, cleanRows, sColTypes);
+
+          sheetInfo.push({
+            key: sheetKey,
+            file: file.originalname,
+            sheetName,
+            displayLabel,
+            rowCount: cleanRows.length,
+            columnCount: cleanHeaders.length,
+            headers: cleanHeaders,
+            columnTypes: sColTypes,
+            stats: sStats,
+          });
+
+          sheetsData[sheetKey] = {
+            key: sheetKey,
+            file: file.originalname,
+            sheetName,
+            displayLabel,
+            headers: cleanHeaders,
+            rows: cleanRows,
+            rowCount: cleanRows.length,
+            columnTypes: sColTypes,
+            stats: sStats,
+          };
+          if (sheetKey !== sheetName && !sheetsData[sheetName]) {
+            sheetsData[sheetName] = sheetsData[sheetKey];
+          }
+
+          const taggedRows = cleanRows.map((r) => ({
+            ...r,
+            Sheet: sheetName,
+            "Source File": file.originalname,
+            "File Sheet": sheetKey,
+          }));
+
+          cleanHeaders.forEach((h) => headersSet.add(h));
+          headersSet.add("Sheet");
+          headersSet.add("Source File");
+          if (req.files.length > 1) headersSet.add("File Sheet");
+          rows = rows.concat(taggedRows);
+        }
       }
-
-      const cleaned = cleanParsedRows(fileHeaders, fileRows);
-      fileHeaders = cleaned.headers;
-      fileRows = cleaned.rows;
-
-      fileHeaders.forEach((h) => headersSet.add(h));
-      // Add source file identifier so AI can distinguish them
-      fileRows = fileRows.map((r) => ({ ...r, "Source File": file.originalname }));
-      rows = rows.concat(fileRows);
     }
 
-    headersSet.add("Source File");
     const headers = Array.from(headersSet);
 
     if (!headers.length || !rows.length) {
       return res.status(400).json({ error: "Files appear to be empty or unreadable." });
     }
 
-    // Detect column types + stats with hardened parsers
+    // Fill missing headers on combined rows so schema is uniform
+    rows = rows.map((r) => {
+      for (const h of headers) {
+        if (!(h in r)) r[h] = null;
+      }
+      return r;
+    });
+
+    // Detect column types + stats over the full combined dataset
     const columnTypes = detectColumnTypes(headers, rows);
     const stats = computeStats(headers, rows, columnTypes);
 
-    // Store parsed data in memory
+    // Store parsed data
     const fileId = uuidv4();
     const displayName =
       originalNames.length > 1 ? `${originalNames.length} files combined` : originalNames[0];
@@ -164,10 +275,11 @@ router.post("/", upload.array("file", 10), async (req, res) => {
       stats,
       rowCount: rows.length,
       sheetInfo,
+      sheetsData,
       uploadedAt: new Date().toISOString(),
     });
 
-    // Auto-delete after 24 hours (MongoDB does this automatically, but keeping fallback cleanup)
+    // Auto-delete fallback after 24 hours
     setTimeout(async () => {
       await dataStore.delete(fileId);
     }, 24 * 60 * 60 * 1000);
@@ -181,7 +293,7 @@ router.post("/", upload.array("file", 10), async (req, res) => {
       columnTypes,
       stats,
       sheetInfo,
-      preview: rows.slice(0, 5),
+      preview: rows.slice(0, 10),
     });
   } catch (err) {
     console.error("Upload error:", err);
