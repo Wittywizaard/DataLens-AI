@@ -28,10 +28,20 @@ export default function useAnalysis() {
       const data = await analyzeData(fileInfo.fileId, query, historyRef.current);
       const aiId = Date.now();
       setMessages(prev => [...prev, { role: "assistant", result: data.result, id: aiId }]);
+      const summary = data.result?.summary || "";
+      const insightBits = Array.isArray(data.result?.insights)
+        ? data.result.insights
+            .slice(0, 4)
+            .map((i) => `${i.label}: ${i.value}`)
+            .join("; ")
+        : "";
       historyRef.current = [
         ...historyRef.current,
         { role: "user", content: query },
-        { role: "assistant", content: JSON.stringify(data.result).slice(0, 300) },
+        {
+          role: "assistant",
+          content: [summary, insightBits].filter(Boolean).join(" | ").slice(0, 500),
+        },
       ].slice(-8);
     } catch (err) {
       setMessages(prev => [...prev, { role: "error", content: err.message, id: Date.now() }]);

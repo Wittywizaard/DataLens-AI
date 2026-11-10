@@ -1,6 +1,11 @@
 const express = require("express");
 const Groq = require("groq-sdk");
 const dataStore = require("../utils/dataStore");
+const {
+  buildPrecomputedAggregations,
+  buildRepresentativeSample,
+  formatAggregationsForPrompt,
+} = require("../utils/dataAnalysis");
 
 const router = express.Router();
 
@@ -94,12 +99,25 @@ function sanitizeResult(parsed, headers, columnTypes) {
   return parsed;
 }
 
-function buildPrompt({ originalName, rowCount, colSummaries, sampleRows, conversationHistory, query }) {
+function buildPrompt({
+  originalName,
+  rowCount,
+  colSummaries,
+  sampleRows,
+  precomputedBlock,
+  sheetInfo,
+  conversationHistory,
+  query,
+}) {
   const history = conversationHistory.length
     ? `\nPrior conversation:\n${conversationHistory.map(m => `${m.role==="user"?"User":"AI"}: ${m.content}`).join("\n")}\n`
     : "";
 
-  return `You are DataLens AI. Analyze the spreadsheet data and respond to the user's question.
+  const sheetNote = sheetInfo?.length
+    ? `\nExcel sheets used: ${sheetInfo.map(s => `${s.file} → "${s.selectedSheet}" (available: ${s.availableSheets.join(", ")})`).join("; ")}`
+    : "";
+
+  return `You are DataLens AI. Answer the user's question using ONLY the verified aggregates below. Do not invent numbers.
 
 ==CRITICAL INSTRUCTION==
 You MUST respond with ONLY a valid JSON object. No markdown code fences. No backticks. No explanation text before or after. Just raw JSON starting with { and ending with }.
@@ -120,9 +138,6 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
     ]
   },
   "chartConfigs": [
-    // IMPORTANT: If the user explicitly asks for MULTIPLE charts or a full dashboard, 
-    // set "chartConfig" to null and provide all requested charts here as objects in this array.
-    // If they only asked for one chart or a general question, leave this array empty.
     {
       "type": "line",
       "title": "Descriptive title for chart 1",
@@ -138,14 +153,25 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
   "tableData": null
 }
 
+==ACCURACY RULES (MOST IMPORTANT)==
+- ALL chart data, insights, and tableData numbers MUST come from "Column details" or "PRECOMPUTED AGGREGATIONS" below.
+- Sample rows are for schema/context ONLY. NEVER compute totals, averages, rankings, or chart values from the sample.
+- Prefer the matching groupBy×metric aggregation when answering comparisons, breakdowns, trends, or top-N questions.
+- For overall totals / averages / min / max, use the Column details numeric stats (sum, avg, min, max, count).
+- If the question cannot be answered precisely from those aggregates, say so clearly in "summary", set chartConfig to null, leave chartConfigs empty, and keep insights honest (do not fabricate).
+- Do NOT copy example numbers from this prompt (like 100, 200, 150 or $1,234.50). Those are format examples only.
+- When using a precomputed group, chart labels MUST be the group keys and data MUST be the corresponding sum/avg/count values exactly as listed.
+- Sort time-series labels chronologically.
+
 ==CHART TYPE RULES==
 - Use "bar" for comparing categories (most common — default to this)
 - Use "line" for data over time / trends
 - Use "pie" or "doughnut" for showing percentages/proportions (max 8 slices)
 - Use "scatter" for correlation between two numeric columns
-- Use "radar" for comparing multiple quantitative variables across a single category (like skill sets or performance metrics)
-- Use "polarArea" similar to pie charts but when you also want the radius/size of the slice to represent the magnitude
+- Use "radar" for comparing multiple quantitative variables across a single category
+- Use "polarArea" similar to pie charts when radius should also encode magnitude
 - Use "bubble" when you have 3 numeric dimensions (x, y, and r for bubble size)
+- If the user asks for MULTIPLE charts or a dashboard: set chartConfig to null and put charts in chartConfigs. Otherwise leave chartConfigs as [].
 
 ==CRITICAL COLOR RULES==
 - For "bar", "line", "radar" and "bubble": backgroundColor MUST be a single color string like "#f59e0b"
@@ -153,21 +179,22 @@ The JSON MUST follow this EXACT structure — do not add or remove fields:
 - NEVER use a single string for pie/doughnut/polarArea backgroundColor.
 
 ==OTHER RULES==
-- labels: max 12 items. If more, group the smallest values as "Other"
-- data values: must be real numbers computed from the actual sample data
-- insights: 3-4 key stats, formatted professionally ("$1,234.50" or "34.3%").
-- Each insight MUST have a "label" and "value". You can optionally add a "trend" field like "+12.5%".
-- tableData: set to {"headers":["Col1","Col2"],"rows":[["val1","val2"]]} only for top-N lists, else null
-- chartConfig: only set to null if the question genuinely cannot be charted
-- Sort time-series data chronologically
+- labels: max 12 items. If more categories exist in precomputed data, use the provided "Other" bucket or the top groups already computed.
+- insights: 3-4 key stats taken from verified aggregates, formatted professionally.
+- Each insight MUST have a "label" and "value". Optional "trend" only if supported by the aggregates.
+- tableData: set to {"headers":["Col1","Col2"],"rows":[["val1","val2"]]} for top-N / breakdown tables using precomputed groups; else null
+- chartConfig: only set to null if the question genuinely cannot be charted from verified data
 
 ==DATA==
 File: "${originalName}"
-Total rows in file: ${rowCount}
-Column details:
+Total rows in file: ${rowCount}${sheetNote}
+Column details (computed from ALL rows):
 ${colSummaries.join("\n")}
 
-Sample data (first rows):
+PRECOMPUTED AGGREGATIONS (computed from ALL ${rowCount} rows — use these for charts/answers):
+${precomputedBlock}
+
+Sample rows (schema/context ONLY — do not aggregate from these):
 ${JSON.stringify(sampleRows, null, 0)}
 ${history}
 User question: ${query}
@@ -271,7 +298,7 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "Session expired — please re-upload your file." });
     }
 
-    const { headers, rows, columnTypes, stats, rowCount, originalName } = fileData;
+    const { headers, rows, columnTypes, stats, rowCount, originalName, sheetInfo } = fileData;
 
     const colSummaries = headers.map(h => {
       const type = columnTypes[h];
@@ -279,15 +306,23 @@ router.post("/", async (req, res) => {
       if (type === "numeric" && s) {
         return `  "${h}" [numeric]: min=${s.min?.toFixed(2)}, max=${s.max?.toFixed(2)}, avg=${s.mean?.toFixed(2)}, sum=${s.sum?.toFixed(2)}, count=${s.count}`;
       } else if (s) {
-        return `  "${h}" [${type}]: ${s.unique} unique values. Top values: ${s.topValues?.slice(0,6).map(v=>`"${v.val}"=${v.count}`).join(", ")}`;
+        return `  "${h}" [${type}]: ${s.unique} unique values. Top values: ${s.topValues?.slice(0,8).map(v=>`"${v.val}"=${v.count}`).join(", ")}`;
       }
       return `  "${h}" [${type}]`;
     });
 
-    const sampleRows = rows.slice(0, 5);
+    // Deterministic aggregations over the FULL dataset — source of truth for the LLM
+    const aggregations = buildPrecomputedAggregations(rows, headers, columnTypes);
+    const precomputedBlock = formatAggregationsForPrompt(aggregations);
+    const sampleRows = buildRepresentativeSample(rows, 30);
 
     const prompt = buildPrompt({
-      originalName, rowCount, colSummaries, sampleRows,
+      originalName,
+      rowCount,
+      colSummaries,
+      sampleRows,
+      precomputedBlock,
+      sheetInfo,
       conversationHistory: conversationHistory.slice(-6),
       query,
     });
