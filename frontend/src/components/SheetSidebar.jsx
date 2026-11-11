@@ -30,6 +30,12 @@ import React from "react";
  * in the project.
  */
 export default function SheetSidebar({ sheetInfo = {}, activeSheetKey = null, onSelectSheet }) {
+  // Filter out placeholder column names like "Column_1", "Column_2"
+  const isPlaceholder = (h) => /^Column_\d+$/.test(h);
+  const sheetKeys = Object.keys(sheetInfo).sort();
+  const currentKey = activeSheetKey && sheetInfo[activeSheetKey] ? activeSheetKey : sheetKeys[0];
+  const rawHeaders = sheetInfo[currentKey]?.headers || [];
+  const headers = rawHeaders.filter(h => h && !isPlaceholder(h));
   // Derive list of sheet keys sorted alphabetically for deterministic order
   const sheetKeys = Object.keys(sheetInfo).sort();
 
