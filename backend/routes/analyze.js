@@ -120,11 +120,13 @@ function sanitizeResult(parsed, headers, columnTypes, queryResult) {
         ])
       };
     } else if (queryResult.matchingRows && queryResult.matchingRows.length > 0) {
-      const sampleRow = queryResult.matchingRows[0];
-      const rowHeaders = Object.keys(sampleRow).filter(k => k !== "Source File");
+      // Use the full headers set (excluding internal tags) for a proper table preview
+      const displayHeaders = headers.filter(h => h !== "Source File" && h !== "File Sheet");
       parsed.tableData = {
-        headers: rowHeaders,
-        rows: queryResult.matchingRows.slice(0, 10).map(r => rowHeaders.map(h => String(r[h] ?? "")))
+        headers: displayHeaders,
+        rows: queryResult.matchingRows.slice(0, 10).map(r =>
+          displayHeaders.map(h => String(r[h] ?? ""))
+        ),
       };
     }
   }

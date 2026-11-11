@@ -1156,6 +1156,18 @@ function formatQueryResultForPrompt(qr) {
   } else if (qr.type === "filter_result") {
     lines.push(`Matching Rows Count: ${qr.count}`);
     if (qr.matchingRows?.length) {
+      // Table preview of first few rows (markdown style)
+      const sample = qr.matchingRows.slice(0, 5);
+      const headers = Object.keys(sample[0] || {});
+      if (headers.length) {
+        lines.push('Table preview:');
+        lines.push(`| ${headers.join(' | ')} |`);
+        lines.push(`| ${headers.map(() => '---').join(' | ')} |`);
+        for (const row of sample) {
+          const vals = headers.map((h) => String(row[h] ?? ''));
+          lines.push(`| ${vals.join(' | ')} |`);
+        }
+      }
       lines.push(
         `Matching rows preview:\n${qr.matchingRows.map((r, i) => `  ${i + 1}. ${JSON.stringify(r)}`).join("\n")}`
       );
@@ -1169,19 +1181,18 @@ function formatSheetsOverviewForPrompt(sheetInfo) {
   if (!sheetInfo || !sheetInfo.length) return "Single sheet file.";
   const files = [...new Set(sheetInfo.map((s) => s.file).filter(Boolean))];
   if (files.length > 1) {
-    return files
-      .map((f, i) => {
-        const fileSheets = sheetInfo.filter((s) => s.file === f);
-        const totalRows = fileSheets.reduce((a, b) => a + b.rowCount, 0);
-        const sheetLines = fileSheets
-          .map(
-            (s) =>
-              `    * Tab "${s.sheetName}" (${s.rowCount} rows, ${s.headers?.length || 0} cols: ${s.headers?.join(", ")})`
-          )
-          .join("\n");
-        return `  File ${i + 1}: "${f}" (${fileSheets.length} tabs, ${totalRows} total rows):\n${sheetLines}`;
-      })
-      .join("\n");
+    // Multi‑file overview – render a markdown table summarising each sheet
+    const headerLine = "| File | Tab | Rows | Columns | Sample Columns |";
+    const separator = "| --- | --- | ---: | ---: | --- |";
+    const rows = [];
+    for (const f of files) {
+      const fileSheets = sheetInfo.filter((s) => s.file === f);
+      for (const s of fileSheets) {
+        const sampleCols = (s.headers || []).slice(0, 3).join(", ");
+        rows.push(`| ${f} | ${s.sheetName} | ${s.rowCount} | ${s.headers?.length || 0} | ${sampleCols} |`);
+      }
+    }
+    return `${headerLine}\n${separator}\n${rows.join("\n")}`;
   }
   return sheetInfo
     .map(
