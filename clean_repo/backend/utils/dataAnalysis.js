@@ -1007,7 +1007,12 @@ function executeDataQuery({ query, rows, sheetsData, headers, columnTypes, stats
       }
 
       if (isMatch) {
-        matchedFilters.push({ column: cc, value: val });
+        const roleKeywords = ["senior","lead","engineer","developer","analyst","manager","specialist","architect","consultant"];
+const isDeptCol = /department/i.test(cc);
+const queryHasRole = roleKeywords.some(k => normQuery.includes(k));
+if (!(isDeptCol && queryHasRole)) {
+  matchedFilters.push({ column: cc, value: val });
+}
         break;
       }
     }

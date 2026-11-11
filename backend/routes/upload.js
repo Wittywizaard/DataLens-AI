@@ -95,6 +95,14 @@ router.post("/", upload.array("file", 10), async (req, res) => {
         });
 
         let fileHeaders = (result.meta.fields || []).filter(Boolean);
+      // Detect any extra columns that appear in later rows (Papa may miss them if they are not in the first row)
+      const extraCols = new Set();
+      result.data.forEach(row => {
+        Object.keys(row).forEach(k => {
+          if (!fileHeaders.includes(k)) extraCols.add(k);
+        });
+      });
+      if (extraCols.size) fileHeaders = [...new Set([...fileHeaders, ...extraCols])];
         let fileRows = result.data.map((r) => {
           const out = { ...r };
           for (const h of fileHeaders) {
